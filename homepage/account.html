@@ -1,0 +1,397 @@
+
+<style>
+	#floatMenu {
+		position: absolute;    
+		left: 0;
+		top: 50px;    
+		color: #fff;
+	}
+	.mdaccount{height: 700px; overflow: auto;}
+
+	/*betTable*/  
+		table.betTable tr td{
+			border: solid 1px #607d8b; 
+		} 
+		table.betTable tr td{line-height: 30px; vertical-align: bottom;}      
+		span.dat{float: right;}   
+		tr.betRow td.over{background-color: #f3b60c}
+		
+		td.game_num{
+			width:5%;
+			background-color: #d2d2d2; 
+			text-align: center;     
+		}
+		td.homePic{width: 35%}
+		span.homeTeam{float: left; margin-right: 5px;}
+		.homeTeam img{margin: 0px 10px 0px 10px;}
+		span.homeWin {float: right; margin-right: 15px;}
+		td.drawPic {width: 10%; text-align: center;}
+		td.awayPic{width: 35%}
+		span.awayTeam {float: right;}
+		td.awayPic img{
+			margin: 0px 10px 0px 10px;}
+		span.awayLose{margin-left: 15px;}
+
+		span.under{color: blue;}
+	span.over{color: red;}
+	.betInfo {background-color: #dfe3ea}
+	.betInfo td:first-child{border-right: none;}
+	.betInfo td:nth-child(2){border-left: none;}
+	.winTeam{
+		color: #07A7F7;
+	}
+	
+	/*betCart*/
+		.betCart{
+			margin-top: 20px;
+		}
+		.betCartTable{
+			font-size: 13px;
+		}
+		.betCartTable td:nth-child(1){      
+			background-color: #d2d2d2;
+			text-align: center;
+			width: 5%;
+		}
+		.betCartTable td:nth-child(3){      
+			text-align: center;
+			width: 10%;
+		} 
+		.cartHomeBet, .cartAwayName{
+			float: right;
+		}
+		.myBet,.highlight{
+			background-color:#d9edf7s;
+
+		}
+		.betState{
+			background-color: #ffff00;
+		}
+</style>
+
+
+	<div id="floatMenu">		
+		<input type="image" src="{{STATIC_URL}}img/letter-p.png" data-toggle="modal" data-target="#accountModa2">		
+	</div>
+
+
+
+<!-- 픽스타리그 modal -->
+	<div class="modal fade" id="accountModa2" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel">
+		<div class="modal-dialog modal-lg" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+					<h4 class="modal-title" id="myModalLabel">픽스타리그 등록하기</h4>
+				</div>
+				<div class="modal-body">
+					
+					<div class="row">
+						<div class="col-md-4">
+							<div class="accountInfo">               
+								<p><b>베팅금액은 최소 100원 이상 최대 100,000원까지 가능합니다</b></p>                
+
+								<table class="table table-bordered">
+									<tr>
+										<td><b>배당</b></td>                      
+										<td>
+											<span id="betValue" value="1.0">1.0</span>
+										</td>
+									</tr>
+									<tr>
+										<td><b>가상머니(배팅금액)</b></td>
+										<td>
+											<input type="text" id="money" min="100" max="100000" value="5000" contenteditable="true" size="4"/>
+											<button type="button" id="newMoney" class="btn btn-primary btn-sm"/>적용</button>                   
+										</td>                     
+									</tr>
+									<tr>
+										<td><b>예상적중금액</b></td>
+										<td>
+											<span id="totalMoney" value="5000">5000</span>
+										</td>
+									</tr>
+								</table>
+								<div class="betState"></div>
+								<div class="betCart"></div>                 
+							</div><!--end accountInfo-->
+						</div>
+						<div class="col-md-8 mdaccount">
+							<div id="picstarLeague"></div><!--새로 예측할 경기불러오는곳-->
+						</div>
+						
+					</div><!--end row-->
+				</div><!--modeal-body-->
+
+				<div class="modal-footer">				
+					<button type="button" id="resetForm" class="btn btn-default" data-dismiss="modal">취소</button>					
+					<button type="submit" class="btn btn-primary" data-dismiss="modal">확인</button>
+					{% endif %}   
+				</div>
+			</div>
+		</div>
+	</div>
+
+<script>//플로팅 메뉴
+	$(document).ready(function() {   
+		// 기존 css에서 플로팅 배너 위치(top)값을 가져와 저장한다.
+		var floatPosition = parseInt($("#floatMenu").css('top'));
+		// 250px 이런식으로 가져오므로 여기서 숫자만 가져온다. parseInt( 값 );
+	 
+		$(window).scroll(function() {
+			// 현재 스크롤 위치를 가져온다.
+			var scrollTop = $(window).scrollTop();
+			var newPosition = scrollTop + floatPosition + "px"; 
+			/* 애니메이션 없이 바로 따라감
+			 $("#floatMenu").css('top', newPosition);
+			 */ 
+			$("#floatMenu").stop().animate({
+				"top" : newPosition
+			}, 500); 
+		}).scroll(); 
+	});
+
+	$("#floatMenu").stop().animate({
+		"top" : newPosition
+	}, {
+		'duration' : 500,
+		'easing' : 'easeInOutCubic',
+		'complete' : function() {
+			console.log('이동 완료하였습니다.');
+		}
+	});
+</script>
+
+<script>
+	function remakeDate(strDate){
+		var year = strDate.substring(0,4);
+		var month = strDate.substring(5,7);
+		var day = strDate.substring(8,10);
+		var hour = strDate.substring(11,13);
+		var minute = strDate.substring(14,16);
+
+		var realDate = new Date(Date.UTC(year, month, day, hour, minute));			
+		var myyear = realDate.getFullYear();	
+		var mymonth = realDate.getMonth();
+		var myweekday = realDate.getDate();
+		var myhour = realDate.getHours();
+		var myminute = realDate.getMinutes();
+			return ((mymonth < 10) ? "0" : "") + mymonth +"-"+ (myweekday <10 ? "0" : "") + myweekday +" "+((myhour < 10) ? "0" : "")+ myhour+":"+((myminute < 10) ? "0" : "") + myminute;			
+	}
+	
+	var betList = [];
+
+	$.getJSON('/gameList/', function(data){
+		console.log(data);
+		var strData = JSON.stringify(data);//json 데이터를 스트링으로
+		var objList = JSON.parse(strData); //스트링 데이터를 json으로 다시파싱   
+		var simpleGame = objList.data; //게임 객체 1개
+			
+		var dataList='';    
+			dataList += '<table class="table table-bordered table-hover betTable">';                  
+		
+		for(var i=0; i < simpleGame.length; i++){
+			dataList += '<tr class="betInfo">'+
+									'<td colspan="2"><span class="lea"><b>'+simpleGame[i].league+'</b></span></td>'+
+									'<td colspan="3"><span class="dat"><b>'+remakeDate(simpleGame[i].date)+
+									'</b></span></td></tr>';
+			
+			dataList += '<tr class="betRow">';
+			dataList += '<td class="game_num"><b>'+simpleGame[i].num+'</b></td>';
+			//home
+			dataList += '<td gameId="'+simpleGame[i].gameId+'" class="betd homePic" onclick="getBet(this);"'+ 
+											'ratio="'+simpleGame[i].win+'"  choice="1" realGameId="'+simpleGame[i].realGameId+'" gameNum="'+simpleGame[i].num+'" homeName="'+simpleGame[i].home+'" awayName="'+simpleGame[i].away+'" homeBet="'+simpleGame[i].win+'" awayBet="'+simpleGame[i].lose+'" drawBet="'+simpleGame[i].draw+'">'+
+									'<span class="homeTeam">'+
+									'<img src="'+simpleGame[i].homePic+'" width="30px" height="30px" />'+
+									'<span>'+simpleGame[i].home+'</span>'+
+									'</span>'
+			dataList += (simpleGame[i].gameType == 1) ? 'H '+simpleGame[i].handiNum : '';
+			dataList += '<span class="homeWin">'+simpleGame[i].win;
+			dataList += (simpleGame[i].gameType == 2) ? '<span class="under">↓</span>' : ''+    
+									'</span>'+
+									'</td>';
+			//draw            
+			dataList += '<td gameId="'+simpleGame[i].gameId+'" class="betd drawPic" onclick="getBet(this);"'+
+											'ratio="'+simpleGame[i].draw+'" choice="4" realGameId="'+simpleGame[i].realGameId+'" gameNum="'+simpleGame[i].num+'" homeName="'+simpleGame[i].home+'" awayName="'+simpleGame[i].away+'" homeBet="'+simpleGame[i].win+'" awayBet="'+simpleGame[i].lose+'" drawBet="'+simpleGame[i].draw+'">'
+			dataList +=   (simpleGame[i].draw) ? simpleGame[i].draw : '';
+			dataList +=   (simpleGame[i].gameType == 2) ? 'U '+simpleGame[i].handiNum : '';
+									'</td>';      
+			//away            
+			dataList += '<td gameId="'+simpleGame[i].gameId+'" class="betd awayPic" onclick="getBet(this);"'+
+											'ratio="'+simpleGame[i].lose+'" choice="2" realGameId="'+simpleGame[i].realGameId+'" gameNum="'+simpleGame[i].num+'" homeName="'+simpleGame[i].home+'" awayName="'+simpleGame[i].away+'" homeBet="'+simpleGame[i].win+'" awayBet="'+simpleGame[i].lose+'" drawBet="'+simpleGame[i].draw+'">';
+			dataList += '<span class="awayLose">'+simpleGame[i].lose;
+			dataList += (simpleGame[i].gameType == 2) ? '<span class="over">↑</span>' : ''; '</span>';                    
+			dataList += '<span class="awayTeam">'+simpleGame[i].away+
+										'<img src="'+simpleGame[i].awayPic+'" width="30px" height="30px"/>'+
+									'</span>';
+			dataList += '</td>';
+			dataList += '</tr>';
+		}     
+			dataList += '</table>';    
+		$('#picstarLeague').append(dataList);
+
+		$(".betInfo").each(function(i){//날짜로 분류
+			if($(".dat").eq(i).text() == $(".dat").eq(i+1).text()){
+				$(".betInfo").eq(i+1).hide();     
+			};
+		});  
+
+	//대기중 픽스타리그 리스트
+
+		$.getJSON('/singleChoice/', function(data){
+			var single = data.singleChoiceList;	  	
+			var betd = $('.betd');
+			for(var i=0; i < betd.length; i++){
+				for(var j=0; j < single.length; j++){
+					if(($(betd[i]).attr("choice") == single[j].choice) && ($(betd[i]).attr("gameId") == single[j].gameId)){
+						$(betd[i]).addClass('highlight');			  		
+						betList.push({choice: $(betd[i]).attr('choice'), gameId: $(betd[i]).attr('gameId')})
+						console.log($(betd[i]).attr('choice'), $(betd[i]).attr('gameId'))
+					}
+				}
+			}
+		});//end singleChoice
+
+	});// end getJSON gameList
+
+
+
+	//betList넣었다뺐다
+	/*
+	var betTotal = $('#betValue').val(); // 배당 초기값1.0
+	var money = $('#money').val();       // 가상머니 초기값5000
+	var totalMoney = $('#totalMoney').val(); //예상적중금액 */
+	
+	
+	function picLeagueBet(thisObj){
+		var gameNum = $(thisObj).attr('gameNum');
+		var homeName = $(thisObj).attr('homeName');
+		var awayName = $(thisObj).attr('awayName');
+		var homeBet = $(thisObj).attr('homeBet');
+		var awayBet = $(thisObj).attr('awayBet');   
+		var drawBet = $(thisObj).attr('drawBet');   
+		var gameId = $(thisObj).attr('gameId');
+		var betNum = $(thisObj).attr('ratio');    
+		var choice = $(thisObj).attr('choice');
+		var realGameId = $(thisObj).attr('realGameId');
+		var flag = 0;
+		console.log("클릭시작: "+gameNum, gameId, betNum, choice, realGameId, homeName, awayName, homeBet, awayBet, drawBet);
+
+		$(thisObj).addClass('highlight');
+		$(thisObj).siblings().removeClass('highlight');
+		$.post('/addSingleBet/', {state:0, choice:choice, gameId:gameId}, 
+			function(data){				
+				if(data.error == null){
+					alert("성공적으로 등록되었습니다.");
+				}
+				else if(data.error == 6){
+					if(confirm("현재 대기중인 게임이 10개입니다. 추가적으로 선택을 하기 위해서는 100별이 필요합니다. 선택을 진행하시겠습니까?")){
+						$.post('/addSingleBet/', {state:1, choice:choice, gameId:gameId}, function(){
+							window.location.reload(true);	
+						});
+					}						
+					else{
+						window.location.reload(true);	
+					}				
+				}
+				else if(data.error == 8){
+					alert("별이 부족합니다.");
+					window.location.reload(true);	
+				}
+				else if(data.error == 7){
+					alert("이미 구매된 경기입니다.");
+					window.location.reload(true);	
+				}
+			});
+
+
+		if($(thisObj).attr('ratio') == 'null'){
+			alert('선택할 배당이 없습니다.');
+		}
+		else if(betList.length==10){
+			for(var i=0; i<betList.length; i++){//먼저 betList안에 있는걸 루프돌면서
+				/*
+				if(betList[i].realGameId == realGameId && betList[i].gameId != gameId){//gameId, realGameId 같은거 뺌
+					flag = 1;
+					alert("같은 리얼게임은 선택할 수 없습니다.");
+				}*/
+				if(betList[i].gameId == gameId){//gameId 같을때         
+					if(betList[i].choice == choice){ // 찍힌거 찍으면 뺌
+												
+						betList.splice(i,1);
+						$(thisObj).removeClass('highlight');            
+						flag = 1;						
+					}
+					else{ // 다른거 찍으면 원래꺼 빼고 찍은거 넣어            
+						betList.splice(i,1);
+						$(thisObj).siblings().removeClass('highlight');         
+						
+						betList.push({gameId:gameId, betNum:betNum, choice:choice, realGameId:realGameId, gameNum:gameNum, 
+													homeName:homeName, awayName:awayName, homeBet:homeBet, awayBet:awayBet, drawBet:drawBet});            
+						$(thisObj).addClass('highlight');
+						
+						flag = 1;           
+					}
+				}
+			}
+			if(flag==0){				
+			}     
+		} 
+		else if(betList.length == 0){//첫번째는 무조건 넣어      
+			betList.push({gameId:gameId, betNum:betNum, choice:choice, realGameId:realGameId, gameNum:gameNum, 
+										homeName:homeName, awayName:awayName, homeBet:homeBet, awayBet:awayBet, drawBet:drawBet});
+			
+			$(thisObj).addClass('highlight');     
+		}   
+		else if(betList.length > 0 && betList.length <10){//리스트가 10개가 아니면
+			for(var i=0; i<betList.length; i++){//먼저 betList안에 있는걸 루프돌면서
+				/*
+				if(betList[i].realGameId == realGameId && betList[i].gameId != gameId){//gameId, realGameId 같은거 뺌
+					flag = 1;
+					alert("같은 리얼게임은 선택할 수 없습니다.");
+					break;
+				}*/
+				if(betList[i].gameId == gameId){//gameId 같을때         
+					if(betList[i].choice == choice){ // 찍힌거 찍으면 뺌
+												
+						betList.splice(i,1);
+						$(thisObj).removeClass('highlight');            
+						flag = 1;
+						break;
+					}
+					else{ // 다른거 찍으면 원래꺼 빼고 찍은거 넣어            
+						betList.splice(i,1);
+						$(thisObj).siblings().removeClass('highlight');         
+						console.log("넣기전")
+						console.log(gameId, betNum, choice, realGameId);
+						betList.push({gameNum:gameNum, gameId:gameId, betNum:betNum, choice:choice, realGameId:realGameId, 
+													homeName:homeName, awayName:awayName, homeBet:homeBet, awayBet:awayBet, drawBet:drawBet});
+						
+						console.log("넣은후")
+						$(thisObj).addClass('highlight');
+						
+						flag = 1;
+						break;          
+					}
+				}
+			}     
+			if(flag == 0){
+				betList.push({gameNum:gameNum, gameId:gameId, betNum:betNum, choice:choice, realGameId:realGameId, 
+											homeName:homeName, awayName:awayName, homeBet:homeBet, awayBet:awayBet, drawBet:drawBet});//리얼게임 아이디 다르면 그냥 넣어
+				
+				$(thisObj).addClass('highlight');     
+			}     
+		}
+
+		//betList.sort(function(a, b){return a.gameId-b.gameId});//게임아이디 순서대로 sort
+
+		for(var j = 0 in betList){
+			console.log(betList[j].gameNum, betList[j].choice, betList[j].gameId, 
+				betList[j].homeName, betList[j].homeBet, betList[j].awayBet, betList[j].awayName, betList[j].drawBet);
+		}
+
+	}// end function getBet()	
+</script>
+
+
+

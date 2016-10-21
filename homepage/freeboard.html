@@ -1,0 +1,341 @@
+{% extends 'homepage/base.html' %}
+		
+{% block content %}
+
+{% block load_css %}
+	<style>		
+		div.container{position: relative;}
+		div.freeboard-theme{
+			margin: 30px 0px 30px 0px;			
+			border-bottom: solid 1px #fff;
+			}		
+			div.main-freeboard,.g,.sub-freeboard,.note{
+				display: inline-block;
+				color: white;
+			}
+			span.glyphicon-chevron-right{
+				margin-bottom: 10px;}
+			.explain{
+				float: right;
+				margin-top: 30px;
+				color: #fff;
+			}				
+		img#imagePreview {display:inline; width:100px; height:100px}		
+		.restBtn{float: right; margin-top: 10px;}
+		.restPaging{						
+			text-align: center;}
+		.freeboard-tab{
+			background-color: #dfe3ea;}
+		.freeboardArea{			
+			min-height: 1420px;
+			background-color: #E2E2E2;
+		}
+		
+	</style>
+{% endblock %}
+
+{% block load_js %}
+<script src="{{STATIC_URL}}h_js\bootstrap-paginator.js"></script>
+{% endblock %}
+
+{% block main %}	
+<div class="container">
+	<div class="row">
+		<div class="col-md-9">
+
+			<div class="freeboard-theme">
+				<div class="main-freeboard"><h1><b>쉼터</b></h1></div>
+				<div class="g"><span class="glyphicon glyphicon-chevron-right"></span></div>
+				<div class="sub-freeboard"><h4 >전체 게시판</h4></div>
+				<div class="explain"><h6>다양한 사진을 올릴 수 있는 공간입니다.</h6></div>
+			</div>
+
+			<div class="card" id="cardSee"></div><!--apiFreeboardSee 상세글 불러오기-->	
+			
+			<div class="freeboard-tab">
+				<ul class="nav nav-tabs nav-justified" id="free-menu">
+					<li role="presentation" class="active">
+						<a href="#all" id="all_tab" data-toggle="tab">전체</a>
+					</li>
+					<li role="presentation">
+						<a href="#best" id="best_tab" data-toggle="tab">인기</a>
+					</li>
+					<li role="presentation">
+						<a href="#proto" id="proto_tab" data-toggle="tab">프로토</a>
+					</li>
+					<li role="presentation">
+						<a href="#humor" id="humor_tab" data-toggle="tab">유머</a>
+					</li>
+					<li role="presentation">
+						<a href="#photo" id="photo_tab" data-toggle="tab">포토</a>
+					</li>
+				</ul>
+			</div>			
+
+			<div class="tab-content freeboardArea">
+				<div class="tab-pane active" id="all"></div>
+				<div class="tab-pane" id="best"></div>
+				<div class="tab-pane" id="proto"></div>
+				<div class="tab-pane" id="humor"></div>
+				<div class="tab-pane" id="photo"></div>
+			</div>
+			<div id="detailSee"></div><!--쉼터글 추가 되는곳-->
+
+			<!--글쓰기버튼-->			
+			<div class="restBtn">
+				<button type="button" class="btn btn-primary btn-md" data-toggle="modal" data-target="#freeWriting">
+					글쓰기 / 사진올리기</button>
+			</div>			
+			<!-- Modal -->
+			<div class="modal fade" id="freeWriting" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+				<div class="modal-dialog" role="document">
+					<div class="modal-content">
+
+						<div class="modal-header">
+							<button type="button" class="close" data-dismiss="modal" aria-label="Close" onclick="reset();">
+								<span aria-hidden="true">&times;</span>
+							</button>
+							<h4 class="modal-title" id="myModalLabel">글쓰기 / 사진올리기</h4>
+						</div>
+
+						<form action="/addFreeWriting/" name="fm-resting" id="fm-resting" method="post" accept-charset="utf-8" enctype="multipart/form-data">	
+							<div class="modal-body">
+								<input type="radio" name="boardId" value="1" />프로토
+								<input type="radio" name="boardId" value="2" />유머
+								<input type="radio" name="boardId" value="3" />포토
+								<input type="text" id="fm-theme" class="form-control" name="title" placeholder="제목" /><br>
+								<textarea id="fm-content" class="form-control" rows="10" name="text" placeholder="본문"></textarea></br>
+								<input type="file" name="files" id="uploadImage" />										
+								<div id="preview">
+									<img id="imagePreview" src="#" alt="Preview upload images" />
+								</div>
+							</div>							
+							<div class="modal-footer">
+								<button class="btn btn-default" data-dismiss="modal" onclick="reset();">닫기</button>
+								{% if user.is_anonymous  %}
+									<button type="button" class="btn btn-primary" onclick="alert('로그인이 필요한 서비스입니다.');">올리기</button>
+								{% else %}
+									<input type="submit" class="btn btn-primary" value="올리기">
+								{% endif %}		
+							</div>
+						</form>
+
+					</div>	
+				</div>	
+			</div><!--end modal-->
+
+			<div class="restPaging"><ul id="freePaging"></ul></div><!--페이징-->
+								
+		</div><!--end col-md-9-->
+		
+	</div><!--row-->	
+</div><!--end container-->
+{% block right %}
+	{% include 'homepage/rightbar.html' %}
+{% endblock%}
+
+
+
+
+<script>//freeboard_cell 1페이지 불러오기	
+	var page = 1;
+	$.post('/freeboardCell/',{state:2, page:1},
+		function(data){
+			$('#all').html(data);	
+			freeboardCellDate()
+	});
+		
+	$.post('/freeboardCell/',{state:3, page:1},
+		function(data){
+			$('#best').html(data);			
+			freeboardCellDate()
+	});
+
+	$.post('/freeboardCell/',{boardId:1, page:1},
+		function(data){
+			$('#proto').html(data);
+			freeboardCellDate()
+	});
+
+	$.post('/freeboardCell/',{boardId:2, page:1},
+		function(data){
+			$('#humor').html(data);
+			freeboardCellDate()
+	});
+
+	$.post('/freeboardCell/',{boardId:3, page:1},
+		function(data){
+			$('#photo').html(data);
+			freeboardCellDate()
+	});	
+</script>
+<script>//페이지 변경
+	var options = {
+    currentPage: 1,
+    totalPages: 350,
+    bootstrapMajorVersion: 3,
+    onPageClicked: function(e,originalEvent,type,page){
+    	$.post('/freeboardCell/',{state:2, page:page},     		
+				function(data){						
+					$('#all').html(data);
+					freeboardCellDate()
+			});
+			$.post('/freeboardCell/',{state:3, page:page},
+				function(data){						
+					$('#best').html(data);
+					freeboardCellDate()
+			});
+			$.post('/freeboardCell/',{boardId:1, page:page},
+				function(data){						
+					$('#proto').html(data);
+					freeboardCellDate()
+			});
+			$.post('/freeboardCell/',{boardId:2, page:page},
+				function(data){						
+					$('#humor').html(data);
+					freeboardCellDate()
+			});
+			$.post('/freeboardCell/',{boardId:3, page:page},
+				function(data){						
+					$('#photo').html(data);
+					freeboardCellDate()
+			});
+    }
+	}
+	$('#freePaging').bootstrapPaginator(options);		
+</script>
+<script>//쉼터 상세글 불러오기
+	function detailFreeboard(param){
+		$.post('/api/apiFreeWritingDetail/',{writingId: $(param).attr("writingId")},
+			function(data) {
+				$("#cardSee").html(data);
+				parseDetailDate();
+		});
+	}
+</script>
+
+
+<script>//서버날짜 파싱
+	function freeboardCellDate(){//쉼터 조각글 날짜 파싱
+		var hDateList = $('h5.writingDate');		
+		for (var i=0; i < hDateList.length; i++){				
+			var formDate = $(hDateList[i]).attr("date");
+			formDate = parseDate(formDate);
+			$(hDateList[i]).html(formDate)
+		}	
+	}
+
+	function parseDate(date){//서버날짜 파싱
+		var year = date.substring(0,4);
+		var month = date.substring(5,7);
+		var day = date.substring(8,10);
+		var hour = date.substring(11,13);
+		var minute = date.substring(14,16);
+
+		var realDate = new Date(year+'-'+month+'-'+day+'T'+hour+':'+minute);
+		//console.log(realDate)
+		var myyear = realDate.getFullYear();		
+		var mymonth = realDate.getMonth();
+		mymonth = mymonth+1;
+		var myweekday = realDate.getDate();
+		var myhour = realDate.getHours();
+		var myminute = realDate.getMinutes();
+
+		return ((mymonth < 10) ? "0" : "") + mymonth+"-"+ (myweekday <10 ? "0" : "") + myweekday +" "+((myhour < 10) ? "0" : "")+ myhour+":"+((myminute < 10) ? "0" : "") + myminute;	
+	}
+
+
+	function parseDetailDate(){//쉼터 상세글 날짜 파싱
+		var spans = $('span.commentDate');		
+		for (var i=0; i < spans.length; i++){		
+			var formDate = parseDate($(spans[i]).attr("commentDate"))
+			$(spans[i]).html(formDate)
+		}		
+	}
+
+	function reset(){//글쓰기폼 초기화
+		document.getElementById('fm-resting').reset();
+	}
+
+	function readUploadImage( inputObject ) {//사진 미리보기
+	/*브라우저에서 FileReader가 지원되는지 확인하기 위해 window.File && window.FileReader 해 본다.*/
+		if ( window.File && window.FileReader ) {
+			/*입력된 파일이 1개 이상 있는지 확인~*/
+			if ( inputObject.files && inputObject.files[0]) {
+				/* 이미지 파일인지도 체크해 주면 좋지~ */
+				if ( !(/image/i).test(inputObject.files[0].type ) ){
+					alert("이미지 파일을 선택해 주세요!");
+					return false;
+				}
+				/* FileReader 를 준비 한다. */
+				var reader = new FileReader();
+				reader.onload = function (e) {
+					/* reader가 다 읽으면 imagePreview에 뿌려 주면 끝~  */
+					$('#imagePreview').attr('src', e.target.result);
+				}	
+				/* input file에 있는 파일 하나를 읽어온다. */
+				reader.readAsDataURL(inputObject.files[0]);
+			}
+		} else {
+			alert( "미리보기 안되요.~ 브라우저를 업그레이드하세요~");
+		}
+	}
+	/*input 태그에 보통<element onchange="SomeJavaScriptCode">해 주던지 아님 jquery를 이용해 change 이벤트를 달아 줘도 된다.*/
+	$("#uploadImage").change(function(){
+			readUploadImage(this);
+	});
+</script>
+<script>
+	function cmtParentBtn(){// 댓글달기버튼			
+			var pText = $("#commentPText");
+						
+			if($.trim(pText.val())==""){
+				alert("내용을 입력하세요.");
+				pText.focus();
+				return;
+			}
+			console.log($('.freeWritingNum').attr("freeWritingNum"), pText.val())
+
+			$.post("/addFreeComment/", {writingId:$('.freeWritingNum').attr('freeWritingNum'), text:pText.val()}, function(data){				
+			});
+			
+			var commentPText = '<div class="commentArea" name="commentPCode">'+
+														"{% if user.picKey == 0 %}"+
+                         		 '<img style="float:left;" "margin-right:20px" src="{{ STATIC_URL }}img/ic_user.png" class="img-circle" onError="this.src="{{ STATIC_URL }}img/ic_user.png"" width="50px" height="50px"/>'+         
+	                          "{% else %}"+
+	                          	'<img src="{{infoUser.picKey}}" class="img-circle" onError="this.src="{{ STATIC_URL }}img/ic_user.png"" width="50px" eight="50px"/>'+
+	                          "{% endif %}"+
+	                          '<div class="comment_bottom">'+
+															'<p>'+pText.val().replace(/\n/g, "<br>")+'</p>'+
+															'<p><b>'+"{{infoUser.nickname}}"+'</b>&nbsp;&nbsp;<span class="time"></span></p>'+			
+														'</div>'+														
+												'</div>'
+
+			//테이블의 div자식이 있으면 div 뒤에 붙인다. 없으면 테이블 안에 div을 붙인다.
+			if($('.commentWrap').contents().size()==0){//댓글 처음일때
+					$('.commentArea').append(commentPText);
+			}else{//댓글 있을때
+					$('.commentWrap').append(commentPText);
+			}
+			$("#commentPText").val("");			
+			$(function(){				
+			var now = new Date();					
+			var nowTime = ((now.getMonth()+1 < 10) ? "0" : "") + (now.getMonth()+1) +"-"+ (now.getDate()<10 ? "0" : "") +now.getDate()+(now.getHours()<10 ? "0" : " ")+now.getHours()+":"+(now.getMinutes() < 10 ? "0" : "")+now.getMinutes();
+			$(".time").text(nowTime);					
+		});		
+		}
+</script>
+<script>/*
+	$('.rest_container').each(function(i){	
+		$('.rest_container').eq(i).vgrid({
+		  time:300,
+		  delay:1,
+		  wait:300
+	  });		  
+	});		*/
+</script>
+{% endblock %}
+{% endblock%}
+
+
+

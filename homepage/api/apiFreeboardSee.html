@@ -1,0 +1,122 @@
+{% block load_css %}
+<style>
+
+	div.activeList{
+		display: inline-block;
+		cursor: pointer;		
+		line-height: 40px;
+		border: 1px solid black;
+		margin: 20px;	
+		border-radius: 5px;}
+		.activeList img{
+			margin-left: 5px;			
+		}
+	span.activeSee{
+		margin-right: 5px;
+		vertical-align: middle;}		
+		
+
+	div.comment_head{margin:10px;}
+	div.commentArea {
+		width: 100%;
+		height: 80px;
+		border-top: 1px solid #d2d2d2; 
+		padding: 10px;
+
+	}
+	.commentArea img{
+		float: left; 
+		margin-right: 20px
+	}	
+	div.comment_bottom{
+		display: inline-block; 
+		width: 600px;
+		word-break: break-all;}	
+	}		
+	.commentBtn{text-align: center; margin-top: 20px;}
+
+</style>
+{% endblock %}
+
+
+<div class="panel panel-primary restPanel">
+	<div class="panel-heading">
+		<div class="panel-title">
+			<p><h5 class="freeWritingNum" freeWritingNum="{{ freeWriting.writingId }}">글번호: {{ freeWriting.writingId }}</p>  
+			<p><h5>제목: <strong>{{ freeWriting.title }}</strong></p>  
+			<p>글쓴이: {{ freeWriting.user.nickname }} 조회: {{ freeWriting.readCount}} 
+				 추천: {{ freeWriting.likeCount }} </h5></p>
+		</div>
+	</div>
+
+	<div class="panel-body">
+		
+		<p>{{ freeWriting.text }}</p>
+		<p><img src="{{ freeWriting.picKey }}" width="100%" height="100%" alt="freeImage"></p>
+		
+		<div class="activeList" onclick="goPersonalPage({{freeWriting.user.userId}})">
+			{% if writing.user.picKey == 0 %}
+			<img src="{{ STATIC_URL }}img/ic_user.png" class="img-circle" 
+						onError="this.src='{{ STATIC_URL }}img/ic_user.png'" width="30px" height="30px"/>          
+			{% else %}                
+			<img src="{{ freeWriting.user.picKey }}" class="img-circle" 
+						onError="this.src='{{ STATIC_URL }}img/ic_user.png'" width="30px" height="30px"/>          
+			{% endif %}										
+			<span class="activeSee">
+				<b>{{ freeWriting.user.nickname }}&nbsp;</b>님의 활동내역 보러가기
+			</span>
+		</div>
+	</div>
+
+
+
+	<div class="panel-footer">
+		<div class="comment_head">댓글[{{ freeWriting.commentCount}}]</div>
+		
+		<div class="commentWrap">
+			{% for comment in comments %}
+			<div class="commentArea">			
+				{% if comment.user.picKey == 0 %}
+				<img src="{{ STATIC_URL }}img/ic_user.png" class="img-circle" 
+							onError="this.src='{{ STATIC_URL }}img/ic_user.png'" width="50px" height="50px"/>          
+				{% else %}                
+				<img src="{{comment.user.picKey}}" class="img-circle" 
+							onError="this.src='{{ STATIC_URL }}img/ic_user.png'" width="50px" height="50px"/>          
+				{% endif %}				
+				<div class="comment_bottom">  
+					<p>{{ comment.text }}</p>
+					<p><b>{{ comment.user.nickname }}</b>&nbsp;&nbsp;<span class="commentDate" commentDate="{{ comment.date }}"></span></p>				
+				</div>				
+			</div><!--end commentArea-->		
+			{% endfor %}
+		</div><!--end commentWrap-->
+
+		<div> 
+			<textarea name="inputArea" class="form-control" id="commentPText" rows="3" placeholder="댓글을 입력해주세요:)"></textarea>
+			<div class="commentBtn">
+			{% if user.is_anonymous  %}
+				<button class="btn btn-success" onclick="alert('로그인이 필요한 서비스입니다.');">댓글달기</button>
+			{% else %}    
+				<button type="submit" id="commentSubmit" name="commentSubmit" class="btn btn-success" onclick="cmtParentBtn();">댓글달기</button>
+			{% endif %}
+			</div>					
+		</div>
+	
+	</div><!--end panel-footer-->
+</div><!--end restPanel-->
+
+
+<script>//개인 아이디
+	function goPersonalPage(personalId){
+		window.location.href = "/personal/personalPage/?personalId="+personalId;
+	}
+</script>
+<script>//추천수 증가
+	$(".reco-btn").on('click', function(){
+		var n = parseInt($(".likeCount").text())
+		//console.log(n);
+		n = n+1;
+		$(".likeCount").text(n);
+	})
+</script>
+

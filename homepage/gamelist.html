@@ -1,0 +1,650 @@
+{% extends 'homepage/base.html' %}
+		
+
+{% block content %}
+
+{% block load_css %}
+<link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+<style>
+/*livegame_cell.html*/
+		.rowGame{
+			cursor: pointer;			
+		}
+		.gameTable {			
+			width: 100%;
+			table-layout: fixed;
+		}		
+		.rowGame td:nth-child(1){			
+			text-align: center;
+		}
+		.rowGame td:nth-child(2){
+			text-align: center;
+		}
+		.rowGame td:nth-child(3){
+			text-align: center;
+		}
+		.rowGame td:nth-child(4){
+			text-align: center;
+		}
+		.rowGame td:nth-child(5){
+			text-align: center;
+		}
+		.rowGame td:last-child{
+			text-align: center;
+		}
+					
+/*gamelist.html*/
+	div.gameMenu{
+		margin-top: 110px;
+	}	
+	div.dateChoice a{
+		margin: 0 auto;
+	}
+	div.tab-content{
+		min-height: 500px;
+		overflow: hidden;
+		height: auto;
+		background-color: #ffffff;
+
+	}
+	div.dateChoice{
+		margin-top: 30px;		
+	}
+	#headingOne a{
+		text-decoration: none;
+	}
+	#headingTwo a{
+		text-decoration: none;	
+	}
+	#headingThree a{
+		text-decoration: none;	
+	}	
+	.tab-content div{
+		margin: 0 auto;
+	}
+	div#loading {
+		width: 100%;   
+		height: 100%;   
+		top: 0px;
+		left: 0px;
+		position: fixed;   
+		display: block;   
+		opacity: 0.7;   
+		background-color: #fff;   
+		z-index: 99;   
+		text-align: center;
+		}
+		img#loading-image {   
+			position: absolute;   
+			top: 50%;   
+			left: 50%;
+			z-index: 100;
+		}
+	
+	#datePrev{
+		text-decoration: none;		
+	}
+	#dateAfter{
+		text-decoration: none;
+	}
+	#picToday{
+		font-size: 18px;
+		text-decoration: none;
+	}
+	.date{
+		float: right;	
+	}
+	.dateList{
+		list-style: none;
+		display: inline-block;		
+		}
+		.dateList li{
+			display: inline;			
+			}
+		.dateList li:first-child{
+			margin-right: 70px;
+		}
+		.dateList li:nth-child(2){
+			margin-right: 70px;
+		}
+		#date{
+			float: right;}
+	.hidden{
+		display: none;}
+	.onTitle, .waitTitle,.endTitle{
+		font-size: 24px;
+	}
+	.glyphicon-chevron-down{
+		float: right;
+	}
+
+</style>
+{% endblock %}
+
+{% block load_js %}
+<script src="//code.jquery.com/ui/1.11.4/jquery-ui.min.js"></script>
+{% endblock %}
+
+{% block main %}	
+<div class="container">
+	<div class="row">
+			
+	<div class="col-md-7 col-sm-7">
+		<div id="detailOne"></div>
+		<div class="panel panel-default dateChoice">
+			<div class="panel-body clearfix">
+				<ul class="dateList" >
+				  <li class="dateP">
+				  	<a href="#" id="datePrev" value="">
+							<img src="{{STATIC_URL}}img\left.png"/>
+						</a>			
+				  </li>
+				  <li>
+				  	<a id="picToday" href="#" value=""></a>
+				  </li>		
+				  <li>
+				  	<a href="#" id="dateAfter" value="">
+							<img src="{{STATIC_URL}}img\right2.png" />
+						</a>
+				  </li>
+				</ul>										
+				<span id="date"><input class="hidden" type="text" id="datepicker"/></span>
+			</div><!--end panel-body-->
+		</div><!--end panel-->
+
+		<div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">		  
+		  <div class="panel panel-default">
+		    <div class="panel-heading" role="tab" id="headingOne">
+		      
+		      <h4 class="panel-title">
+		        <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+		        	<div>
+			          <span class="onTitle">현재 진행중인 게임</span>
+			          <span class="glyphicon glyphicon-chevron-down"></span>		         
+			        </div>
+		        </a>
+		      </h4>
+
+		    </div>
+		    <div id="collapseOne" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingOne"></div>   
+		  </div>		  
+
+		  <div class="panel panel-default">
+		    <div class="panel-heading" role="tab" id="headingTwo">
+		      <h4 class="panel-title">
+		        <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+		        	<div>
+			          <span class="waitTitle">시작 대기중인 게임</span>
+			          <span class="glyphicon glyphicon-chevron-down"></span>
+		          </div>
+		        </a>
+		      </h4>
+		    </div>
+		    <div id="collapseTwo" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingTwo"></div>		    
+		  </div>
+			
+		  <div class="panel panel-default">
+		    <div class="panel-heading" role="tab" id="headingThree">
+		      <h4 class="panel-title">
+		        <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+		          <div>
+			          <span class="endTitle">종료된 게임</span>		          
+			          <span class="glyphicon glyphicon-chevron-down"></span>
+			        </div>
+		        </a>
+		      </h4>
+		    </div>
+		    <div id="collapseThree" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingThree"></div>    
+		  </div>			
+		</div><!--end accordian-->
+	</div><!--end col-md-7-->
+	
+
+	</div><!--end row-->
+</div><!--end container-->
+
+{% block right %}
+	{% include 'homepage/rightbar.html' %}
+{% endblock%}
+
+<script>	
+	function closeDetail(){
+		$('.totalDetail').empty();
+	}
+</script>
+<script>//5분마다 리로드
+	$(document).ready(function(){
+		setInterval(function(){cache_clear()},300000);
+	});
+	function cache_clear(){
+		window.location.reload(true);
+	}
+</script>
+<script>/*
+	$(function(){
+		
+		var gameMenu = "";
+		gameMenu += '<ul class="list-group">';
+		console.log($('tr.rowGame'));
+		var trs = $('tr.rowGame')
+		
+		for(var i=0; i <= trs.length; i++){
+
+		}
+	});*/
+</script>
+
+<script>//경기 분류
+	$('#allGame').on('click', function(){
+		var trs = $('tr.rowGame')		
+		for (var i=0; i < trs.length; i++){
+			$(trs[i]).show();
+		}
+	})
+	$('.sublinks a').on("click", function(event){		
+		var select = $(this).attr("leagueName");
+		var trs = $('tr.rowGame')
+		for (var i=0; i < trs.length; i++){
+			$(trs[i]).show();
+			if(select != $(trs[i]).attr("gameLeague")){
+				$(trs[i]).hide();
+			}
+		}
+	});
+</script>
+
+
+
+<script>
+	function gameCellDate(){//조각글 날짜 파싱
+		var tds = $('td.gameDate')		
+		for (var i=0; i < tds.length; i++){		
+			var formDate = $(tds[i]).attr("date")
+			formDate = parseDate(formDate)			
+			$(tds[i]).html(formDate)
+		}	
+	}
+	function parseDate(date){//서버날짜 파싱
+		var year = date.substring(0,4);
+		var month = date.substring(5,7);
+		var day = date.substring(8,10);
+		var hour = date.substring(11,13);
+		var minute = date.substring(14,16);
+
+		var realDate = new Date(year+'-'+month+'-'+day+'T'+hour+':'+minute);
+		//console.log(realDate)
+		var myyear = realDate.getFullYear();		
+		var mymonth = realDate.getMonth();
+		mymonth = mymonth+1;
+		var myweekday = realDate.getDate();
+		var myhour = realDate.getHours();
+		var myminute = realDate.getMinutes();
+
+		return ((mymonth < 10) ? "0" : "") + mymonth+"-"+ (myweekday <10 ? "0" : "") + myweekday +" "+((myhour < 10) ? "0" : "")+ myhour+":"+((myminute < 10) ? "0" : "") + myminute;			
+	}	
+</script>
+
+<script>
+	function winTeam(){//이기고 있는팀 색깔강조
+		var home = $('span.homeScore')
+		var away = $('span.awayScore')
+		var game = $('td.gameScore')
+
+		for(var i=0; i < game.length; i++){			
+			if(parseInt($(home[i]).attr("home")) - parseInt($(away[i]).attr("away")) > 0){				
+				$(home[i]).css('color','#07A7F7')
+			}
+		  if(parseInt($(away[i]).attr("away")) - parseInt($(home[i]).attr("home")) > 0){				
+				$(away[i]).css('color','#07A7F7')
+			}
+		}		
+	}
+</script>
+<script>//게임 상세페이지를 가져옴
+	function gameDetail(param){		
+		$.post('/gameDetail/', {gameId: $(param).attr('id')},
+			function(data){				
+				$('#detailOne').html(data);
+		
+				$.post('/predictInfo/', {gameId: $(param).attr('id')}, 
+					function(data){				
+						$('#foreignPick').html(data);				
+				});		
+				$.post('/matchInfo/', {gameId: $(param).attr('id')}, 
+					function(data){
+						$('#matchInfo').html(data);				
+				});
+				$.post('/leagueInfo/', {gameId: $(param).attr('id')}, 
+					function(data){
+						$('#leagueInfo').html(data);					
+				});
+				$.post('/gameCommentList/', {gameId: $(param).attr('id')}, 
+					function(data){
+						$('#opinion').html(data);				
+				});
+			});
+		window.location.href = '#detailOne';		
+	}
+</script>
+
+<script>
+//날짜선택해서 경기가져오기
+  $(function() {
+    $("#datepicker").datepicker({
+    	showOn:"button",
+    	buttonImage: "{{STATIC_URL}}img/time.png",
+    	buttonImageOnly:true,
+    	dateFormat: "yy-mm-dd",
+    	changeMonth: true,
+    	changeYear:true,    	
+    	nextText: '다음 달',
+    	prevText: '이전 달',
+    	dayNames: ['월요일', '화요일', '수요일', '목요일', '금요일', '토요일', '일요일'],
+    	dayNamesMin: ['일','월', '화', '수', '목','금', '토'],    	
+    	monthNamesShort: ['1월','2월','3월','4월','5월','6월','7월','8월','9월','10월','11월','12월']  	
+    });
+  });
+</script>
+
+<script>
+//어제,내일 날짜 파싱
+	function getDay(date, num){
+		strArray = date.split("-");		
+		if(strArray[2].substring(0,1)=="0"){
+			var myDate = new Date(strArray[0], parseInt(strArray[1])-1,
+									parseInt(strArray[2])+parseInt(num, 10));
+		}else{
+			var myDate = new Date(strArray[0], parseInt(strArray[1])-1,
+									parseInt(strArray[2])+parseInt(num, 10));
+		}
+			var result = formDate(myDate);
+			return result;		
+	}
+	function formDate(date){
+		var mymonth = date.getMonth()+1;
+		var myweekday = date.getDate();
+			return (date.getFullYear() +"-"+ ((mymonth < 10) ? "0" : "") + 
+				mymonth +"-"+ (myweekday <10 ? "0" : "") + myweekday);
+	}
+</script>
+
+<script>		
+//오늘 날짜로 기본세팅
+	$(document).ready(function(){
+		var now = new Date();
+		var day = ("0" + now.getDate()).slice(-2);
+		var month = ("0" + (now.getMonth() + 1)).slice(-2);
+		var today = now.getFullYear()+"-"+(month)+"-"+(day);
+		
+		$('#datepicker').val(today);
+		$("#picToday").text(month+"월"+day+"일");		
+		$("#picToday").val(today);
+		
+		$("#datePrev").attr("value", getDay(today,-1));
+		$("#dateAfter").attr("value",getDay(today,+1));	
+
+		var paramsToday = {date:today}
+			$.ajax({
+				type: "POST",
+				data: paramsToday,
+				url: '/api/apiGameList/',
+				success: function(data){//data에는 script파일까지 다 담겨있음
+					var e = $(data).filter('.ongam').html(); // script적용안된 html만 가져옴											
+					$('#collapseOne').append(e);
+					gameCellDate();
+					winTeam();
+				}
+			});
+			$.ajax({
+				type: "POST",
+				data: paramsToday,
+				url: '/api/apiGameList/',
+				success: function(data){
+					var e1 = $(data).filter('.waitgam').html();	
+					$('#collapseTwo').append(e1);			
+					gameCellDate();
+					winTeam();
+				}
+			});
+			$.ajax({
+				type: "POST",
+				data: paramsToday,
+				url: '/api/apiGameList/',
+				success: function(data){
+					var e2 = $(data).filter('.endgam').html();			
+					$('#collapseThree').append(e2);
+					gameCellDate();
+					winTeam();
+				}
+			});
+		}) 
+</script>
+
+<script>
+//날짜 바뀌면 해당 경기 띄우기
+	$(document).ready(function(){
+		$("#datepicker").change(function(){
+	  
+			var changeDate = $('#datepicker').val();	
+					
+			$("#datePrev").attr("value", getDay(changeDate,-1)); //바뀐날짜에 -1
+			$("#dateAfter").attr("value", getDay(changeDate,+1)); //바뀐날짜에 +1
+				
+			var month = changeDate.slice(5,7);		
+			var day = changeDate.slice(-2);		
+			$("#picToday").text(month+"월"+day+"일");//날짜 화면에띄우기
+			var params = {date:changeDate}
+			
+			$.ajax({
+				type: "POST",
+				data: params,
+				url: '/api/apiGameList/',			
+				success: function(data){	
+					$('#collapseOne').empty();//전에 띄워진 경기 비우고
+					var e1 = $(data).filter('.ongam').html();								
+					$('#collapseOne').append(e1);
+					gameCellDate();
+					winTeam();
+				}//진행중 게임은 오늘날짜로만 파라미터받음
+			});
+			$.ajax({
+				type: "POST",
+				data: params,
+				url: '/api/apiGameList/',
+				success: function(data){					
+					$('#collapseTwo').empty();//전에 띄워진 경기 비우고
+					var e2 = $(data).filter('.waitgam').html();					
+					$('#collapseTwo').append(e2);
+					gameCellDate();
+					winTeam();
+				}//대기중게임은 오늘날짜인데 대기중인거
+			});
+			$.ajax({
+				type: "POST",
+				cache: false,
+				data: params,
+				url: '/api/apiGameList/',
+				success: function(data){				
+					$('#collapseThree').empty();//전에 띄워진 경기 비우고
+					var e3 = $(data).filter('.endgam').html();									
+					$('#collapseThree').addClass("in"); //이전 경기날짜 내려줌			
+					$('#collapseThree').append(e3);
+					gameCellDate();
+					winTeam();
+				}
+			});	
+		});
+	})  
+</script>
+
+<script>
+//이전 날짜 가져오기	
+	$(document).ready(function(){
+		$("#datePrev").click(function(){	
+			//var now = new Date();  		
+  		var yesterday = $("#datePrev").attr("value"); //오늘날짜로 세팅되면 어제내일 값이 세팅되어있어야함
+  		
+  		var month = yesterday.slice(5,7);		
+			var day = yesterday.slice(-2);
+  		
+  		$("#picToday").text(month+"월"+day+"일")//#datePrev value를 #picToday에 뿌려주기
+  		$("#datePrev").attr("value", getDay(yesterday, -1)) //원래 yesterday-1 한 값을 #datePrev value값으로 넣기
+			$("#dateAfter").attr("value", getDay(yesterday, +1)) //원래 yesterday+1 한 값을 #datePrev value값으로 넣기															
+			paramsPrev = {date: yesterday}
+
+			$.ajax({
+				type: "POST",
+				data: paramsPrev,
+				url: '/api/apiGameList/',
+				success: function(data){
+					$('#collapseOne').empty();//전에 띄워진 경기 비우고
+					var e1 = $(data).filter('.ongam').html();				
+					$('#collapseOne').html(e1);
+					gameCellDate();
+					winTeam();
+				}//진행중 게임은 오늘날짜로만 파라미터받음
+			});
+			$.ajax({
+				type: "POST",
+				data: paramsPrev,
+				url: '/api/apiGameList/',
+				success: function(data){
+					$('#collapseTwo').empty();//전에 띄워진 경기 비우고
+					var e2 = $(data).filter('.waitgam').html();					
+					$('#collapseTwo').html(e2);
+					gameCellDate();
+					winTeam();								
+				}//대기중게임은 오늘날짜인데 대기중인거
+			});
+			$.ajax({
+				type: "POST",
+				data: paramsPrev,
+				url: '/api/apiGameList/',
+				success: function(data){
+					$('#collapseThree').empty();//전에 띄워진 경기 비우고			
+					var e3 = $(data).filter('.endgam').html();
+					$('#collapseThree').append(e3);
+					$('#collapseThree').addClass("in"); //이전 경기날짜 내려줌		
+					gameCellDate();
+					winTeam();								
+				}//종료된 게임도 날짜마다 달라짐,, 파라미터를 한개 더 줘야 나눌수있음?
+			});
+		});
+	})	
+</script>	
+
+<script>
+//다음 날짜 가져오기
+	$(document).ready(function(){
+		$("#dateAfter").click(function(){
+			var tomorrow = $("#dateAfter").attr("value");
+
+			var month = tomorrow.slice(5,7);		
+			var day = tomorrow.slice(-2);
+  		
+  		$("#picToday").text(month+"월"+day+"일")//#datePrev value를 #picToday에 뿌려주기
+  		$("#datePrev").attr("value", getDay(tomorrow, -1)) //원래 yesterday-1 한 값을 #datePrev value값으로 넣기
+			$("#dateAfter").attr("value", getDay(tomorrow, +1)) //원래 yesterday+1 한 값을 #datePrev value값으로 넣기	
+				
+			paramsAfter = {date: tomorrow}
+
+			$.ajax({
+				type: "POST",
+				data: paramsAfter,
+				url: '/api/apiGameList/',
+				success: function(data){
+					$('#collapseOne').empty();//전에 띄워진 경기 비우고
+					var e1 = $(data).filter('.ongam').html();				
+					$('#collapseOne').html(e1);
+					gameCellDate();
+					winTeam();																					
+				}//진행중 게임은 오늘날짜로만 파라미터받음
+			});
+			$.ajax({
+				type: "POST",
+				data: paramsAfter,
+				url: '/api/apiGameList/',
+				success: function(data){
+					$('#collapseTwo').empty();//전에 띄워진 경기 비우고
+					var e2 = $(data).filter('.waitgam').html();					
+					$('#collapseTwo').html(e2);
+					gameCellDate();
+					winTeam();								
+				}//대기중게임은 오늘날짜인데 대기중인거
+			});
+			$.ajax({
+				type: "POST",
+				data: paramsAfter,
+				url: '/api/apiGameList/',
+				success: function(data){
+					$('#collapseThree').empty();//전에 띄워진 경기 비우고
+					var e3 = $(data).filter('.endgam').html();
+					$('#collapseThree').append(e3);
+					$('#collapseThree').addClass("in"); //이전 경기날짜 내려줌																
+					gameCellDate();
+					winTeam();								
+				}//종료된 게임도 날짜마다 달라짐,, 파라미터를 한개 더 줘야 나눌수있음?
+			});
+		});
+	})		
+</script>
+
+<script>//댓글 이벤트
+	$("#commentPSubmit").click(function(e){//depth1 댓글 이벤트			
+
+			var pText = $("#commentPText");
+			//var gameId = getParameter("gameId");
+			var text = pText.val();
+			var gameId = "{{game.gameId}}"
+			console.log(text, gameId);
+
+			if($.trim(pText.val())==""){
+				alert("내용을 입력하세요.");
+				pText.focus();
+				return;
+			}
+			$.post("/addGameComment/", {gameId:gameId, text:text}, function(data){
+				if(data.error == "1"){
+					alert("회원 전용입니다.");
+				}
+				else{
+					//window.location.href = "/gameDetail/?gameId="+gameId;
+					//window.location.reload(true);
+				}
+			});					
+		 
+			var commentPText = '<div class="commentArea" name="commentPCode">'+
+														"{% if user.picKey == '0' %}"+
+                         		 '<img style="float:left;" "margin-right:20px" src="{{ STATIC_URL }}img/ic_user.png" class="img-circle" onError="this.src="{{ STATIC_URL }}img/ic_user.png"" width="50px" height="50px"/>'+         
+	                          "{% else %}"+
+	                          	'<img src="{{user.picKey}}" class="img-circle" onError="this.src="{{ STATIC_URL }}img/ic_user.png"" width="50px" eight="50px"/>'+
+	                          "{% endif %}"+
+	                          '<div class="comment_bottom">'+
+															'<p><b>"{{infoUser.nickname}}"</b></p>'+
+															'<p>'+pText.val().replace(/\n/g, "<br>")+'</p>'+
+														'</div>'+														
+													'</div>'
+
+			//테이블의 div자식이 있으면 div 뒤에 붙인다. 없으면 테이블 안에 div을 붙인다.
+			if($('.commentWrap').contents().size()==0){//댓글 처음일때
+					$('.commentArea').append(commentPText);
+			}else{//댓글 있을때
+					$('.commentWrap').append(commentPText);
+			}
+			$("#commentPText").val("");
+			
+	});
+</script>
+
+<script>
+/*//로딩 이미지
+	$(window).load(function(){
+		$("#loading").hide();
+	});*/
+</script>
+
+
+
+
+{% endblock %}
+{% endblock%}

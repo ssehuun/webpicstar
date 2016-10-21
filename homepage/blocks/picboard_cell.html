@@ -1,0 +1,57 @@
+
+
+		<table id="mytable" class="table table-hover">
+			<thead>
+				<tr id="table-head">
+					<th>번호</th>
+					<th>제목</th>
+					<th>닉네임</th>
+					<th>날짜</th>
+					<th>조회</th>
+					<th>추천</th>
+				</tr>
+			</thead>	
+			<tbody>
+			{% for board in writingList %}			
+			<tr class="list">
+				<td class="li1 col-md-1 writingId">{{ board.writingId }}</td>
+				<td class="col-md-4">
+					<a href="#" class="boardTitle" writingId="{{ board.writingId }}" onclick="detailBoard(this);">{{ board.title }}
+						<span class="comment">[{{ board.commentCount }}]</span>
+					<a/>
+				</td>
+				<td class="li2 col-md-3" class="nickname">{{board.user.nickname}}</td>
+				<td class="dateClass col-md-2" date="{{ board.date }}"></td>
+				<td class="li4 col-md-1">{{ board.readCount }}</td>
+				<td class="li5 col-md-1">{{ board.likeCount}}</td>
+			</tr>
+			{% endfor %}
+			</tbody>
+		</table>
+
+
+
+<script>// 첫페이지 로드
+/*
+ 	var page = 1;
+	$.post('/picboardCell/',{state:0, page:page},     		
+		function(data){
+			$('#allPick').html(data);
+			boardCellDate();
+	});
+	$.post('/picboardCell/',{state:1, page:page},
+		function(data){						
+			$('#bestPick').html(data);
+			boardCellDate();
+	});
+	$.post('/picboardCell/',{state:2, page:page},
+		function(data){						
+			$('#rightPick').html(data);
+			boardCellDate();
+	});	
+	$.post('/picboardCell/',{state:3, page:page},
+		function(data){						
+			$('#waitPick').html(data);
+			boardCellDate();
+	});*/
+</script>

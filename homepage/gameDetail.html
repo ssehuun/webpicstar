@@ -1,0 +1,131 @@
+
+<style>				
+	#closeBtn{float:right;}
+	div.detailArea{
+		background-color: #4b4b4b !important;
+		text-align: center;		
+		padding-top: 32px;		
+		border-radius: 5px;
+		
+		}			
+		.detailInfo{
+			display: inline-block;
+		}
+		.info1{
+			margin-right: 50px;}
+		.info3{
+			margin-left: 50px;
+		}
+		.info2{
+			width:30%;
+		}
+		.detailInfo img{
+			height: 80px;
+			width: 80px;
+		}
+		.detailScore{
+			font-size: 40px;
+		}
+	/*배당표*/
+	div.tableArea{
+		margin-top: 30px;
+		margin-bottom: 30px;
+	}
+	table.detail{		
+		width: 90%;
+		table-layout: fixed;			
+		margin: 0 auto;
+		}
+		.detail tr{
+			width: 100%;
+		}
+		.detail tr td{
+			border: 1px solid; 				
+			border:2px solid #aaa;       
+			text-align: center;
+			vertical-align: middle!important;
+			font-size:1.0em; 
+			padding:10px;
+		}    		
+		.white{
+			color: #fff;
+		}
+		.orange{
+			color: #ff8000!important;
+		}
+		.blueSky{
+			color: #82dafe!important;
+		}		
+</style>
+		
+	<div class="totalDetail">
+		<input type="image" src="{{STATIC_URL}}img/icon.png" onclick="closeDetail();" id="closeBtn">
+		<div class="detailArea">
+
+			<div class="detailInfo info1">
+				<img src="{{realGame.homePic}}" alt="homeTeam">
+				<p class="white">{{realGame.home}}</p>
+			</div>
+			<div class="detailInfo info2">
+				<p class="white">
+					<span class="detailScore">{{realGame.homescore}}</span>
+					<span class="orange" style="font-size: 20px;">&nbsp;&nbsp;vs&nbsp;&nbsp;</span>
+					<span class="detailScore">{{realGame.awayscore}}</span>
+				</p>
+				<div class="white" realdate="{{realGame.date}}">{{realGame.date}}</div>
+				<div class="blueSky">{{realGame.progress}}</div>
+			</div>
+			<div class="detailInfo info3">
+				<img src="{{realGame.awayPic}}"alt="awayTeam">
+				<p class="white">{{realGame.away}}</p>
+			</div>
+
+			<div class="tableArea">
+				<table class="table table-bordered detail">
+					<tr>
+						<td class="orange">유형</td>
+						<td class="orange">승(언더)</td>
+						<td class="orange">무</td>
+						<td class="orange">패(오버)</td>
+					</tr>
+					{% for onlyGame in realGame.protogames %}					
+						<tr>            
+							<td class="white">            
+								{% if onlyGame.gameType == 0%}일반</span>{% endif %}
+								{% if onlyGame.gameType == 1%}홈 핸디{{onlyGame.handiNum}}</span>{% endif %}
+								{% if onlyGame.gameType == 2%}언더/오버 {{onlyGame.handiNum}}</span>{%endif%}
+							</td>
+							<td class="white"> {{onlyGame.win}}	({{onlyGame.homeCount}}건)</td>
+							<td class="white">
+								{% if onlyGame.draw %} {{onlyGame.draw}} {% endif %}
+							</td>
+							<td class="white"> {{onlyGame.lose}} ({{onlyGame.awayCount}}건)</td>
+						</tr>					
+					{% endfor %}                        
+				</table>
+			</div>	
+
+			<ul class="nav nav-tabs nav-justified navDetail">
+				<li class="active" role="presentation" id="foreign_tab">
+					<a href="#foreignPick" data-toggle="tab"><b>해외픽</b></a>
+				</li>
+				<li class="white" role="presentation" id="match_tab">
+					<a href="#matchInfo" data-toggle="tab"><b>팀정보</b></a>
+				</li>
+				<li class="white" role="presentation" id="league_tab">
+					<a href="#leagueInfo" data-toggle="tab"><b>리그정보</b></a>
+				</li>
+				<li class="white" role="presentation" id="opinion_tab">
+					<a href="#opinion" data-toggle="tab"><b>의견</b></a>
+				</li>					
+			</ul>
+		</div><!--end detailArea-->
+
+		<div class="tab-content detailTab" ><!--ajax로 불러오는곳-->
+			<div class="tab-pane active" id="foreignPick"></div>
+			<div class="tab-pane" id="matchInfo"></div>
+			<div class="tab-pane" id="leagueInfo"></div>
+			<div class="tab-pane" id="opinion"></div>
+		</div><!--end tab-content-->				
+	</div>	<!-- end totalDetail-->
+

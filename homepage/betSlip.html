@@ -1,0 +1,313 @@
+
+<style>
+	#betSlipBtn{
+		margin-top: 50px;
+	}.accountInfo{
+		background-color: #fff;
+	}.betState{
+		background-color: #ffff00;
+	}.betMyList{
+		background-color: #fff;
+		font-size: 13px;
+	}
+
+	.betTable{
+		margin-top: 40px;
+		background-color: #fff;
+		font-size: 13px;		
+	}#betCart{
+		height: 650px;
+		overflow: auto;
+	}.myBet, .highlight{
+			background-color: #f3b60c;}
+	.dat{
+		float: right;
+	}.betInfo {background-color: #dfe3ea}
+	.betInfo td:first-child{border-right: none;}
+	.betInfo td:nth-child(2){border-left: none;}	
+	.betRow td:first-child{
+		
+		font-size: 12px;
+		text-align: center;}
+	.betInfo td:nth-child(2){
+		
+	}.betRow td:nth-child(3){		
+		text-align: center;
+	}
+	span.homeWin, .awayTeam{float: right;}
+
+</style>
+
+<div class="col-md-5 betSlipArea">
+	<a id="betSlipBtn" class="btn btn-primary btn-lg" role="button" data-toggle="collapse" href="#betCollapse" aria-expanded="false" aria-controls="betCollapse">
+  픽스타리그&nbsp;&nbsp;
+  <span class="glyphicon glyphicon-chevron-down"></span>
+  </a>
+  
+  <div class="collapse" id="betCollapse">
+  	<div class="accountInfo">
+			<p><b>베팅금액은 최소 100원 이상 최대 100,000원까지 가능합니다</b></p>
+			<table class="table table-bordered">
+				<tr>
+					<td><b>배당</b></td>											
+					<td>
+						<span id="betValue" value="1.0">1.0</span>
+					</td>
+				</tr>
+				<tr>
+					<td><b>가상머니</b></td>
+					<td>
+						<input type="text" id="money" min="100" max="100000" value="5000" contenteditable="true" size="4"/>
+						<button type="button" id="newMoney" class="btn btn-primary btn-sm"/>적용</button>										
+					</td>
+				</tr>
+				<tr>
+					<td><b>예상적중금액</b></td>
+					<td>
+						<span id="totalMoney" value="5000">5000</span>
+					</td>
+				</tr>
+			</table>
+			<div>				
+				<div class="betState"></div>
+				<div class="betMyList"></div>
+				<button type="button" id="betCartBtn" class="btn btn-success btn-sm">픽추가</button>
+				<div id="betCart"></div>
+			</div>
+		
+		</div><!--end accountInfo-->  	
+	</div><!--end betCollapse-->
+</div>
+
+<script>
+$.getJSON('/gameList/', function(data){
+  	var strData = JSON.stringify(data);//json 데이터를 스트링으로
+		var objList = JSON.parse(strData); //스트링 데이터를 json으로 다시파싱 	
+  	var simpleGame = objList.data; //게임 객체 1개
+  		
+  	var dataList='';  	
+			dataList += '<table class="table table-bordered table-hover betTable">';									
+			
+		for(var i=0; i < simpleGame.length; i++){
+			dataList += '<tr class="betInfo">'+
+									'<td colspan="2"><span class="lea"><b>'+simpleGame[i].league+'</b></span></td>'+
+									'<td colspan="3"><span class="dat"><b>'+remakeDate(simpleGame[i].date)+
+									'</b></span></td></tr>';
+			
+			dataList += '<tr class="betRow">';
+			dataList += '<td class="game_num"><b>'+simpleGame[i].num+'</b></td>';
+
+			dataList += '<td gameId="'+simpleGame[i].gameId+'" class="betd homePic" onclick="getBet(this);"'+ 
+											'ratio="'+simpleGame[i].win+'"  choice="1" realGameId="'+simpleGame[i].realGameId+'" gameNum="'+simpleGame[i].num+'" homeName="'+simpleGame[i].home+'" awayName="'+simpleGame[i].away+'" homeBet="'+simpleGame[i].win+'" awayBet="'+simpleGame[i].lose+'" drawBet="'+simpleGame[i].draw+'">'+
+									'<span class="homeTeam">'+									
+									'<span>'+simpleGame[i].home+'</span>'+
+									'</span>'
+			dataList +=	(simpleGame[i].gameType == 1) ? 'H'+simpleGame[i].handiNum : '';
+			dataList +=	'<span class="homeWin">'+simpleGame[i].win;
+			dataList +=	(simpleGame[i].gameType == 2) ? '<span class="under">↓</span>' : ''+		
+									'</span>'+
+									'</td>';
+
+			dataList += '<td gameId="'+simpleGame[i].gameId+'" class="betd drawPic" onclick="getBet(this);"'+
+											'ratio="'+simpleGame[i].draw+'" choice="4" realGameId="'+simpleGame[i].realGameId+'" gameNum="'+simpleGame[i].num+'" homeName="'+simpleGame[i].home+'" awayName="'+simpleGame[i].away+'" homeBet="'+simpleGame[i].win+'" awayBet="'+simpleGame[i].lose+'" drawBet="'+simpleGame[i].draw+'">'
+			dataList +=		(simpleGame[i].draw) ? simpleGame[i].draw : '';
+			dataList +=		(simpleGame[i].gameType == 2) ? 'U '+simpleGame[i].handiNum : '';
+									'</td>';			
+
+			dataList += '<td gameId="'+simpleGame[i].gameId+'" class="betd awayPic" onclick="getBet(this);"'+
+											'ratio="'+simpleGame[i].lose+'" choice="2" realGameId="'+simpleGame[i].realGameId+'" gameNum="'+simpleGame[i].num+'" homeName="'+simpleGame[i].home+'" awayName="'+simpleGame[i].away+'" homeBet="'+simpleGame[i].win+'" awayBet="'+simpleGame[i].lose+'" drawBet="'+simpleGame[i].draw+'">';
+			dataList +=	'<span class="awayLose">'+simpleGame[i].lose;
+			dataList +=	(simpleGame[i].gameType == 2) ? '<span class="over">↑</span>' : ''; '</span>';										
+			dataList +=	'<span class="awayTeam">'+simpleGame[i].away+				 						
+									'</span>';
+			dataList += '</td>';
+			dataList += '</tr>';
+		} 					
+			dataList += '</table>';
+		
+  	$('#betCart').append(dataList);
+
+	 	$(".betInfo").each(function(i){
+			if($(".dat").eq(i).text() == $(".dat").eq(i+1).text()){
+				$(".betInfo").eq(i+1).hide();			
+			};
+		});
+	});//end getJSON
+</script>
+
+<script>
+	function remakeDate(strDate){
+		var year = strDate.substring(0,4);
+		var month = strDate.substring(5,7);
+		var day = strDate.substring(8,10);
+		var hour = strDate.substring(11,13);
+		var minute = strDate.substring(14,16);
+
+		var realDate = new Date(Date.UTC(year, month, day, hour, minute));			
+		var myyear = realDate.getFullYear();	
+		var mymonth = realDate.getMonth();
+		var myweekday = realDate.getDate();
+		var myhour = realDate.getHours();
+		var myminute = realDate.getMinutes();
+			return ((mymonth < 10) ? "0" : "") + mymonth +"-"+ (myweekday <10 ? "0" : "") + myweekday +" "+((myhour < 10) ? "0" : "")+ myhour+":"+((myminute < 10) ? "0" : "") + myminute;			
+	}
+</script>
+
+<script>
+var betTotal = $('#betValue').val(); // 배당 초기값1.0
+	var money = $('#money').val();       // 가상머니 초기값5000
+	var totalMoney = $('#totalMoney').val(); //예상적중금액 
+	var betList = [];
+	
+	function getBet(thisObj){
+		var gameNum = $(thisObj).attr('gameNum');
+		var homeName = $(thisObj).attr('homeName');
+		var awayName = $(thisObj).attr('awayName');
+		var homeBet = $(thisObj).attr('homeBet');
+		var awayBet = $(thisObj).attr('awayBet');		
+		var drawBet = $(thisObj).attr('drawBet');		
+		var gameId = $(thisObj).attr('gameId');
+		var betNum = $(thisObj).attr('ratio');		
+		var choice = $(thisObj).attr('choice');
+		var realGameId = $(thisObj).attr('realGameId');
+		var flag = 0;
+		console.log("클릭시작: "+ gameId, betNum, choice, realGameId, gameNum, homeName, awayName, homeBet, awayBet, drawBet);
+		if($(thisObj).attr('ratio') == 'null'){
+			alert('선택할 배당이 없습니다.');
+		}
+		else if(betList.length==10){
+			for(var i=0; i<betList.length; i++){//먼저 betList안에 있는걸 루프돌면서
+				if(betList[i].realGameId == realGameId && betList[i].gameId != gameId){//gameId, realGameId 같은거 뺌
+					flag = 1;
+					alert("같은 리얼게임은 선택할 수 없습니다.");
+				}
+				else if(betList[i].gameId == gameId){//gameId 같을때					
+					if(betList[i].choice == choice){ // 찍힌거 찍으면 뺌
+												
+						betList.splice(i,1);
+						$(thisObj).removeClass('highlight');						
+						flag = 1;
+						
+					}
+					else{ // 다른거 찍으면 원래꺼 빼고 찍은거 넣어						
+						betList.splice(i,1);
+						$(thisObj).siblings().removeClass('highlight');					
+						
+						betList.push({gameId:gameId, betNum:betNum, choice:choice, realGameId:realGameId, gameNum:gameNum, 
+													homeName:homeName, awayName:awayName, homeBet:homeBet, awayBet:awayBet, drawBet:drawBet});
+						$(thisObj).addClass('highlight');
+						
+						flag = 1;						
+					}
+				}
+			}
+			if(flag==0){
+				alert("10개선택 불가능합니다.");	
+			}			
+		}	
+		else if(betList.length == 0){//첫번째는 무조건 넣어			
+			betList.push({gameId:gameId, betNum:betNum, choice:choice, realGameId:realGameId, gameNum:gameNum, 
+										homeName:homeName, awayName:awayName, homeBet:homeBet, awayBet:awayBet, drawBet:drawBet});
+			
+			$(thisObj).addClass('highlight');			
+		}		
+		else if(betList.length > 0 && betList.length <10){//리스트가 10개가 아니면
+			for(var i=0; i<betList.length; i++){//먼저 betList안에 있는걸 루프돌면서
+				if(betList[i].realGameId == realGameId && betList[i].gameId != gameId){//gameId, realGameId 같은거 뺌
+					flag = 1;
+					alert("같은 리얼게임은 선택할 수 없습니다.");
+					break;
+				}
+				else if(betList[i].gameId == gameId){//gameId 같을때					
+					if(betList[i].choice == choice){ // 찍힌거 찍으면 뺌
+												
+						betList.splice(i,1);
+						$(thisObj).removeClass('highlight');						
+						flag = 1;
+						break;
+					}
+					else{ // 다른거 찍으면 원래꺼 빼고 찍은거 넣어						
+						betList.splice(i,1);
+						$(thisObj).siblings().removeClass('highlight');					
+						console.log("넣기전")
+						console.log(gameId, betNum, choice, realGameId);
+						betList.push({gameId:gameId, betNum:betNum, choice:choice, realGameId:realGameId, gameNum:gameNum, 
+													homeName:homeName, awayName:awayName, homeBet:homeBet, awayBet:awayBet, drawBet:drawBet});
+						console.log("넣은후")
+						$(thisObj).addClass('highlight');
+						
+						flag = 1;
+						break;					
+					}
+				}
+			}			
+			if(flag == 0){
+				betList.push({gameId:gameId, betNum:betNum, choice:choice, realGameId:realGameId, gameNum:gameNum, 
+											homeName:homeName, awayName:awayName, homeBet:homeBet, awayBet:awayBet, drawBet:drawBet});//리얼게임 아이디 다르면 그냥 넣어
+				$(thisObj).addClass('highlight');			
+			}			
+		}
+
+	betList.sort(function(a, b){return a.gameId-b.gameId});//게임아이디 순서대로 sort
+
+	//배당 계산시작
+		var temBet=1.0;
+		for(var j = 0 in betList){
+			temBet = temBet * betList[j].betNum;
+		}		
+		betTotal = temBet;
+		betTotal = (Math.ceil(betTotal*10))/10;		
+		totalMoney = (Math.floor(betTotal * money));
+		$("#betValue").attr("value", betTotal);
+		$("#betValue").text(betTotal);
+		$("#totalMoney").attr("value", totalMoney);
+		$("#totalMoney").text(totalMoney);
+		console.log(temBet);
+		console.log(betTotal);
+		console.log(money);
+		console.log(totalMoney);
+		console.log(betList.length);
+
+	//betCart에 담는거 보여줌
+		var betSate = '<div>';
+		for(var j = 0 in betList){
+			g = betList.length
+		}	
+		betSate += g+'게임 선택</div>'
+		$('.betState').html(betSate);
+
+		var betCart ='<table class="table table-bordered betCartTable">'			
+		for(var j = 0 in betList){
+			console.log(betList[j].gameNum, betList[j].homeName, betList[j].homeBet, betList[j].awayBet, betList[j].awayName, betList[j].drawBet, betList[j].choice);						
+			betCart += '<tr>';			 
+			betCart += '<td class="cartNum"><b>'+betList[j].gameNum+'</b></td>';
+			betCart += (betList[j].choice==1) ? '<td class="cartHome myBet">' : '<td class="cartHome">';
+			betCart += betList[j].homeName+'<span class="cartHomeBet">'+betList[j].homeBet+'</span></td>';
+			betCart += (betList[j].choice==4) ? '<td class="myBet">' : '<td>';			
+			betCart += (betList[j].drawBet == 'null') ? '' : betList[j].drawBet +'</td>';
+			betCart += (betList[j].choice==2) ? '<td class="cartAway myBet">' : '<td class="cartAway">';
+			betCart += betList[j].awayBet+'<span class="cartAwayName">'+betList[j].awayName+'</span></td>';			
+			betCart += '</tr>';			
+		}
+		betCart += '</table>'
+		$('.betMyList').html(betCart);
+	}// end func getBet
+</script>
+
+
+<script>//적용버튼 클릭시
+$('#newMoney').on('click', function(){
+	if($('#money').val() < 100 || $('#money').val() > 100000){
+		alert("베팅금액은 최소 100원 이상 최대 100,000원까지 가능합니다");
+		$('#money').attr("value",money);
+	}else{
+		money = $('#money').val();
+		totalMoney = betTotal * money;		
+		console.log(betTotal);
+		console.log(money);
+		console.log(totalMoney);		
+		$("#totalMoney").attr("value", totalMoney);
+		$("#totalMoney").text(totalMoney);
+	} 		
+});
+</script>

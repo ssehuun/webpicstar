@@ -1,0 +1,339 @@
+{% block load_css %}
+	<link rel="stylesheet" href="{{ STATIC_URL }}h_css/mainnav.css">	
+{% endblock %}
+
+<style>
+
+	#drawer-toggle {
+		position: absolute;
+		opacity: 0;
+	}
+	#drawer-toggle-label {
+	  -webkit-touch-callout: none;
+	  -webkit-user-select: none;
+	  -khtml-user-select: none;
+	  -moz-user-select: none;
+	  -ms-user-select: none;
+	  user-select: none;
+	  left: 0px;
+	  height: 50px;
+	  width: 50px;
+	  display: block;
+	  position: fixed;
+	  background: rgba(255, 255, 255, .0);
+	  z-index: 1;
+	}
+	#drawer-toggle-label:before {
+	  content: '';
+	  display: block;
+	  position: absolute;
+	  height: 2px;
+	  width: 24px;
+	  background: #8d8d8d;
+	  left: 13px;
+	  top: 18px;
+	  box-shadow: 0 6px 0 #8d8d8d, 0 12px 0 #8d8d8d;
+	}
+	#drawer {
+	  position: fixed;
+	  top: 60px;
+	  left: -300px;
+	  height: 100%;
+	  width: 300px;
+	  background: #2f2f2f;
+	  overflow-x: hidden;
+	  overflow-y: scroll;
+	  padding: 20px;
+	  -webkit-overflow-scrolling: touch;
+	  z-index: 1;
+	}
+	#drawer li{		
+		list-style: none;
+		margin-bottom: 30px;	}
+	#drawer li a{
+		text-decoration: none;
+		color: white;}
+	/* actual page content pane */
+
+	.container {
+	  
+	  margin-top: 50px;
+	  
+	  height: calc(100% - 50px);
+	  overflow-x: hidden;
+	  
+	  -webkit-overflow-scrolling: touch;
+	  padding: 20px;
+	}
+	/* checked styles (menu open state) */
+
+	#drawer-toggle:checked ~ #drawer-toggle-label {
+	  height: 100%;
+	  width: calc(100% - 300px);
+	  background: rgba(192,192,192,0.5);
+	}
+
+	#drawer-toggle:checked ~ #drawer-toggle-label,
+	#drawer-toggle:checked ~ header {
+	  left: 300px;
+	}
+
+	#drawer-toggle:checked ~ #drawer {
+	  left: 0px;
+	}
+
+	#drawer-toggle:checked ~ .container {
+	  margin-left: 300px;
+	}
+	.glyphicon-shopping-cart{color: white; margin-right: 20px;}
+</style>
+
+	<input type="checkbox" id="drawer-toggle" name="drawer-toggle"/>
+	<label for="drawer-toggle" id="drawer-toggle-label"></label>
+	
+	<nav id="drawer">
+		<ul>			
+			<li><a href="/followingListPage">관심 픽스타</a></li>
+			<li><a href="/boughtListPage">구매한 픽</a></li>
+			<li><a href="/sellingListPage">픽 판매 관리</a></li>
+			<li><a href="/askPagePage">고객센터</a></li>
+			<li><a href="#">본인확인</a></li>
+		</ul>
+	</nav>
+
+
+	<nav class="navbar navbar-fixed-top" role="navigation">
+		<div class="container-fluid">
+
+			<div class="navbar-header">
+				<button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#real-nav" aria-expanded="false">
+						<span class="sr-only">Toggle navigation</span>
+						<span class="icon-bar"></span>
+						<span class="icon-bar"></span>
+						<span class="icon-bar"></span>
+				</button>
+				<a class="brand" href="/">
+					<img src="{{STATIC_URL}}img/picImg.png" height="45px" width="150px">
+				</a> 
+			</div>
+
+			<div id="real-nav" class="navbar_menu collapse navbar-collapse">      
+				<ul class="nav navbar-nav navbar-left">
+					<li><a class="navbar-menu" href="/">홈</a></li>
+					<li ><a class="navbar-menu" href="/liveGameList">경기목록</a></li>
+					<li ><a class="navbar-menu" href="/rankingPage">픽스타랭킹</a></li>
+					<li ><a class="navbar-menu" href="/picboard">픽게시판</a></li>
+					<li ><a class="navbar-menu" href="/freeboard">쉼터</a></li>
+					{% if user.is_anonymous %}
+					<li ><a class="navbar-menu" href="#" onclick="alert('로그인이 필요한 서비스입니다.');">마이페이지</a></li>
+					{% else %}                              
+					<li ><a class="navbar-menu" href="#" onclick="goPersonalPage({{user.id}})">마이페이지</a></li>
+					{% endif %}                              
+				</ul>			
+		
+									
+				<form class="navbar-form navbar-left" role="search">
+					<div class="form-group searchForm">
+						<input id="userSearch" type="text" class="form-control" size="10" placeholder="유저검색">
+						<a id="search" href="#">
+							<span class="glyphicon glyphicon-search"></span>
+						</a>
+					</div>
+				</form>					
+					
+				<ul class="nav navbar-nav navbar-right">
+					{% if user.is_anonymous  %}
+					<li class="navbar_login">
+						<div><a id="kakao-login-btn"></a></div>
+					</li>
+					<li>
+						<!--<a href="http://alpha-developers.kakao.com/logout"></a>-->
+						<button id="loginBtn" type="button" class="btn btn-default" data-toggle="modal" data-target="#lgin">로그인</button>						
+					</li>
+					{% else %}                              
+					<li>
+						<span class="infoUser">
+							<b id="nickname">{{ infoUser.nickname }}</b> 님 반갑습니다&nbsp;
+							<a id="logoutBtn" class="btn btn-success" href="/logout/" role="button">로그아웃</a>
+						</span>
+					</li>
+					{% endif %}				
+				</ul>			
+			</div>		
+		</div>
+	</nav>
+
+		<!-- 로그인 Modal -->
+			<div class="modal fade" id="lgin" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+				<div class="modal-dialog" role="document">
+					
+					<div class="modal-content">
+						<div class="modal-header">
+							<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+								<span aria-hidden="true">&times;</span>
+							</button>
+							<h4 class="modal-title" id="myModalLabel">로그인</h4>
+						</div>
+
+						<div class="modal-body">
+							<form id="loginForm" class="form-horizontal" method="post" accept-charset="utf-8" action="/login/">
+								<div class="form-group">
+									<label for="useremail" class="col-sm-2 control-label">이메일</label>
+									<div class="col-sm-10">
+										<input type="email" class="form-control" id="useremail" name="useremail" placeholder="이메일" autofocus />
+									</div>
+								</div>
+								<div class="form-group">
+									<label for="pwd" class="col-sm-2 control-label">비밀번호</label>
+									<div class="col-sm-10">
+										<input type="password" class="form-control" id="pwd" name="pwd" placeholder="비밀번호">
+									</div>
+								</div>
+								<div class="form-group">
+									<div class="col-sm-offset-2 col-sm-10">
+										<div class="checkbox">
+											<label><input type="checkbox"> 비밀번호 기억</label>
+										</div>
+									</div>
+								</div>										
+							</form>		
+						</div>
+						<div class="modal-footer">					        
+							<div class="form-group">
+								<div class="col-sm-offset-2 col-sm-10">
+									<button type="submit" class="btn btn-default" data-dismiss="modal" id="loginbtn">로그인</button>									
+								</div>
+							</div>
+						</div>
+					</div><!--modal content-->
+
+				</div>
+			</div>
+
+<script>
+	//<![CDATA[
+		// 사용할 앱의 JavaScript 키를 설정해 주세요.    
+		Kakao.init('86d0b190ce52cc0b5bfc0183bd9e9481');
+		// 카카오 로그인 버튼을 생성합니다.		
+			Kakao.Auth.createLoginButton({
+			container: '#kakao-login-btn',
+			success: function(authObj) {
+				console.log(JSON.stringify(authObj));
+				var obj = $.parseJSON(JSON.stringify(authObj));
+				console.log(obj.access_token);
+
+				$.post('/kakaoLogin/',{token:obj.access_token},	function(){
+						window.location.reload(true);
+				});
+			},
+			fail: function(err) {
+				 alert((JSON.stringify(err)));
+			}
+		});		
+	//]]>
+</script>
+<script>//로그인
+	var md5 = function(value) {
+		return CryptoJS.MD5(value).toString();
+	}
+
+	$('#loginbtn').click(function(){
+		var username = $('#useremail').val();
+		var password = $('#pwd').val();			
+		
+		hashPassword = md5(password);
+		console.log(hashPassword);    	
+		
+		$.post('/login/', {username:username, password:hashPassword},
+				function(data){			
+					if(data.error == "1"){
+						alert("잘못 입력하였습니다.");
+					}
+					else if(data.error == "2"){
+						alert("로그인 실패하셨습니다.");
+					}
+					else{					
+						window.location.reload(true);
+					}
+			});
+	});	
+</script>
+
+<script>
+$(function(){
+	$('#loginForm')[0].reset();
+	//$('#sgUpForm')[0].reset();
+});
+</script>
+
+
+
+<script>//유저 검색	
+/*
+	$('#userSearch').keyup(function(event){
+		var nickname = $("#userSearch").val();
+		console.log(nickname);
+		
+		if(event.keyCode == 13){			
+			$.post("/findUser/", {nickname: nickname}, function(data){
+			console.log(data.error);
+			if(data.error == "1"){
+				alert("회원 전용입니다.");
+				return;
+			}
+			else if(data.error == "2"){
+				alert("회원이 존재하지 않습니다");					
+			}
+			else{
+				goPersonalPage(data.personalId);  						
+			}				
+		});
+	}
+	});		*/	
+	
+	$('#search').on('click', function(){
+		var nickname = $("#userSearch").val();
+		console.log(nickname);
+		$.post("/findUser/", {nickname: nickname}, function(data){
+			console.log(data.error);
+			if(data.error == "1"){
+				alert("회원 전용입니다.");
+				return;
+			}
+			else if(data.error == "2"){
+				alert("회원이 존재하지 않습니다");					
+			}
+			else{
+				goPersonalPage(data.personalId);  						
+			}
+		});		
+	});	
+	
+	
+</script>
+
+
+
+
+<script>
+/*//회원가입
+	var md5 = function(value) {
+		return CryptoJS.MD5(value).toString();
+	}
+
+	$('#signUpbtn').click(function(){
+		var username = $('#username').val();
+		var password = $('#password').val();
+		//var nickname = $('#nickname').val();
+		var params1 = {username:username, password:password};
+		
+		$.ajax({
+			type: 'POST',
+			data: params0,
+			url: '/signUp/',
+			dataType: 'json',
+			success: function(){							
+			}
+		})
+	})*/
+</script>

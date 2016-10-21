@@ -1,0 +1,467 @@
+{% load poll_extras %}
+
+<h2><b>해외 분석</b><br></h2>
+{% if MacaoInfo %}
+<h3><b>7M</b></h3>
+<table class='topBorder' style="width:100%;border-collapse:collapse; text-align:center;" border=1px>
+	<tr style="background-color:orange;">
+		<th width="80%">분석내용</th>
+		<th width="20%">추천 픽</th>
+	</tr>
+		<tr>
+		<td>{{ MacaoInfo.comment }}</td>
+		<td>{{ MacaoInfo.result|calResult }}</td>
+		</tr>
+</table>
+{% endif %}
+
+{% if VitiInfo %}
+<h3><b>VITIBET</b></h3>
+<table class='topBorder' style="width:100%;border-collapse:collapse; text-align:center;" border=1px>
+	<tr style="background-color:orange;">
+		<th>승무패 확률</th>
+		<th>예상점수</th>
+		<th>추천 픽</th>
+	</tr>
+	<tr>
+	<td>{{ VitiInfo.winPer }}% {{VitiInfo.drawPer}}% {{VitiInfo.losePer}}%</td>
+	<td>{{ VitiInfo.score }}</td>
+	<td>{{ VitiInfo.prediction|calResult }}</td>
+	</tr>
+</table>
+{% endif %}
+
+{% if ProSocInfo %}
+<h3><b>Pro Soccer</b></h3>
+<table class='topBorder' style="width:100%;border-collapse:collapse; text-align:center;" border=1px>
+	<tr style="background-color:orange;">
+		<th>배당</th>
+		<th>승무패 확률</th>
+		<th>2.5 U/O 확률</th>
+		<th>예상 점수</th>
+	</tr>
+	<tr>
+	<td>{{ ProSocInfo.win }} {{ProSocInfo.draw}} {{ProSocInfo.lose}}</td>
+	<td>{{ ProSocInfo.winPer}}% {{ProSocInfo.drawPer}}% {{ProSocInfo.losePer}}%</td>
+	<td>{{ ProSocInfo.under}}% {{ProSocInfo.over}}%</td>
+	<td>{{ ProSocInfo.scoreOne}} 또는 {{ProSocInfo.scoreTwo}}</td>
+	</tr>
+</table>
+{% endif %}
+
+{% if WDWInfo %}
+<h3><b>WinDrawWin</b></h3>
+<table class='topBorder' style="width:100%;border-collapse:collapse; text-align:center;" border=1px>
+	<tr style="background-color:orange;">
+		<th>배당</th>
+		<th>U/O 배당</th>
+		<th>금액 추천</th>
+		<th>예상 점수</th>
+	</tr>
+	<tr>
+	<td>{{ WDWInfo.win}} {{WDWInfo.draw}} {{WDWInfo.lose}}</td>
+	<td>{{ WDWInfo.under }} {{WDWInfo.over}}</td>
+	<td>{{ WDWInfo.stake }}</td>
+	<td>{{ WDWInfo.score }}</td>
+	</tr>
+</table>
+{% endif %}
+
+{% if PredictzInfo %}
+<h3><b>Predictz</b></h3>
+<table class='topBorder' style="width:100%;border-collapse:collapse; text-align:center;" border=1px>
+	<tr style="background-color:orange;">
+		<th>배당</th>
+		<th>예상 점수</th>
+		<th>추천 픽</th>
+	</tr>
+	<tr>
+	<td>{{ PredictzInfo.win}} {{PredictzInfo.draw}} {{PredictzInfo.lose}}</td>
+	<td>{{ PredictzInfo.score }}</td>
+	<td>{{ PredictzInfo.result|calResult }}</td>
+	</tr>
+</table>
+{% endif %}
+
+{% if LimsoInfo %}
+<h3><b>Limso</b></h3>
+<table class='topBorder' style="width:100%;border-collapse:collapse; text-align:center;" border=1px>
+	<tr style="background-color:orange;">
+		<th>예상 점수1</th>
+		<th>예상점수2</th>
+		<th>추천 픽</th>
+	</tr>
+	<tr>
+	<td>{{ LimsoInfo.scoreOne }}</td>
+	<td>{{ LimsoInfo.scoreTwo }}</td>
+	<td>{{ LimsoInfo.result|calResult }}</td>
+	</tr>
+</table>
+{% endif %}
+
+{% if StatareaInfo %}
+<h3><b>Stat Area</b></h3>
+<table class='topBorder' style="width:100%;border-collapse:collapse; text-align:center;" border=1px>
+	<tr style="background-color:orange;">
+		<th>승무패 확률</th>
+		<th>전반전 확률</th>
+		<th>1.5/2.5/3.5 오버 확률</th>
+	</tr>
+	<tr>
+	<td>{{ StatareaInfo.winPer }}% {{StatareaInfo.drawPer}}% {{StatareaInfo.losePer}}%</td>
+	<td>{{StatareaInfo.hwinPer }}% {{StatareaInfo.hdrawPer}}% {{StatareaInfo.hlosePer}}%</td>
+	<td>{{StatareaInfo.onefiveOverPer}}% {{StatareaInfo.twofiveOverPer}}% {{StatareaInfo.threefiveOverPer}}%</td>
+	</tr>
+	<tr style="background-color:orange;">
+		<th>양팀 득점 확률</th>
+		<th>한팀만 득점 확률</th>
+		<th>추천 픽</th>
+	</tr>
+	<tr>
+	<td>{{StatareaInfo.bts}}%</td>
+	<td>{{StatareaInfo.ots}}%</td>
+	<td>{{StatareaInfo.tip|calResult}}</td>
+	</tr>
+</table>
+{% endif %}
+
+{% if BetinfInfo %}
+<h3><b>Betinf</b></h3>
+<table class='topBorder' style="width:100%;border-collapse:collapse; text-align:center;" border=1px>
+	<tr style="background-color:orange;">
+		<th>배당</th>
+		<th>승무/무패 배당</th>
+		<th>픽1</th>
+		<th>픽2</th>
+		<th>픽3</th>
+		<th>픽4</th>
+		</tr>
+	<tr>
+	<td>{{ BetinfInfo.win }} {{BetinfInfo.draw}} {{BetinfInfo.lose}}</td>
+	<td>{{BetinfInfo.windraw}} {{BetinfInfo.drawlose}}</td>
+	<td>{{BetinfInfo.tip1|calResult}}</td>
+	<td>{{BetinfInfo.tip2|calResult}}</td>
+	<td>{{BetinfInfo.tip3|calResult}}</td>
+	<td>{{BetinfInfo.tip4|calResult}}</td>
+	</tr>
+</table>
+{% endif %}
+
+{% if AdibetInfo %}
+<h3><b>Adibet</b></h3>
+<table class='topBorder' style="width:100%;border-collapse:collapse; text-align:center;" border=1px>
+	<tr style="background-color:orange;">
+		<th>추천픽</th>
+		</tr>
+	<tr>
+	<td>
+	{{AdibetInfo.result|calResultAdi}}
+	</td>
+	</tr>
+</table>
+{% endif %}
+
+
+{% if SoccertipskingInfo %}
+<h3><b>Soccer Tips King</b></h3>
+<table class='topBorder' style="width:100%;border-collapse:collapse; text-align:center;" border=1px>
+	<tr style="background-color:orange;">
+		<th>추천 픽</th>
+		</tr>
+	<tr>
+	<td>{{ SoccertipskingInfo.result|calResult}}</td>
+	</tr>
+</table>
+{% endif %}
+
+{% if FootballtipswinInfo %}
+<h3><b>Football Tips Win</b></h3>
+<table class='topBorder' style="width:100%;border-collapse:collapse; text-align:center;" border=1px>
+	<tr style="background-color:orange;">
+		<th>추천 픽</th>
+		</tr>
+	<tr>
+	<td>{{ FootballtipswinInfo.result|calResult}}</td>
+	</tr>
+</table>
+{% endif %}
+{% if WhoScoreInfo %}
+<h3><b>Whoscore</b></h3>
+<table class='topBorder' style="width:100%;border-collapse:collapse; text-align:center;" border=1px>
+	<tr style="background-color:orange;">
+		<th>예상 점수</th>
+		</tr>
+	<tr>
+	<td>{{ WhoScoreInfo.homeScore }} : {{ WhoScoreInfo.awayScore }}</td>
+	</tr>
+</table>
+{% endif %}
+
+
+
+{% if SportslineInfo %}
+<h3><b>NBA픽</b></h3>
+<table class='topBorder' style="width:100%;border-collapse:collapse; text-align:center;" border=1px>
+	<tr style="background-color:orange;">
+		<th>홈 핸디</th>
+		<th>U/O 기준점</th>
+		<th>예상 점수</th>
+		</tr>
+	<tr>
+		<td>{{ SportslineInfo.handicap}}</td>
+		<td>{{ SportslineInfo.overUnder}}</td>
+		<td>{{SportslineInfo.homeTeamProjScore}} : {{SportslineInfo.awayTeamProjScore}}</td>
+	</tr>
+	<tr>
+	<td colspan=3 style="padding:20px;">
+	<table style="width:100%;text-align:center" class='topBorder' border=1px;>
+	<tr style="background-color:orange;">
+		<th>추천픽1</th>
+		<th>추천정도</th>
+		</tr>
+	<tr>
+		<td>{{ SportslineInfo.pick1}}</td>
+		<td>{{ SportslineInfo.pick1Grade}}</td>
+	</tr>
+	<tr style="background-color:orange;">
+		<th>추천픽2</th>
+		<th>추천정도</th>
+	</tr>
+	<tr>
+		<td>{{ SportslineInfo.pick2}}</td>
+		<td>{{ SportslineInfo.pick2Grade}}</td>
+	</td>
+	</tr>
+	</table>
+	</tr>
+</table>
+{% endif %}
+{% if FourwdlInfo %}
+<h3><b>4WDL</b></h3>
+<table class='topBorder' style="width:100%;border-collapse:collapse; text-align:center;" border=1px>
+	<tr style="background-color:orange;">
+		<th>예상 점수</th>
+		</tr>
+	<tr>
+	<td>{{ FourwdlInfo.homeScore }} : {{ FourwdlInfo.awayScore }}</td>
+	</tr>
+</table>
+{% endif %}
+<br><br><br>
+<h3><b>{{ home }}</b> 최근 5경기</h3>
+
+<div class="tabbale">
+<div class="tab-content">
+
+<div id="home_all" class="tab-pane active fade in">
+<table border=0px style="width:100%;border-collapse:collapse; text-align:center;">
+	<tr style="background-color:orange;">
+		<th style="">날짜</th>
+		<th style="">리그</th>
+		<th style="">경기</th>
+		<th style="">점수</th>
+		<th>결과</th>
+		</tr>
+	<tbody>
+	{% for game in recentGame.homeall %}
+{% if t.teamName == home or t.teamName == away %}
+		<tr style='background-color:yellow;'>
+{% else %}
+		<tr style='{% if forloop.counter0|divisibleby:2 %}background-color:#eeeeee;{%else%}background-color:#dddddd;{%endif%}'>
+{% endif %}
+		<td>{{ game.date }}</td>
+		<td>{{ game.league }}</td>
+		<td><span {% if game.home == home %}style="color:blue"{% endif %}>{{ game.home }}</span> vs <span {% if game.away == home %}style="color:blue"{% endif %}>{{ game.away }}</span></td>
+		<td>{{ game.homescore }} : {{ game.awayscore }}</td>
+		<td>{{game|resultString:home}}</td>
+		</tr>
+	{% endfor %}
+	</tbody>
+</table>
+</div>
+</div>
+</div>
+
+<h3><b>{{ away }}</b> 최근 5경기</h3>
+
+<div class="tabbale">
+   <div class="tab-content">
+
+<div id="away_all" class="tab-pane active fade in">
+<table border=0px style="width:100%;border-collapse:collapse; text-align:center;">
+	<tr style="background-color:orange;">
+		<th style="">날짜</th>
+		<th style="">리그</th>
+		<th style="">경기</th>
+		<th style="">점수</th>
+		<th>결과</th>
+		</tr>
+	<tbody>
+	{% for game in recentGame.awayall %}
+{% if t.teamName == home or t.teamName == away %}
+		<tr style='background-color:yellow;'>
+{% else %}
+		<tr style='{% if forloop.counter0|divisibleby:2 %}background-color:#eeeeee;{%else%}background-color:#dddddd;{%endif%}'>
+{% endif %}
+		<td>{{ game.date }}</td>
+		<td>{{ game.league }}</td>
+		<td><span {% if game.home == away %}style="color:blue"{% endif %}>{{ game.home }}</span> vs <span {% if game.away == away %}style="color:blue"{% endif %}>{{ game.away }}</span></td>
+		<td>{{ game.homescore }} : {{ game.awayscore }}</td>
+		<td>{{game|resultString:away}}</td>
+		</tr>
+	{% endfor %}
+	</tbody>
+</table>
+</div>
+</div>
+</div>
+
+<h3>상대 전적</h3>
+<div class="tab-pane active fade in">
+<table border=0px style="width:100%;border-collapse:collapse; text-align:center;">
+	<tr style="background-color:orange;">
+		<th style="">날짜</th>
+		<th style="">리그</th>
+		<th style="">경기</th>
+		<th>결과</th>
+		</tr>
+	<tbody>
+	{% for game in recentGame.allhomeaway %}
+{% if t.teamName == home or t.teamName == away %}
+		<tr style='background-color:yellow;'>
+{% else %}
+		<tr style='{% if forloop.counter0|divisibleby:2 %}background-color:#eeeeee;{%else%}background-color:#dddddd;{%endif%}'>
+{% endif %}
+		<td>{{ game.date }}</td>
+		<td>{{ game.league }}</td>
+		<td><span {% if game.homescore > game.awayscore %}style="color:blue;"{% endif %} >{{ game.home }}</span> vs <span {% if game.awayscore > game.homescore %}style="color:blue;"{% endif %}>{{ game.away }}</span></td>
+		<td>{{ game.homescore }} : {{ game.awayscore }}</td>
+		</tr>
+	{% endfor %}
+	</tbody>
+</table>
+</div>
+
+
+{% if players %}
+<h3> 라인업</h3>
+<table class='topBorder' style="width:100%;border-collapse:collapse; text-align:center;" border=1px>
+	<tr style="background-color:orange;">
+		<th colspan="2" style="width:50%">{{ home }} ({{ players.homeFormation }})</th>
+		<th colspan="2" style="width:50%">{{ awiay }} ({{ players.awayFormation }})</th>
+		</tr>
+		<tr style="background-color:orange;">
+		<th style="width:35%">선수명</th>
+		<th style="width:15%">평점</th>
+		<th style="width:35%">선수명</th>
+		<th style="width:15%">평점</th>
+		</tr>
+{% zip_longest players.homePlayers players.awayPlayers as items %}
+{% for item in items %}
+    {% with item|first as one %}
+    {% with item|last as two %}
+<tr>
+<td>{{ one.name }}</td>
+<td>{{ one.rating }}</td>
+<td>{{ two.name }}</td>
+<td>{{ two.rating }}</td>
+</tr>
+    {% endwith %}
+    {% endwith %}
+{% endfor %}
+</table>
+
+
+<h3><b>{{ home }}</b> 결장선수</h3>
+<table class='topBorder' style="width:100%;border-collapse:collapse; text-align:center;" border=1px>
+	<tr style="background-color:orange;">
+		<th style="width:40%">선수명</th>
+		<th style="width:20%">평점</th>
+		<th style="width:20%">사유</th>
+		<th style="width:20%">상태</th>
+		</tr>
+	{% for p in missingPlayers.homeMissingPlayers %}
+		<tr>
+		<td>{{ p.name }}</td>
+		<td>{{ p.rating }}</td>
+		<td>{{ p.reason }}</td>
+		<td>{{ p.sataus }}</td>
+		</tr>
+	{% endfor %}
+</table>
+<h3><b>{{ away }}</b> 결장선수</h3>
+<table class='topBorder' style="width:100%;border-collapse:collapse; text-align:center;" border=1px>
+	<tr style="background-color:orange;">
+		<th style="width:40%">선수명</th>
+		<th style="width:20%">평점</th>
+		<th style="width:20%">사유</th>
+		<th style="width:20%">상태</th>
+		</tr>
+	{% for p in missingPlayers.awayMissingPlayers %}
+		<tr>
+		<td>{{ p.name }}</td>
+		<td>{{ p.rating }}</td>
+		<td>{{ p.reason }}</td>
+		<td>{{ p.sataus }}</td>
+		</tr>
+	{% endfor %}
+</table>
+{% endif %}
+<br><br><br>
+<h3><b>{{ league }}</b> 경기기록</h3>
+
+<div class="tabbale">
+<div class="tab-content">
+
+<div id="league_all" class="tab-pane active fade in">
+<table border=0px style="width:100%;border-collapse:collapse; text-align:center;">
+	<tr style="background-color:orange;">
+		<th style="text-align:center;">순위</th>
+		<th style="text-align:center;">팀명</th>
+		<th style="text-align:center;">경기수</th>
+		<th style="text-align:center;">승</th>
+		<th style="text-align:center;">무</th>
+		<th style="text-align:center;">패</th>
+		<th style="text-align:center;">득점</th>
+		<th style="text-align:center;">실점</th>
+		</tr>
+<tbody>
+{% for t in overall  %}{% if t.teamName == home or t.teamName == away %}<tr style='background-color:yellow;'>{% else %}<tr style='{% if forloop.counter0|divisibleby:2 %}background-color:#eeeeee;{%else%}background-color:#dddddd;{%endif%}'>{% endif %}<td>{{ t.rank }}</td><td>{{ t.teamName }}</td><td>{{ t.played }}</td><td>{{ t.win }}</td><td>{{ t.draw }}</td><td>{{ t.lose }}</td><td>{{ t.goalsfor }}</td><td>{{ t.goalsagainst }}</td></tr>{% endfor %}
+</tbody>
+</table>
+</div>
+</div>
+</div>
+
+
+<h3><b>{{ league }}</b> 리그 전적</h3>
+
+<div class="tabbale">
+<div class="tab-content">
+
+<div id="history_all" class="tab-pane active fade in">
+<table style="width:100%;border-collapse:collapse; text-align:center;">
+<tbody>
+	<tr style="background-color:orange;">
+		<th>순위</th>
+		<th>팀명</th>
+		<th>[첫 경기 ... 최근 경기]</th>
+	</tr>
+{% for t in overall %}
+{% if t.teamName == home or t.teamName == away %}
+<tr style='background-color:yellow;'>{% else %}<tr style='{% if forloop.counter0|divisibleby:2 %}background-color:#eeeeee;{%else%}background-color:#dddddd;{%endif%}'>
+{% endif %}
+<td>{{ t.rank }}</td>
+<td>{{ t.teamName }}</td>
+<td>{% for h in t.history%}{% if h = '3' %}<table style='display:inline-block;width:6px;height:10px;background-color:green;margin:1px;'></table>{% elif h = '1' %}<table style='display:inline-block;width:6px;height:10px;background-color:gray;margin:1px;'></table>{% else %}<table style='display:inline-block;width:6px;height:10px;background-color:red;margin:1px;'></table>{%endif%}{%endfor%}
+
+</td>
+</tr>
+{% endfor %}
+</tbody>
+</table>
+</div>
+</div>
+</div>
+
+

@@ -1,0 +1,40 @@
+<style>
+	div.commentWrap{
+		background-color: #ffffff;
+		width: 95%;
+	}
+	div.commentArea {border-top: 1px solid #d2d2d2; padding: 10px;}
+	div.commentArea img{float: left; margin-right: 20px}	
+	div.comment_bottom{display: inline-block;}
+	div.reply{display: inline-block; float: right}
+	div.opinionBtn{text-align: center; margin-top: 20px; margin-bottom: 20px;}
+</style>
+
+<div class="commentWrap">
+	{% for comment in commentList %}
+	<div class="commentArea">
+		{% if comment.user.picKey == 0 %}
+		<img src="{{ STATIC_URL }}img/ic_user.png" class="img-circle" 
+					onError="this.src='{{ STATIC_URL }}img/ic_user.png' " width="50px" height="50px"/>          
+		{% else %}                
+		<img src="{{comment.user.picKey}}" class="img-circle" 
+					onError="this.src='{{ STATIC_URL }}img/ic_user.png' " width="50px" height="50px"/>          
+		{% endif %}
+		<div class="comment_bottom">
+			<p><b>{{ comment.user.nickname }}</b><span class="commentDate" date="{{ comment.date }}">{{ comment.date }}</span></p>
+			<p>{{ comment.text }}</p>
+		</div>		
+	</div><!--end commentArea-->
+	{% endfor %}					
+</div><!--end commentWrap-->
+
+<div> 
+	<textarea name="inputArea" class="form-control" id="commentPText" rows="3" placeholder="의견을 입력해주세요:)"></textarea>
+	<div class="form-group opinionBtn">
+		{% if user.is_anonymous %}
+			<button type="button" class="btn btn-success" onclick="alert('로그인이 필요한 서비스입니다.');">의견달기</button>
+		{% else %}
+			<button type="button" class="btn btn-success" id="commentPSubmit" name="commentPSubmit" class="btn btn-default">의견달기</button>
+		{% endif %}
+	</div>					
+</div>

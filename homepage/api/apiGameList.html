@@ -1,0 +1,24 @@
+
+
+
+	<div class="ongam">
+		<table class="table table-hover gameTable">
+			{% for game in run%}
+				{% include 'homepage/blocks/livegame_cell.html' with game=game %}
+			{% endfor%}			
+		</table>
+	</div>
+	<div class="waitgam">
+		<table class="table table-hover gameTable">				
+			{% for game in wait%}
+				{% include 'homepage/blocks/livegame_cell.html' with game=game %}
+			{% endfor%}		
+		</table>
+	</div>		
+	<div class="endgam">
+		<table class="table table-hover gameTable">								
+			{% for game in end%}
+				{% include 'homepage/blocks/livegame_cell.html' with game=game %}
+			{% endfor%}		
+		</table>
+	</div>

@@ -1,0 +1,276 @@
+
+{% block load_css %}
+<style>
+	div.picboard-detail{background-color: #ffffff; border: 2px solid #e2e2e2; margin-bottom: 20px}
+		div.detail_head{margin: 20px;}
+			div.detail_title{margin-left: 10px; margin-bottom: 10px; font-size: 13px;}
+				
+			div.detail_info {margin-left: 10px}
+			div.detail_info img{float: left; margin-right: 10px; vertical-align: middle}
+			div.detail_info span{vertical-align: middle}
+
+	div.detail-body{margin-left: 70px; margin-right: 60px; margin-top:30px; height: auto;}
+	div.activeList{
+		display: inline-block;
+		cursor: pointer;		
+		line-height: 40px;
+		border: 1px solid black;
+		margin: 20px;	
+		border-radius: 5px;}
+		.activeList img{
+			margin-left: 5px;			
+		}
+	span.activeSee{
+		margin-right: 5px;
+		vertical-align: middle;}		
+
+
+	span.glyphicon-thumbs-up{font-size: 15px; }
+	a.reco-btn{display: inline; text-align: center;}
+	div.body-reco{margin-top: 30px; text-align: center}
+
+
+	div.detail-tail{margin: 20px;}	
+	div.comment_count{margin:10px;}
+
+	div.commentArea {border-top: 1px solid #d2d2d2; padding: 10px;}
+	div.commentArea img{float: left; margin-right: 20px}	
+	div.comment_bottom{
+		display: inline-block; 
+		width: 600px;
+		word-break: break-all;}	
+	div.reply{display: inline-block; float: right}
+	div.commentBtn{text-align: center; margin-top: 20px;}
+	div.commentSubArea{
+		border-top: 1px solid #d2d2d2; padding: 10px;		
+		}
+		.commentSubArea img{float: left; margin-right: 20px}	
+		.turnImg {
+			margin: 15px 30px 0 20px;}
+	#writingBody{
+		white-space: pre-wrap;
+	}
+</style>
+<link rel="stylesheet" href="{{ STATIC_URL }}h_css/folder.css">
+{% endblock %}
+
+	<div class="picboard-detail">			
+		<div class="detail_head">
+
+			<div class="detail_title" writingId="{{ writing.writingId }}">
+				제목&nbsp;&nbsp;&nbsp;<b>{{ writing.title }}</b>				
+			</div>
+			
+			<div class="detail_info">
+				{% if writing.user.picKey == 0 %}
+				<img src="{{ STATIC_URL }}img/ic_user.png" class="img-circle" 
+							onError="this.src='{{ STATIC_URL }}img/ic_user.png'" width="30px" height="30px"/>          
+				{% else %}                
+				<img src="{{ writing.user.picKey }}" class="img-circle" 
+							onError="this.src='{{ STATIC_URL }}img/ic_user.png'" width="30px" height="30px"/>          
+				{% endif %}										
+				<span>
+					<b>{{ writing.user.nickname }}&nbsp;&nbsp;&nbsp;</b>
+					조회수 {{ writing.readCount}}  |  추천수 <span class="likeCount">{{ writing.likeCount }}</span> 
+				</span>						         
+			</div>
+
+		</div><!--end detail-head-->
+
+		<div class="detail-body">
+
+
+<!--folder_cell include해야 하는 부분-->
+	
+<div class="folder">
+	<div class="round">프로토 <span>{{writing.folder.round}}</span>회차</div>
+	<ul class="bet_list">
+		{%for bet in writing.folder.betList%}
+		<li class="bet">
+			<div class="bet">
+				<div class="num"><p>{{bet.num}}</p></div>
+				<div class="date"><p class="valign">{{bet.date}}</p></div>
+				<div class="league"><p class="valign">{{bet.league}}</p></div>
+				<div class="home{% if bet.choice == 1%} choice{% endif %}">
+					<p class="valign">
+						{{bet.home}}
+						{% if bet.gameType == 2 %}<span class="under">↓</span>{% endif %}
+						{% if bet.gameType == 1%}<span class="blue">{{bet.handiNum}}</span>{% endif %}
+						<span class="win">{{bet.win}}</span>
+					</p>
+				</div>
+				<div class="draw{% if bet.choice == 4%} choice{% endif %}">
+					<p class="valign">
+						{% if bet.draw %}{{bet.draw}}{% endif %}
+						{% if bet.gameType == 2%}<span class="blue">U/O {{bet.handiNum}}</span>{%endif%}
+					</p>
+				</div>
+				<div class="away{% if bet.choice == 2%} choice{% endif %}">
+					<p class="valign">{{bet.lose}}<span class="team">{{bet.away}}</span>
+						{% if bet.gameType == 2 %}<span class="over">↑</span>{% endif %}
+					</p>
+				</div>
+				<div class="score{% if bet.result == 1 %} light_blue{% endif %}{% if bet.result == 3 %} 
+						light_blue{% endif %}{% if bet.result == 2 %} light_red{% endif %}">
+					<p class="valign">
+						{% if bet.result == 3 %}
+							적특
+						{% elif bet.result == 0 %}
+							대기중
+						{% else  %}
+							{% if bet.gameType == 2 %}{{bet.drawscore}}
+							{% else %}{{bet.homescore}}:{{bet.awayscore}}
+							{% endif %}
+						{% endif %}
+					</p>
+				</div>
+			</div>
+		</li>
+		{%endfor%}
+	</ul>
+
+	<div class="folder_info">
+		<div class="floatLeft">
+			배팅시간 : <b> {{writing.folder.date}} </b><br>
+			배팅금액 : <b> {{writing.folder.money}}원 </b><br>
+			배당 : <b>{% if folder.ratio %} {{folder.ratio}} {% else %} 비공개 {% endif %}</b><br>
+			적중예상금액 : 
+			<b>
+			{% if folder.expect %}
+				{{folder.expect}}원
+			{% else %}
+				비공개
+			{% endif %}<br>
+			</b>
+		</div>
+
+		{% if folder.result == 0 %}
+			<div class="result waiting">대기중</div>
+		{% elif folder.result == 1%}
+			<div class="result win">적중</div>
+		{% elif folder.result == 2%}
+			<div class="result lose">미적중</div>
+		{% elif folder.result == 3%}
+			<div class="result cancel">적특</div>
+		{% endif %}
+
+		{% if not folder.isOpened %}
+			<div class="key" onClick="buyFolder({{folder.folderId}})">
+				<img src="{{STATIC_URL}}img/ic_key.png" height="30px"> 
+				<div class="text">X {{ writing.folder.key }}</div>
+			</div>
+		{% elif folder.user %}
+			<div class="owner">
+				<div class="desc">picked by</div>
+				<div class="user_image">
+					<img src="{{ folder.user.picKey }}" height="25px" width="25px"  onError="this.onerror=null;this.src='{{ STATIC_URL }}img/ic_user.png';">
+				</div>
+				<div class="nickname">{{ writing.folder.user.nickname }}</div>
+			</div>
+		{% endif %}
+	</div><!--end folder_info-->
+</div><!--end folder-->
+
+		<!--유저 활동내역-->
+			<div class="activeList" onclick="goPersonalPage({{writing.user.userId}})">
+				{% if writing.user.picKey == 0 %}
+				<img src="{{ STATIC_URL }}img/ic_user.png" class="img-circle" 
+							onError="this.src='{{ STATIC_URL }}img/ic_user.png'" width="30px" height="30px"/>          
+				{% else %}                
+				<img src="{{ writing.user.picKey }}" class="img-circle" 
+							onError="this.src='{{ STATIC_URL }}img/ic_user.png'" width="30px" height="30px"/>          
+				{% endif %}										
+				<span class="activeSee">
+					<b>{{ writing.user.nickname }}&nbsp;</b>님의 활동내역 보러가기
+				</span>
+			</div>
+
+			<p id="writingBody">{{ writing.text }}</p>
+			
+		<!--추천버튼-->	
+			<div class="body-reco">
+				{% if user.is_anonymous  %}
+					<a href="#" class="btn btn-default" onclick="alert('로그인이 필요한 서비스입니다.');">
+						<span class="glyphicon glyphicon-thumbs-up"></span>&nbsp;추천하기					
+					</a>
+				{% else %}
+					<a href="#" class="btn btn-success reco-btn">
+						<span class="glyphicon glyphicon-thumbs-up"></span>&nbsp;추천하기					
+					</a>
+				{% endif %}			
+			</div>
+		</div><!--end detail-body-->
+
+
+		<!--댓글-->
+			<div class="detail-tail">
+				<div class="comment_count">댓글[{{ writing.commentCount}}]</div>	
+
+				<div class="commentWrap">
+					{% for comment in comments %}
+					<div class="commentArea" commentId="{{comment.commentId}}" name="commentPCode">
+						{% if comment.user.picKey == 0 %}
+						<img src="{{ STATIC_URL }}img/ic_user.png" class="img-circle" 
+									onError="this.src='{{ STATIC_URL }}img/ic_user.png' " width="50px" height="50px"/>          
+						{% else %}                
+						<img src="{{comment.user.picKey}}" class="img-circle" 
+									onError="this.src='{{ STATIC_URL }}img/ic_user.png' " width="50px" height="50px"/>          
+						{% endif %}
+						<div class="comment_bottom">							
+							<p>{{ comment.text }}</p>
+							<p><b>{{ comment.user.nickname }}</b>&nbsp;&nbsp;<span class="commentDate" commentDate="{{ comment.date }}"></span></p>
+						</div>
+						<div class="reply">
+						{% if user.is_anonymous  %}
+							<a class="replyBtn" onclick="alert('비회원은 답글을 작성할 수 없습니다.')" style="cursor:pointer;">답글</a>
+						{% else %}    
+							<a class="replyBtn" onclick="replyEdit(this)" style="cursor:pointer;">답글</a>
+						{% endif %}
+						</div>
+					</div><!--end commentArea-->					
+					
+						{% for subComment in comment.subCommentList %}								
+						<div class="commentSubArea" commentId="{{subComment.commentId}}" name="commentCCode">
+							<img src="{{ STATIC_URL }}img/turn-right.png" class="turnImg"/>
+							{% if subComment.user.picKey == 0 %}
+							<img src="{{ STATIC_URL }}img/ic_user.png" class="img-circle subImg" 
+										onError="this.src='{{ STATIC_URL }}img/ic_user.png' " width="50px" height="50px"/>          
+							{% else %}                
+							<img src="{{subComment.user.picKey}}" class="img-circle subImg" 
+										onError="this.src='{{ STATIC_URL }}img/ic_user.png' " width="50px" height="50px"/>          
+							{% endif %}
+							<div class="comment_bottom">							
+								<p>{{ subComment.text }}</p>
+								<p><b>{{ subComment.user.nickname }}</b>&nbsp;&nbsp;<span class="commentDate" commentDate="{{ subComment.date }}"></span></p>
+							</div>
+						</div>							
+						{% endfor %}					
+					{% endfor %}					
+				</div><!--end commentWrap-->
+
+				<div>
+					<textarea name="inputArea" class="form-control" id="commentPText" rows="3" placeholder="댓글을 입력해주세요:)"></textarea>
+					<div class="form-group commentBtn">
+					{% if user.is_anonymous  %}						
+						<button class="btn btn-success" onclick="alert('로그인이 필요한 서비스입니다.');">댓글달기</button>
+					{% else %}    
+						<button type="button" class="btn btn-success" id="commnetParentSubmit" name="commnetParentSubmit" onclick="cmtParentBtn();">댓글달기</button>
+					{% endif %}
+					</div>					
+				</div>
+				
+			</div><!--end detail-tail-->
+
+	</div><!-- end picboard-detail-->
+
+
+
+
+<script>//추천수 증가
+	$(".reco-btn").on('click', function(){
+		var n = parseInt($(".likeCount").text())
+		//console.log(n);
+		n = n+1;
+		$(".likeCount").text(n);
+	})
+</script>

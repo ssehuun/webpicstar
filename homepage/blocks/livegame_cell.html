@@ -1,0 +1,19 @@
+
+
+
+	<tr class="rowGame" id="{{game.gameId}}" gameLeague="{{ game.league }}" onclick="gameDetail(this)">				
+		<!--onClick=location.href="/gameDetail/?gameId={{game.gameId}}"-->		
+		<td class="gameDate" date="{{ game.date }}"></td>
+		<td>
+			<img src="{{ game.homePic }}" alt="thumbnsil" width="22px" height="22px">&nbsp;{{ game.home }}
+		</td>
+		<td class="gameScore">
+			<span class="homeScore" home="{{game.homescore}}">{{game.homescore}}</span>&nbsp;&nbsp;VS&nbsp;&nbsp;
+			<span class="awayScore" away="{{game.awayscore}}">{{game.awayscore}}</span></td>
+		<td>{{ game.away }}&nbsp;
+			<img src="{{ game.awayPic }}" alt="thumbnsil" width="22px" height="22px">
+		</td>
+		<td>{{ game.progress }}</td>
+		<td class="league" league="{{game.league}}">{{ game.league }}</td>		
+	</tr>	
+

@@ -1,0 +1,87 @@
+{% block load_css %}
+<link rel="stylesheet" href="{{ STATIC_URL }}h_css/folder.css">
+<!--<link rel="stylesheet" href="{{ STATIC_URL }}css/common.css">-->
+{% endblock %}
+
+<script>
+	function buyFolder(folderId){
+		window.location.href = "/web/buyFolder/?folderId="+folderId;
+	}
+</script>
+
+<div class="folder">
+	<div class="round">
+		프로토 <span>{{folder.round}}</span>회차
+	</div>
+	<ul class="bet_list">
+		<li class="bet">
+			<div class="bet">
+			<div class="num"><p>{{folder.num}}</p></div>
+			<div class="date"><p class="valign">{{folder.date}}</p></div>
+			<div class="league"><p class="valign">{{folder.league}}</p></div>
+			<div class="home{% if folder.singleChoice == 1%} singleChoice{% endif %}"><p class="valign">
+{{folder.home}}
+{% if folder.gameType == 2 %}<span class="under">↓</span>{% endif %}
+{% if folder.gameType == 1%}<span class="blue">{{folder.handiNum}}</span>{% endif %}
+<span class="win">{{folder.win}}</span>
+</p></div>
+			<div class="draw{% if folder.singleChoice == 4%} singleChoice{% endif %}"><p class="valign">
+{% if folder.draw %}{{folder.draw}}{% endif %}
+{% if folder.gameType == 2%}<span class="blue">U/O {{folder.handiNum}}</span>{%endif%}
+</p></div>
+			<div class="away{% if folder.singleChoice == 2%} singleChoice{% endif %}"><p class="valign">{{folder.lose}}
+<span class="team">{{folder.away}}</span>
+{% if folder.gameType == 2 %}<span class="over">↑</span>{% endif %}
+</p></div>
+			<div class="score{% if folder.singleBetResult == 1 %} light_blue{% endif %}{% if folder.singleBetResult == 3 %} light_blue{% endif %}{% if folder.singleBetResult == 2 %} light_red{% endif %}"><p class="valign">
+{% if folder.singleBetResult == 3 %}
+	적특
+{% elif folder.singleBetResult == 0 %}
+	대기중
+{% else  %}
+	{% if folder.gameType == 2 %}{{folder.drawscore}}
+	{% else %}{{folder.homescore}}:{{folder.awayscore}}
+	{% endif %}
+{% endif %}
+</p></div>
+			</div>
+		</li>
+
+	</ul>
+	<div class="folder_info">
+		<div class="floatLeft">
+		배팅시간 : <b></b><br/>
+		배팅금액 : <b>원</b><br/>
+		배당 : 
+<b>
+<br/>
+</b>
+<b>
+<br/>
+</b>
+		</div>
+{% if folder.singleBetResult == 0 %}
+<div class="result waiting">대기중</div>
+{% elif folder.singleBetResult == 1%}
+<div class="result win">적중</div>
+{% elif folder.singleBetResult == 2%}
+<div class="result lose">미적중</div>
+{% elif folder.singleBetResult == 3%}
+<div class="result cancel">적특</div>
+{% endif %}
+			{% if not folder.isOpened %}
+			<div class="key" onClick="buyFolder({{folder.singleBetId}})">
+				<img src="{{STATIC_URL}}img/ic_key.png" height="30px"> 
+				<div class="text">X {{ folder.key }}</div>
+			</div>
+			{% elif folder.user %}
+			<div class="owner">
+				<div class="desc">picked by</div>
+				<div class="user_image">
+					<img src="{{ folder.user.picKey }}" height="25px" width="25px"  onError="this.onerror=null;this.src='{{ STATIC_URL }}img/ic_user.png';">
+				</div>
+				<div class="nickname">{{ folder.user.nickname }}</div>
+			</div>
+			{% endif %}
+	</div>
+</div>

@@ -1,0 +1,540 @@
+{% extends 'homepage/base.html' %}
+
+{% block content %}
+
+
+{% block load_css %}
+<style>
+/*picboard_cell*/
+	table#mytable{background-color: #ffffff;}
+	#table-head th{text-align: center;}
+	table tr{
+		border: solid 1px #c7c7c7; 
+	}
+	td.li1,.li2,.dateClass,.li4,.li5{text-align: center}
+	span.comment{color: #ffd145;}
+
+/*picboard*/
+	div.picboard-theme{		
+		margin: 30px 0px 30px 0px;			
+		border-bottom: solid 1px #fff;
+		}
+		.main-picboard,.g,.sub-picboard,.note{
+			display: inline-block;
+			color: white;
+			clear: both;
+		}
+		span.glyphicon-chevron-right{
+			margin-bottom: 10px;
+		}
+	  .note{		
+			float: right;
+			margin-top: 30px;
+		}
+	.picboard-tab{
+		background-color: #dfe3ea;
+	}
+	.boardBtn{
+		float: right;
+	}
+	.paging{
+		width: 400px;
+		margin: 0 auto;		
+	}
+/*commentEditor*/
+	div.commentSubArea{
+		border-top: 1px solid #d2d2d2; padding: 10px;		
+	}
+	div.comment_edit_bottom{
+		display: inline-block;				
+		word-break: break-all;
+		margin-right: 20px;}
+	.turnImg {
+		margin: 15px 30px 0 20px;}
+	#commentChildSubmit{
+		vertical-align: text-bottom;
+		padding-bottom: 10px;
+	}	
+
+</style>
+{% endblock %}
+
+{% block load_js %}
+<script src="{{STATIC_URL}}h_js\bootstrap-paginator.js"></script>
+{% endblock %}
+
+{% block main %}
+<div class="container">
+	<div class="row">
+
+		<div class="col-md-9">			
+			<div class="picboard-theme">
+				<div class="main-picboard"><h1><b>픽게시판</b></h1></div>
+				<div class="g"><span class="glyphicon glyphicon-chevron-right"></span></div>
+				<div class="sub-picboard"><h4 >전체 게시판</h4></div>
+				<div class="note"><h6>적중된 픽을 자랑하거나, 예정된 게임을 분석글과 함께 올릴 수 있는 공간입니다.</h6></div>
+			</div>
+			
+			<div id="picDetail"><!--apiPicboardSee상세글불러오는 곳--></div>
+
+			<div class="picboard-tab">
+				<ul class="nav nav-tabs nav-justified"><!--게시판 네비-->
+					<li role="presentation" class="active">
+						<a href="#allPick" data-toggle="tab">전체</a>
+					</li>
+					<li role="presentation">
+						<a href="#bestPick" data-toggle="tab">인기</a>
+					</li>
+					<li role="presentation">
+						<a href="#rightPick" data-toggle="tab">적중</a>
+					</li>
+					<li role="presentation">
+						<a href="#waitPick" data-toggle="tab">대기중</a>
+					</li>
+				</ul>
+			</div>
+
+			
+			<div class="tab-content">
+				<div class="tab-pane active" id="allPick"></div>
+				<div class="tab-pane" id="bestPick"></div>
+				<div class="tab-pane" id="rightPick"></div>
+				<div class="tab-pane" id="waitPick"></div>
+			</div>
+			
+			<div class="boardBtn"><!--목록, 글쓰기-->			
+				<a href="/picboardWritingPage/" class="btn btn-primary" >
+					<span class="glyphicon glyphicon-pencil"></span>&nbsp;&nbsp;&nbsp;&nbsp;글쓰기
+				</a>			
+			</div>
+
+			<div class="paging"><ul id="example"></ul></div>
+		</div><!--col-md-9-->	
+				
+	</div><!--row-->
+</div><!--end container-->
+{% block right %}
+	{% include 'homepage/rightbar.html' %}
+{% endblock%}
+
+
+<script>
+//픽보드 셀 첫페이지 가져오기
+	$.post("/picboardCell/", {state:0, page:1}, function(data){	
+		var writingList = data.writingList;		
+		var str="";	//실시간 진행중게임						
+			str +='<table id="mytable" class="table table-hover">';
+			str +='<thead>';
+			str +='<tr id="table-head">';
+			str +='<th>번호</th>';
+			str +='<th>제목</th>';
+			str +='<th>닉네임</th>';
+			str +='<th>날짜</th>';
+			str +='<th>조회</th>';
+			str +='<th>추천</th>';
+			str +='</tr>';
+			str +='</thead>';
+			str +='<tbody>';
+		for(var i in writingList){
+			str += '<tr class="list">';
+			str += '<td class="li1 col-md-1 writingId">'+writingList[i].writingId+'</td>';
+			str += '<td class="col-md-4">';
+			str += '<a href="#" class="boardTitle" writingId="'+writingList[i].writingId+'" onclick="detailBoard(this);">'+writingList[i].title+'<span class="comment">['+writingList[i].commentCount+']</span>';
+			str += '<a/></td>'
+			str += '<td class="li2 col-md-3" class="nickname">'+writingList[i].user.nickname+'</td>';
+			str += '<td class="dateClass col-md-2" date="'+writingList[i].date+'"></td>';
+			str += '<td class="li4 col-md-1">'+writingList[i].readCount+'</td>';
+			str += '<td class="li5 col-md-1">'+writingList[i].likeCount+'</td>';
+			str += '</tr>';
+		}
+			str +='</tbody></table>';		
+		$('#allPick').html(str);
+		boardCellDate();
+	});
+
+	$.post("/picboardCell/", {state:1, page:1}, function(data){	
+		var writingList = data.writingList;				
+		var str="";	//실시간 진행중게임						
+			str +='<table id="mytable" class="table table-hover">';
+			str +='<thead>';
+			str +='<tr id="table-head">';
+			str +='<th>번호</th>';
+			str +='<th>제목</th>';
+			str +='<th>닉네임</th>';
+			str +='<th>날짜</th>';
+			str +='<th>조회</th>';
+			str +='<th>추천</th>';
+			str +='</tr>';
+			str +='</thead>';
+			str +='<tbody>';
+		for(var i in writingList){
+			str += '<tr class="list">';
+			str += '<td class="li1 col-md-1 writingId">'+writingList[i].writingId+'</td>';
+			str += '<td class="col-md-4">';
+			str += '<a href="#" class="boardTitle" writingId="'+writingList[i].writingId+'" onclick="detailBoard(this);">'+writingList[i].title+'<span class="comment">['+writingList[i].commentCount+']</span>';
+			str += '<a/></td>'
+			str += '<td class="li2 col-md-3" class="nickname">'+writingList[i].user.nickname+'</td>';
+			str += '<td class="dateClass col-md-2" date="'+writingList[i].date+'"></td>';
+			str += '<td class="li4 col-md-1">'+writingList[i].readCount+'</td>';
+			str += '<td class="li5 col-md-1">'+writingList[i].likeCount+'</td>';
+			str += '</tr>';
+		}
+			str +='</tbody></table>';		
+		$('#bestPick').html(str);
+		boardCellDate();
+	});
+
+	$.post("/picboardCell/", {state:2, page:1}, function(data){	
+		var writingList = data.writingList;				
+		var str="";	//실시간 진행중게임						
+			str +='<table id="mytable" class="table table-hover">';
+			str +='<thead>';
+			str +='<tr id="table-head">';
+			str +='<th>번호</th>';
+			str +='<th>제목</th>';
+			str +='<th>닉네임</th>';
+			str +='<th>날짜</th>';
+			str +='<th>조회</th>';
+			str +='<th>추천</th>';
+			str +='</tr>';
+			str +='</thead>';
+			str +='<tbody>';
+		for(var i in writingList){
+			str += '<tr class="list">';
+			str += '<td class="li1 col-md-1 writingId">'+writingList[i].writingId+'</td>';
+			str += '<td class="col-md-4">';
+			str += '<a href="#" class="boardTitle" writingId="'+writingList[i].writingId+'" onclick="detailBoard(this);">'+writingList[i].title+'<span class="comment">['+writingList[i].commentCount+']</span>';
+			str += '<a/></td>'
+			str += '<td class="li2 col-md-3" class="nickname">'+writingList[i].user.nickname+'</td>';
+			str += '<td class="dateClass col-md-2" date="'+writingList[i].date+'"></td>';
+			str += '<td class="li4 col-md-1">'+writingList[i].readCount+'</td>';
+			str += '<td class="li5 col-md-1">'+writingList[i].likeCount+'</td>';
+			str += '</tr>';
+		}
+			str +='</tbody></table>';		
+		$('#rightPick').html(str);
+		boardCellDate();
+	});
+
+	$.post("/picboardCell/", {state:3, page:1}, function(data){		
+		var writingList = data.writingList;				
+		var str="";	//실시간 진행중게임						
+			str +='<table id="mytable" class="table table-hover">';
+			str +='<thead>';
+			str +='<tr id="table-head">';
+			str +='<th>번호</th>';
+			str +='<th>제목</th>';
+			str +='<th>닉네임</th>';
+			str +='<th>날짜</th>';
+			str +='<th>조회</th>';
+			str +='<th>추천</th>';
+			str +='</tr>';
+			str +='</thead>';
+			str +='<tbody>';
+		for(var i in writingList){
+			str += '<tr class="list">';
+			str += '<td class="li1 col-md-1 writingId">'+writingList[i].writingId+'</td>';
+			str += '<td class="col-md-4">';
+			str += '<a href="#" class="boardTitle" writingId="'+writingList[i].writingId+'" onclick="detailBoard(this);">'+writingList[i].title+'<span class="comment">['+writingList[i].commentCount+']</span>';
+			str += '<a/></td>'
+			str += '<td class="li2 col-md-3" class="nickname">'+writingList[i].user.nickname+'</td>';
+			str += '<td class="dateClass col-md-2" date="'+writingList[i].date+'"></td>';
+			str += '<td class="li4 col-md-1">'+writingList[i].readCount+'</td>';
+			str += '<td class="li5 col-md-1">'+writingList[i].likeCount+'</td>';
+			str += '</tr>';
+		}
+			str +='</tbody></table>';		
+		$('#waitPick').html(str);
+		boardCellDate();
+	});
+
+</script>
+
+
+<script>
+//페이지 변경시 로드
+ var options = {
+    currentPage: 1,
+    totalPages: 350,
+    bootstrapMajorVersion: 3,
+    onPageClicked: function(e,originalEvent,type,page){
+    	$.post("/picboardCell/", {state:0, page:page}, function(data){	
+				var writingList = data.writingList;		
+				var str="";	//실시간 진행중게임						
+					str +='<table id="mytable" class="table table-hover">';
+					str +='<thead>';
+					str +='<tr id="table-head">';
+					str +='<th>번호</th>';
+					str +='<th>제목</th>';
+					str +='<th>닉네임</th>';
+					str +='<th>날짜</th>';
+					str +='<th>조회</th>';
+					str +='<th>추천</th>';
+					str +='</tr>';
+					str +='</thead>';
+					str +='<tbody>';
+				for(var i in writingList){
+					str += '<tr class="list">';
+					str += '<td class="li1 col-md-1 writingId">'+writingList[i].writingId+'</td>';
+					str += '<td class="col-md-4">';
+					str += '<a href="#" class="boardTitle" writingId="'+writingList[i].writingId+'" onclick="detailBoard(this);">'+writingList[i].title+'<span class="comment">['+writingList[i].commentCount+']</span>';
+					str += '<a/></td>'
+					str += '<td class="li2 col-md-3" class="nickname">'+writingList[i].user.nickname+'</td>';
+					str += '<td class="dateClass col-md-2" date="'+writingList[i].date+'"></td>';
+					str += '<td class="li4 col-md-1">'+writingList[i].readCount+'</td>';
+					str += '<td class="li5 col-md-1">'+writingList[i].likeCount+'</td>';
+					str += '</tr>';
+				}
+					str +='</tbody></table>';		
+				$('#allPick').html(str);
+				boardCellDate();
+			}, 'json');
+
+    	$.post("/picboardCell/", {state:1, page:page}, function(data){	
+				var writingList = data.writingList;				
+				var str="";	//실시간 진행중게임						
+					str +='<table id="mytable" class="table table-hover">';
+					str +='<thead>';
+					str +='<tr id="table-head">';
+					str +='<th>번호</th>';
+					str +='<th>제목</th>';
+					str +='<th>닉네임</th>';
+					str +='<th>날짜</th>';
+					str +='<th>조회</th>';
+					str +='<th>추천</th>';
+					str +='</tr>';
+					str +='</thead>';
+					str +='<tbody>';
+				for(var i in writingList){
+					str += '<tr class="list">';
+					str += '<td class="li1 col-md-1 writingId">'+writingList[i].writingId+'</td>';
+					str += '<td class="col-md-4">';
+					str += '<a href="#" class="boardTitle" writingId="'+writingList[i].writingId+'" onclick="detailBoard(this);">'+writingList[i].title+'<span class="comment">['+writingList[i].commentCount+']</span>';
+					str += '<a/></td>'
+					str += '<td class="li2 col-md-3" class="nickname">'+writingList[i].user.nickname+'</td>';
+					str += '<td class="dateClass col-md-2" date="'+writingList[i].date+'"></td>';
+					str += '<td class="li4 col-md-1">'+writingList[i].readCount+'</td>';
+					str += '<td class="li5 col-md-1">'+writingList[i].likeCount+'</td>';
+					str += '</tr>';
+				}
+					str +='</tbody></table>';		
+				$('#bestPick').html(str);
+				boardCellDate();
+			}, 'json');
+
+
+    	$.post("/picboardCell/", {state:2, page:page}, function(data){	
+				var writingList = data.writingList;				
+				var str="";	//실시간 진행중게임						
+					str +='<table id="mytable" class="table table-hover">';
+					str +='<thead>';
+					str +='<tr id="table-head">';
+					str +='<th>번호</th>';
+					str +='<th>제목</th>';
+					str +='<th>닉네임</th>';
+					str +='<th>날짜</th>';
+					str +='<th>조회</th>';
+					str +='<th>추천</th>';
+					str +='</tr>';
+					str +='</thead>';
+					str +='<tbody>';
+				for(var i in writingList){
+					str += '<tr class="list">';
+					str += '<td class="li1 col-md-1 writingId">'+writingList[i].writingId+'</td>';
+					str += '<td class="col-md-4">';
+					str += '<a href="#" class="boardTitle" writingId="'+writingList[i].writingId+'" onclick="detailBoard(this);">'+writingList[i].title+'<span class="comment">['+writingList[i].commentCount+']</span>';
+					str += '<a/></td>'
+					str += '<td class="li2 col-md-3" class="nickname">'+writingList[i].user.nickname+'</td>';
+					str += '<td class="dateClass col-md-2" date="'+writingList[i].date+'"></td>';
+					str += '<td class="li4 col-md-1">'+writingList[i].readCount+'</td>';
+					str += '<td class="li5 col-md-1">'+writingList[i].likeCount+'</td>';
+					str += '</tr>';
+				}
+					str +='</tbody></table>';		
+				$('#rightPick').html(str);
+				boardCellDate();
+			}, 'json');
+
+
+			$.post("/picboardCell/", {state:3, page:page}, function(data){		
+				var writingList = data.writingList;				
+				var str="";	//실시간 진행중게임						
+					str +='<table id="mytable" class="table table-hover">';
+					str +='<thead>';
+					str +='<tr id="table-head">';
+					str +='<th>번호</th>';
+					str +='<th>제목</th>';
+					str +='<th>닉네임</th>';
+					str +='<th>날짜</th>';
+					str +='<th>조회</th>';
+					str +='<th>추천</th>';
+					str +='</tr>';
+					str +='</thead>';
+					str +='<tbody>';
+				for(var i in writingList){
+					str += '<tr class="list">';
+					str += '<td class="li1 col-md-1 writingId">'+writingList[i].writingId+'</td>';
+					str += '<td class="col-md-4">';
+					str += '<a href="#" class="boardTitle" writingId="'+writingList[i].writingId+'" onclick="detailBoard(this);">'+writingList[i].title+'<span class="comment">['+writingList[i].commentCount+']</span>';
+					str += '<a/></td>'
+					str += '<td class="li2 col-md-3" class="nickname">'+writingList[i].user.nickname+'</td>';
+					str += '<td class="dateClass col-md-2" date="'+writingList[i].date+'"></td>';
+					str += '<td class="li4 col-md-1">'+writingList[i].readCount+'</td>';
+					str += '<td class="li5 col-md-1">'+writingList[i].likeCount+'</td>';
+					str += '</tr>';
+				}
+					str +='</tbody></table>';		
+				$('#waitPick').html(str);
+				boardCellDate();
+			}, 'json');
+    }
+	}
+	$('#example').bootstrapPaginator(options);		
+</script>
+<script>
+//픽 게시판 상세글 불러오기	
+	function detailBoard(param){
+		$.post('/api/apiWritingDetail/', {writingId:$(param).attr("writingId")}, 
+			function(data){				
+				$("#picDetail").html(data);
+				parseDetailDate();
+		});		
+	}
+	function parseDetailDate(){//게시판 상세글 날짜 파싱
+		var spans = $('span.commentDate')			
+		//var subspans = $('span.subCommentDate')			
+		for (var i=0; i < spans.length; i++){		
+			var formDate = parseDate($(spans[i]).attr("commentDate"))			
+			$(spans[i]).html(formDate)
+		}		
+	}
+
+	function boardCellDate(){//조각글 날짜 파싱
+		var tdDateList = $('td.dateClass');
+		for (var i=0; i < tdDateList.length; i++){							
+			var formDate = $(tdDateList[i]).attr("date")
+			formDate = parseDate(formDate)
+			$(tdDateList[i]).html(formDate);						
+		}	
+	}	
+</script>
+<script>
+//depth1 댓글달기버튼
+	function cmtParentBtn(){
+		var pText = $("#commentPText");
+		
+		if($.trim(pText.val())==""){
+			alert("내용을 입력하세요.");
+			pText.focus();
+			return;
+		}
+		//console.log($('.detail_title').attr("writingId"), pText.val(), 0);
+		$.post("/addComment/", {writingId:$('.detail_title').attr("writingId"), text:pText.val(), commentType:0, parentId:0},
+			function(data){				
+				//window.location.reload(true);
+		});
+		var commentPText = '<div class="commentArea" name="commentPCode">'+
+													"{% if user.picKey == 0 %}"+
+													 '<img style="float:left;" "margin-right:20px" src="{{ STATIC_URL }}img/ic_user.png" class="img-circle" onError="this.src="{{ STATIC_URL }}img/ic_user.png"" width="50px" height="50px"/>'+         
+													"{% else %}"+
+														'<img src="{{infoUser.picKey}}" class="img-circle" onError="this.src="{{ STATIC_URL }}img/ic_user.png"" width="50px" eight="50px"/>'+
+													"{% endif %}"+
+													'<div class="comment_bottom">'+
+														'<p>'+pText.val().replace(/\n/g, "<br>")+'</p>'+
+														'<p><b>'+"{{infoUser.nickname}}"+'</b>&nbsp;&nbsp;<span class="time"></span></p>'+			
+													'</div>'+
+													'<div class="reply">'+
+														'<a class="replyBtn" onclick="replyEdit(this)" style="cursor:pointer;">답글</a>'+
+													'</div>'+
+												'</div>';
+
+		//테이블의 div자식이 있으면 div 뒤에 붙인다. 없으면 테이블 안에 div을 붙인다.
+		if($('.commentWrap').contents().size()==0){//댓글 처음일때
+			$('.commentArea').append(commentPText);
+		}else{//댓글 있을때
+			$('.commentWrap').append(commentPText);
+		}
+		$("#commentPText").val("");
+		
+		$(function(){				
+			var now = new Date();					
+			var nowTime = ((now.getMonth()+1 < 10) ? "0" : "") + (now.getMonth()+1) +"-"+ (now.getDate()<10 ? "0" : "") +now.getDate()+(now.getHours()<10 ? "0" : " ")+now.getHours()+":"+(now.getMinutes() < 10 ? "0" : "")+now.getMinutes();
+			$(".time").text(nowTime);					
+		});		
+	}
+
+//답글 클릭시 에디터 뿌리기
+	function replyEdit(param){
+		//var parentElement = $(param).parent().parent().next(); //자식 첫번째
+		var parentElement = $(param).parent().parent(); //자식 첫번째		
+
+		//부모의 하단에 답글달기 창을 삽입					
+		var commentEditor = '<div id="commentEditor" class="commentSubArea">'+
+													'<img src="{{ STATIC_URL }}img/turn-right.png" class="turnImg" />'+
+													'<div class="comment_edit_bottom">'+
+														'<textarea name="inputArea" id="commentCText" cols="80" rows="2" placeholder="답글달기:)">'+
+														'</textarea>'+
+													'</div>'+
+													'<span>'+
+														'<button type="button" id="commentChildSubmit" name="commentChildSubmit" class="btn btn-success" onclick="cmtChildBtn(this);">답글달기</button>'+
+													'</span>'+
+												'</div>'
+		$("#commentEditor").remove();//답글달기 창을 없앤다.				
+		if($(parentElement).next().attr("name") != "commentCCode"){
+			parentElement.after(commentEditor);			
+		}
+		else{
+			while($(parentElement).next().attr("name") == "commentCCode"){
+				parentElement = parentElement.next();
+			}
+			parentElement.after(commentEditor);			
+		}
+	}
+
+//댓글의 답글버튼 이벤트
+	function cmtChildBtn(param){
+		var cText = $("#commentCText");
+
+		if($.trim(cText.val())==""){
+			alert("내용을 입력하세요.");
+			cText.focus();
+			return;
+		}
+		
+		var commentCText	=	'<div class="commentSubArea" name="commentCCode">'+
+													'<img src="{{ STATIC_URL }}img/turn-right.png" class="turnImg"/>'+
+													"{% if user.picKey == 0 %}"+
+													 '<img style="float:left;" "margin-right:20px" src="{{ STATIC_URL }}img/ic_user.png" class="img-circle" onError="this.src="{{ STATIC_URL }}img/ic_user.png"" width="50px" height="50px"/>'+         
+													"{% else %}"+
+														'<img src="{{infoUser.picKey}}" class="img-circle" onError="this.src="{{ STATIC_URL }}img/ic_user.png"" width="50px" eight="50px"/>'+
+													"{% endif %}"+
+													'<div class="comment_bottom">'+
+														'<p>'+cText.val().replace(/\n/g, "<br>")+'</p>'+
+														'<p><b>'+"{{infoUser.nickname}}"+'</b>&nbsp;&nbsp;<span class="time"></span></p>'+
+													'</div>'+													
+												'</div>'
+		//앞의 div노드 찾기
+		var currentDiv = $(param).parent().parent(); //답글 에디터
+		var prevDiv = currentDiv.prev();	
+		
+		while($(currentDiv).attr('name') != 'commentPCode'){
+			currentDiv = currentDiv.prev();
+		}
+		$("#commentEditor").remove();//답글 에디터 삭제
+		prevDiv.after(commentCText);
+
+		console.log($('.detail_title').attr("writingId"), cText.val(), $(currentDiv).attr('commentId'))
+		$.post("/addComment/", {writingId:$('.detail_title').attr("writingId"), text:cText.val(), commentType:1, parentId:$(currentDiv).attr('commentId')}, 
+			function(data){				
+		});
+
+		$(function(){//대댓글 날짜 파싱
+			var now = new Date();					
+			var nowTime = ((now.getMonth()+1 < 10) ? "0" : "") + (now.getMonth()+1) +"-"+ (now.getDate()<10 ? "0" : "") +now.getDate()+(now.getHours()<10 ? "0" : " ")+now.getHours()+":"+(now.getMinutes() < 10 ? "0" : "")+now.getMinutes();
+			$(".time").text(nowTime);					
+		});	
+	}	
+</script>
+
+{% endblock %}
+{% endblock%}

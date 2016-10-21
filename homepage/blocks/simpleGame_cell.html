@@ -1,0 +1,291 @@
+<style>	
+	table.betTable{
+		margin: 0 auto;
+		}
+		
+	table.betTable tr{line-height: 35px; vertical-align: bottom;}
+	table.betTable tr td{
+		border: solid 1px #607d8b; 		
+	}	
+	
+	table.betTable {width: 100%}
+	.dat{float: right;}
+	tr.betRow {background-color: #f2f2f2}
+	tr.betRow td.over{background-color: #f3b60c}
+
+	.highlight{
+		background-color: #f3b60c}
+
+	td.game_num{
+		width:10%;
+		background-color: #d2d2d2; 
+		text-align: center; 		
+	}
+	td.homePic{width: 35%}
+	span.homeTeam{float: left; margin-right: 5px;}
+	.homeTeam img{margin: 0px 10px 0px 10px;}
+
+	span.homeWin {float: right; margin-right: 15px;}
+
+	td.awayPic{width: 35%}
+	span.awayTeam {float: right;}
+	td.awayPic img{
+		margin: 0px 10px 0px 10px;}
+	span.awayLose{margin-left: 15px;}
+
+	td.drawPic {width: 10%; text-align: center;}
+
+	span.under{color: blue;}
+	span.over{color: red;}
+	.betInfo td:first-child{border-right: none;}
+	.betInfo td:nth-child(2){border-left: none;}
+
+</style>
+
+
+
+
+
+<script>//날짜 같은것끼리 모아줌
+	$(".dat").each(function(i){
+		if($(".dat").eq(i).text() == $(".dat").eq(i+1).text()){
+			$(".dat").eq(i+1).hide();
+			$(".lea").eq(i+1).hide();		
+		};
+	});
+</script>
+
+<script>
+	var home = 1
+	var draw = 4
+	var away = 2
+	var cancel = 3
+
+	var betTotal = $('#betValue').val();// 배당 초기값1.0
+	var money = $('#money').val(); // 가상머니 초기값5000
+	var totalMoney = $('#totalMoney').val();//예상적중금액 
+
+	var betList = []; //game, choice 담는 배열, realGameId 기존하고 비교
+	
+
+
+/* 가상머니 바꾸면 적중금액 바뀌기 미완성
+	$('input#money').keyup(function(){		
+		money = $('#money').val();		
+		$('#totalMoney').val(money * betTotal);
+	});*/	
+
+
+for(i=0; i<betList.length; i++){
+		if(betList[i].realGameId == $(this).attr('realGameId')){
+			alert("같은 게임을 2개이상 선택할 수 없습니다");
+			break;
+		}
+		else{
+			
+		}
+	}	
+
+$('.betd').on('click', function(event){
+
+	$(event.target).toggleClass('highlight');
+	$(this).siblings().removeClass('highlight');
+
+	var gameId = event.target.id;	
+	var betNum = $(this).attr("ratio");
+
+	if($(this).attr('bet')==0){
+		if($(this).hasClass('highlight') == true){
+		
+			betTotal = betNum * betTotal; // 진짜 총 배당
+			betTotal1 = (Math.ceil(betTotal*10))/10; // 보여주는 총 배당
+			
+			$("#betValue").attr("value", betTotal1);
+			//$("#betValue").text(betTotal1);
+
+			var totalMoney = $("#money").attr("value") * betTotal1;
+			$("#totalMoney").attr("value", totalMoney);
+						
+			betList.push({gameId:gameId, choice:home, realGameId:$(this).attr('realGameId')});			
+		}
+		else{				
+			betTotal = betTotal / betNum;
+			betTotal1 = (Math.ceil(betTotal*10))/10; // 보여주는 총 배당
+
+			$("#betValue").attr("value", betTotal1);
+			var totalMoney = $("#money").attr("value") * betTotal1;
+			$("#totalMoney").attr("value", totalMoney);
+
+			betList.pop({gameId:gameId, choice:home, realGameId:$(this).attr('realGameId')});				
+		}		
+	}
+	else if($(this).attr('bet')==1){
+		if($(this).hasClass('highlight') == true){
+		
+			betTotal = betNum * betTotal; // 진짜 총 배당
+			betTotal1 = (Math.ceil(betTotal*10))/10; // 보여주는 총 배당
+			
+			$("#betValue").attr("value", betTotal1);
+			//$("#betValue").text(betTotal1);
+
+			var totalMoney = $("#money").attr("value") * betTotal1;
+			$("#totalMoney").attr("value", totalMoney);
+			
+			betList.push({gameId:gameId, choice:draw, realGameId:$(this).attr('realGameId')});			
+		}
+		else{				
+			betTotal = betTotal / betNum;
+			betTotal1 = (Math.ceil(betTotal*10))/10; // 보여주는 총 배당
+
+			$("#betValue").attr("value", betTotal1);
+			var totalMoney = $("#money").attr("value") * betTotal1;
+			$("#totalMoney").attr("value", totalMoney);
+
+			betList.pop({gameId:gameId, choice:draw, realGameId:$(this).attr('realGameId')});				
+		}		
+	}
+	else if($(this).attr('bet')==2){
+		if($(this).hasClass('highlight') == true){
+		
+			betTotal = betNum * betTotal; // 진짜 총 배당
+			betTotal1 = (Math.ceil(betTotal*10))/10; // 보여주는 총 배당
+			
+			$("#betValue").attr("value", betTotal1);
+			//$("#betValue").text(betTotal1);
+
+			var totalMoney = $("#money").attr("value") * betTotal1;
+			$("#totalMoney").attr("value", totalMoney);
+			
+			betList.push({gameId:gameId, choice:away, realGameId:$(this).attr('realGameId')});			
+		}
+		else{				
+			betTotal = betTotal / betNum;
+			betTotal1 = (Math.ceil(betTotal*10))/10; // 보여주는 총 배당
+
+			$("#betValue").attr("value", betTotal1);
+			var totalMoney = $("#money").attr("value") * betTotal1;
+			$("#totalMoney").attr("value", totalMoney);
+
+			betList.pop({gameId:gameId, choice:away, realGameId:$(this).attr('realGameId')});				
+		}
+	}	
+	for(i=0; i<betList.length; i++){		
+		console.log(betList[i]);
+	}	
+});
+
+	
+
+//홈 픽 골랐을때
+/*
+	$('.homePic').on("click", function(event){
+		$(event.target).toggleClass("highlight"); //색깔 토글			
+		
+		var gameId = event.target.id;		
+		console.log(gameId);
+		var betNum = $(this).attr("ratio");				
+			
+		if( $(event.target).hasClass("highlight") == true ){			
+
+				betTotal = betNum * betTotal; // 진짜 총 배당
+				betTotal1 = (Math.ceil(betTotal*10))/10; // 보여주는 총 배당
+				
+				$("#betValue").attr("value", betTotal1);
+				//$("#betValue").text(betTotal1);
+
+				var totalMoney = $("#money").attr("value") * betTotal1;
+				$("#totalMoney").attr("value", totalMoney);
+				
+				betList.push({gameId:gameId, choice:home})				
+			}
+			else{				
+				betTotal = betTotal / betNum;
+				betTotal1 = (Math.ceil(betTotal*10))/10; // 보여주는 총 배당
+
+				$("#betValue").attr("value", betTotal1);
+				var totalMoney = $("#money").attr("value") * betTotal1;
+				$("#totalMoney").attr("value", totalMoney);
+
+				betList.pop({gameId:gameId, choice:home});				
+			}
+			for(i=0; i<betList.length; i++){
+					console.log(betList[i]);
+			}	
+		});
+	
+
+//동점 픽 골랐을때
+	$('.drawPic').on("click", function(event){
+		
+		$(event.target).toggleClass("highlight"); //색깔 토글	
+		$(event.target).attr("disabled", false);
+
+		var gameId = event.target.id;
+		console.log(gameId);
+
+		var betNum = $(this).attr("ratio");		
+
+		if( $(event.target).hasClass("highlight") == true ){	
+			
+			betTotal = betNum * betTotal; // 진짜 총 배당
+			betTotal1 = (Math.ceil(betTotal*10))/10; // 보여주는 총 배당
+			
+			$("#betValue").attr("value", betTotal1);
+			var totalMoney = $("#money").attr("value") * betTotal1;
+			$("#totalMoney").attr("value", totalMoney);
+			
+			betList.push({gameId:gameId, choice:draw})			
+		}
+		else{
+			betTotal = betTotal / betNum;
+			betTotal1 = (Math.ceil(betTotal*10))/10; // 보여주는 총 배당
+
+			$("#betValue").attr("value", betTotal1);
+			var totalMoney = $("#money").attr("value") * betTotal1;
+			$("#totalMoney").attr("value", totalMoney);			
+			
+			betList.pop({gameId:gameId, choice:draw});			
+		}
+		for(i=0; i<betList.length; i++){
+				console.log(betList[i]);		 	
+		}	
+	});
+
+//어웨이 픽 골랐을때
+	$('.awayPic').on("click", function(event){
+
+		$(event.target).toggleClass("highlight"); //색깔 토글	
+		$(event.target).attr("disabled", false);
+
+		var gameId = event.target.id;
+		console.log(gameId);
+
+		var betNum = $(this).attr("ratio");		
+
+		if( $(event.target).hasClass("highlight") == true ){			
+
+			betTotal = betNum * betTotal; // 진짜 총 배당
+			betTotal1 = (Math.ceil(betTotal*10))/10; // 보여주는 총 배당
+			
+			$("#betValue").attr("value", betTotal1);
+			var totalMoney = $("#money").attr("value") * betTotal1;
+			$("#totalMoney").attr("value", totalMoney);
+			
+			betList.push({gameId:gameId, choice:away})			
+		}
+		else{			
+			betTotal = betTotal / betNum;
+			betTotal1 = (Math.ceil(betTotal*10))/10; // 보여주는 총 배당
+
+			$("#betValue").attr("value", betTotal1);
+			var totalMoney = $("#money").attr("value") * betTotal1;
+			$("#totalMoney").attr("value", totalMoney);			
+			
+			betList.pop({gameId:gameId, choice:away});	
+		}
+		for(i=0; i<betList.length; i++){
+				console.log(betList[i]);		 	
+		}	
+	});
+*/
+</script> 

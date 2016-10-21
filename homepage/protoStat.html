@@ -1,0 +1,113 @@
+											
+		<div class="feedTheme"><b>최근 8주간의 요약</b></div>
+		<table class="table table-bordered feedTable">
+			<tr>
+				<td>배팅금액 {{totalMoney}}</td>
+				<td>당첨금액 {{totalPrize}}</td>
+			</tr>
+			<tr>
+				<td>세트 수 {{totalFolder}}</td>
+				<td class="profitRatio" totalMoney="{{totalMoney}}" totalPrize="{{totalPrize}}"></td>
+			</tr>
+		</table>
+
+		
+		
+		
+
+		<div class="feedTheme"><b>배팅당 폴더수 통계</b></div>
+		<table class="table table-bordered feedTable">
+			<thead>
+				<th>폴더수</th>
+				<th>등록수</th>
+				<th>총베팅금액</th>
+				<th>수익금</th>
+			</thead>
+			<tbody>									
+				{% for i in statFolder %}
+				<tr class="statFolder">
+					<td>{{i.0}}</td>
+					<td>{{i.1}}</td>
+					<td>{{i.2}}</td>
+					<td>{{i.3}}</td>
+				</tr>
+				{% endfor %}									
+			</tbody>
+		</table>
+
+		<div class="feedTheme"><b>리그별 배팅 통계</b></div>
+		<table class="table table-bordered feedTable">
+			<thead >
+				<th>리그명</th>
+				<th>배팅횟수</th>
+				<th>적중횟수</th>
+				<th>적중률</th>
+			</thead>
+			<tbody>
+				{% for j in statBet %}
+				<tr>
+					<td>{{j.0}}</td>
+					<td>{{j.1}}</td>
+					<td>{{j.2}}</td>
+					<td class="leagueCorrectRatio" betCount="{{j.1}}" correctCount="{{j.2}}"></td>
+				</tr>
+				{% endfor %}									
+			</tbody>
+		</table>
+
+		<div class="feedTheme"><b>게임유형별 배팅 통계</b></div>
+		<table class="table table-bordered feedTable">
+			<thead>                            
+				<th>게임유형</th>
+				<th>배팅횟수</th>
+				<th>적중횟수</th>
+				<th>적중률</th>
+			</thead>
+			<tbody>
+				{% for i in statType %}									
+				<tr>
+					{% if i.0 == 0 %}<td>일반</td>{% endif %}
+					{% if i.0 == 2 %}<td>언오버</td>{% endif %}
+					{% if i.0 == 1 %}<td>핸디</td>{% endif %}
+					<td>{{i.1}}</td>
+					<td>{{i.2}}</td>
+					<td class="typeCorrectRatio" betCount="{{i.1}}" correctCount="{{i.2}}"></td>
+				</tr>
+				{% endfor %}
+			</tbody>
+		</table>				
+	
+
+
+
+<script>
+	//8주간 수익률계산
+	$(document).ready(function(){
+		var totalMoney = parseInt($('.profitRatio').attr('totalMoney'))
+		var totalPrize = parseInt($('.profitRatio').attr('totalPrize'))
+		var realProfit = (Math.abs(totalMoney - totalPrize) / totalMoney *100).toFixed(1)
+
+		if(totalPrize-totalMoney < 0 ){
+			$('.profitRatio').html('수익률 -'+realProfit+'%')
+		}
+		if(totalPrize-totalMoney > 0 ){
+			$('.profitRatio').html('수익률 +'+realProfit+'%')
+		}
+	
+	//리그별 적중률계산
+		var statBet = $('td.leagueCorrectRatio');	
+		for (var k=0; k < statBet.length; k++){
+			var lbc=parseInt($(statBet[k]).attr("betCount"))
+			var lbcC=parseInt($(statBet[k]).attr("correctCount"))
+			$(statBet[k]).html(((lbcC/lbc)*100).toFixed(1)+'%');
+		}
+
+	//게임유형별 적중률꼐산
+		var statType = $('td.typeCorrectRatio');
+		for (var i=0; i < statType.length; i++){
+			var sbc = parseInt($(statType[i]).attr('betCount'))
+			var sbcC = parseInt($(statType[i]).attr('correctCount'))
+			$(statType[i]).html(((sbcC/sbc)*100).toFixed(1)+'%');
+		}
+	});
+</script>

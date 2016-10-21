@@ -1,0 +1,178 @@
+{% extends 'homepage/base.html' %}
+
+{% block content %}
+
+
+{% block load_css %}
+
+	<style>
+		div.boughtDetailArea{
+			margin-top: 30px;
+	    padding-bottom: 30px;
+	    background-color: white;
+		}
+		div.boughtAccount{
+			margin-top: 30px;
+		}
+	/*픽스타리그*/
+		div.leagueDiv{
+      margin: 0 auto;
+      margin-top: 20px;
+      width: 80%    
+    }
+    table.leagueTable{    
+      table-layout: fixed;
+      font-size: 15px;  
+    }    
+    span.date{float: right;}
+    span.homeWin,.awayTeam{float: right;}
+
+    .drawTd{
+      text-align: center;
+    }
+    td.leaguePoint{   
+      text-align: center;   
+      font-size:25px;
+    }
+    span.buyNum{
+      text-align: center;
+      font-size: 15px;
+    }
+    span.leagueScore{margin-left: 44%;}
+    .leagueProgress{float: right;}
+    
+    span.under{color: blue;}
+    span.over{color: red;}
+    .yellow{background-color: #ffff80;}
+    .blue{color:blue;}
+    .orange{color:orange;}
+    .nickname{font-size: 15px;}
+		
+		span.buyUser{float: right;}
+	</style>
+{% endblock %}
+
+{% block main %}
+<div class="container">
+	<div class="row">
+		<div class="col-md-9">
+			<div id="boughtArea">
+
+				<ul class="nav nav-tabs nav-justified user_nav">
+					<li >
+						<a href="#leaguePicArea" data-toggle="tab"><b>리그픽</b></a>
+					</li>
+					<li class="active">
+						<a href="#folderPicArea" data-toggle="tab"><b>폴더픽</b></a>
+					</li> 
+				</ul><!--user_nav-->
+			 
+				<div class="tab-content boughtDetailArea">
+					<div class="tab-pane " id="leaguePicArea"></div>
+					<div class="tab-pane active" id="folderPicArea"></div>     
+				</div>
+
+			</div>
+		</div><!--end col-md-9--> 
+	</div>
+</div>
+
+
+
+
+
+<script>
+// 구매한 리그픽   
+	$.getJSON('/boughtList/', {state:1, page:0}, function(data){
+		
+		var leaguePicList = data.folderList;// 구매한 리그픽리스트
+		
+		var leaguePic ="";
+		for(var i=0 in leaguePicList){
+      leaguePic += '<div class="leagueDiv" onclick="goPersonalPage('+leaguePicList[i].user.userId+')">'
+      leaguePic += '<table class="table table-bordered leagueTable">';
+      leaguePic += '<tr>';
+      leaguePic += '<td colspan="3">'+leaguePicList[i].round+'회차&nbsp;'+leaguePicList[i].num+'&nbsp;'+
+                  leaguePicList[i].league+'&nbsp;<span class="date">'+parseDate(leaguePicList[i].date)+'</span></td>';
+      leaguePic += '<td class="leaguePoint" rowspan="3" point="'+leaguePicList[i].point+'">';
+      leaguePic += (leaguePicList[i].point > 0) ? '<span class="blue">적중<br>+'+leaguePicList[i].point : '';
+      leaguePic += (leaguePicList[i].point < 0) ? '<span class="orange">미적중<br>'+leaguePicList[i].point : '';
+      leaguePic += (leaguePicList[i].point == 0) ? '<span>대기중' : '';
+      leaguePic += '</span>';
+      leaguePic += '<div class="user_image">';
+			/*leaguePic += (leaguePicList[i].user.picKey == 0) ? '<img style="margin-right:5px" src="{{ STATIC_URL }}img/ic_user.png" class="img-circle" onError="this.src="{{ STATIC_URL }}img/ic_user.png"" width="30px" height="30px"/>' : '<img src="leaguePicList[i].user.picKey" class="img-circle" onError="this.src="{{ STATIC_URL }}img/ic_user.png"" width="30px" eight="30px"/>';*/
+			
+			leaguePic += '<span class="nickname">'+leaguePicList[i].user.nickname+'</span>';
+			leaguePic += '</div>';
+      leaguePic += '</td></tr>';
+
+      leaguePic += '<tr>';
+      leaguePic += (leaguePicList[i].singleChoice == 1) ? '<td class="homeTd yellow">' : '<td class="homeTd">';           
+      leaguePic += leaguePicList[i].home+'<span class="homeWin">'+leaguePicList[i].win;
+      leaguePic += (leaguePicList[i].gameType == 2) ? '<span class="under">↓</span>' : ''+'</span></td>';
+      
+      leaguePic += (leaguePicList[i].singleChoice == 4) ? '<td class="drawTd yellow">' : '<td class="drawTd">';     
+      leaguePic += (leaguePicList[i].draw) ? leaguePicList[i].draw : '';      
+      leaguePic += (leaguePicList[i].gameType == 2) ? '<span class="blue">U '+leaguePicList[i].handiNum : ''+'</span></td>';
+
+      leaguePic += (leaguePicList[i].singleChoice == 2) ? '<td class="awayTd yellow">' : '<td class="awayTd">';   
+      leaguePic += leaguePicList[i].lose;
+      leaguePic += (leaguePicList[i].gameType == 2) ? '<span class="over">↑</span>' : '';
+      leaguePic += '<span class="awayTeam">'+leaguePicList[i].away+'</span></td></tr>';
+
+      leaguePic += '<tr><td colspan="3">';
+      leaguePic += (leaguePicList[i].gameType == 0) ? '<span class="leagueScore">'+leaguePicList[i].homescore+'&nbsp;&nbsp;&nbsp;vs&nbsp;&nbsp;&nbsp;'+leaguePicList[i].awayscore+'</span>' : '';
+      leaguePic += (leaguePicList[i].gameType == 1) ? 'H '+leaguePicList[i].handiNum+'.0&nbsp;<span class="leagueScore">'+leaguePicList[i].homescore+'&nbsp;vs&nbsp;'+leaguePicList[i].awayscore+'</span>' : '';      
+      leaguePic += (leaguePicList[i].gameType == 2) ? '<span class="leagueScore">'+leaguePicList[i].drawscore+'</span>' : '';
+      leaguePic += (leaguePicList[i].progress == null) ? '<span class="leagueProgress"><b>대기중' : '<span class="leagueProgress blue"><b>'+leaguePicList[i].progress+'</b>';
+      leaguePic += '</span></td></tr>';
+      leaguePic += '</table>';
+      leaguePic += '</div>'
+    }  
+    $('#leaguePicArea').html(leaguePic);
+  });
+
+
+
+// 구매한 폴더픽    
+	$.getJSON('/boughtList/', {state:0, page:0}, function(data){
+		
+		var folderPicList = data.folderList;
+		console.log(folderPicList);		
+
+		var folderPic ="";
+		
+		for(var i=0; i < folderPicList.length; i++){		
+			folderPic += '<div class="boughtAccount">';
+			folderPic += '<table class="table table-bordered">';
+			folderPic += '<tbody>'
+		 	folderPic += '<tr><td colspan="6">프로토 '+folderPicList[i].round+'회차<td></tr>'
+
+		 	var bet = folderPicList[i].betList;
+			console.log(bet);
+		 	for(var j=0; j < bet.length; j++){
+		 		folderPic += '<tr><td>'+bet[j].num+'</td>';
+		 		folderPic += '<td>'+bet[j].date+'</td>';
+		 		folderPic += '<td>'+bet[j].league+'</td>';
+		 		folderPic += '<td>'+bet[j].home+bet[j].win+'</td>';
+		 		folderPic += '<td>'+bet[j].draw+'</td>';
+		 		folderPic += '<td>'+bet[j].lose+bet[j].away+'</td>';
+		 		folderPic += '<td>'+bet[j].homescore+':'+bet[j].awayscore+'</td></tr>';
+		 	}
+		 	folderPic += '</tbody></table>'
+		 	folderPic += '<div class="betInfo">';
+		 	folderPic += '배팅시간 : '+folderPicList[i].date+'<br>';
+		 	folderPic += '배팅금액 : '+folderPicList[i].money+'<br>';
+		 	folderPic += '배당 : '+folderPicList[i].ratio;
+		 	folderPic += '<span class="buyUser">picked by'+'<img src="folderPicList[i].user.picKey">'+folderPicList[i].user.nickname+'</span>';
+		 	folderPic += '</div>';		 	
+			folderPic += '</div>'
+		}		  
+		$('#folderPicArea').append(folderPic);		
+	});
+</script>
+
+
+{% endblock %}
+{% endblock %}
+

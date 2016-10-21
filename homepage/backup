@@ -1,0 +1,1275 @@
+
+
+{% block load_css %}
+  <link rel="stylesheet" href="{{ STATIC_URL }}h_css/mainnav.css">
+{% endblock %}
+
+
+
+<nav class="navbar navbar-defualt navbar-fixed-top" role="navigation">
+  <div class="nav-header">
+    
+    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar_menu">
+      <img src="{{ STATIC_URL }}img/menu.png" width="20px" height="20px "alt="">
+    </button>
+    <!--<div class="navbar_img">-->
+      <a class="brand" href="http://web.picstar.me:8880">
+        <img src="{{STATIC_URL}}img\picImg.png" height="45px" width="150px">
+      </a> 
+    <!--</div>-->
+  </div><!--end nav_wrappper-->
+    
+    <div class="collapse navbar-collapse navbar_menu">                          
+      <ul class="nav navbar-nav">
+        <li ><a class="navbar-menu" href="http://web.picstar.me:8880">홈</a></li>
+        <li ><a class="navbar-menu" href="/gamelist">경기목록</a></li>
+        <li ><a class="navbar-menu" href="/ranking">픽스타랭킹</a></li>
+        <li ><a class="navbar-menu" href="/picboard">픽게시판</a></li>
+        <li ><a class="navbar-menu" href="/freeboard">쉼터</a></li>
+        <li ><a class="navbar-menu" href="#" onclick="goPersonalPage({{user.id}})">개인페이지</a></li>
+      </ul>
+          
+
+    <ul class="nav navbar-nav navbar-right">
+      <li>
+      <div class="navbar_right">
+      
+        <div class="navbar_search">
+          <form class="navbar-form" role="search">
+            <div class="form-group searchForm">
+              <input type="text" class="form-control" placeholder="유저검색">
+              <a id="search" href="#">
+                <span class="glyphicon glyphicon-search"></span>
+              </a>
+            </div>
+          </form>                                         
+        </div>
+      </div><!--end navbar_right--> 
+      </li>
+      <li>
+        <div class="navbar_login"><!--로그인, 회원가임버튼-->              
+          <!--<span class="glyphicon glyphicon-bell" id="notice" data-toggle="popover" data-placement="bottom" title="" data-content="">
+          </span>-->      
+          {% if user.is_anonymous  %}  
+            <button type="button" class="btn btn-default" data-toggle="modal" data-target="#lgin">로그인</button>
+            <button type="button" class="btn btn-default" data-toggle="modal" data-target="#sgUp">회원가입</button>
+            <!--<a class="btn btn-default lg-btn" href="/loginPage" role="button">로그인</a>
+            <a class="btn btn-default su-btn" href="/sgUpPage" role="button">회원가입</a>-->
+
+          {% else %}                              
+            <span class="infoUser"><b>{{ infoUser.nickname }}</b> 님 반갑습니다</span>
+            <span><a class="btn btn-default" href="/logout/" role="button">로그아웃</a></span>                  
+          {% endif %}
+
+
+        <!-- 로그인 Modal -->
+          <div class="modal fade" id="lgin" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                  <h4 class="modal-title" id="myModalLabel">로그인</h4>
+                </div>
+                <div class="modal-body">
+                  <form id="loginForm" class="form-horizontal" method="post" accept-charset="utf-8" action="/lgin/">
+                    <div class="form-group">
+                      <label for="username" class="col-sm-2 control-label">이메일</label>
+                      <div class="col-sm-10">
+                        <input type="email" class="form-control" id="username" name="username" placeholder="이메일" autofocus />
+                      </div>
+                    </div>
+                    <div class="form-group">
+                      <label for="password" class="col-sm-2 control-label">비밀번호</label>
+                      <div class="col-sm-10">
+                        <input type="password" class="form-control" id="password" name="password" placeholder="비밀번호">
+                      </div>
+                    </div>
+                    <div class="form-group">
+                      <div class="col-sm-offset-2 col-sm-10">
+                        <div class="checkbox">
+                          <label><input type="checkbox"> 비밀번호 기억</label>
+                        </div>
+                      </div>
+                    </div>                    
+                  </form>   
+                </div>
+                <div class="modal-footer">                  
+                  <div class="form-group">
+                    <div class="col-sm-offset-2 col-sm-10">
+                      <button type="submit" class="btn btn-default"  data-dismiss="modal" id="lg">로그인</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        <!-- 회원가입 Modal -->
+          <div class="modal fade" id="sgUp" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                  <h4 class="modal-title" id="myModalLabel">회원가입</h4>
+                </div>
+                <div class="modal-body">
+                  <form id="sgUpForm" class="form-horizontal" method="post" accept-charset="utf-8" action="/sgUp/">
+                    <div class="form-group">
+                      <label for="username" class="col-sm-2 control-label">이메일</label>
+                      <div class="col-sm-10">
+                        <input type="email" class="form-control" id="email" name="username" placeholder="이메일" autofocus>
+                      </div>
+                    </div>
+                    <div class="form-group">
+                      <label for="password" class="col-sm-2 control-label">비밀번호</label>
+                      <div class="col-sm-10">
+                        <input type="password" class="form-control" id="pwd" name="password" placeholder="비밀번호">
+                      </div>
+                    </div>
+                    <div class="form-group">
+                      <label for="pwdchk" class="col-sm-2 control-label">비밀번호확인</label>
+                      <div class="col-sm-10">
+                        <input type="password" class="form-control" id="pwdchk" name="pwdchk" placeholder="비밀번호확인">
+                      </div>
+                    </div>
+                    <div class="form-group">
+                      <label for="nickname" class="col-sm-2 control-label">닉네임</label>
+                      <div class="col-sm-10">
+                        <input type="text" class="form-control" id="nickname" name="nickname" placeholder="닉네임">
+                      </div>
+                    </div>                    
+                  </form>   
+                </div>
+                <div class="modal-footer">
+                  <div class="form-group">
+                    <div class="col-sm-offset-2 col-sm-10">
+                      <button type="submit" class="btn btn-default" id="first" onclick="formSubmit();" data-dismiss="modal">회원가입</button>
+                    </div>
+                  </div>                  
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </li>
+      
+    </ul>
+    </div>
+  
+</nav><!--end nav-->
+
+
+<script>/*
+  $(function () {
+    var trigger = $('#trigger');
+    var menu = $('nav ul');
+    $(trigger).on('click', function (e) {
+      e.preventDefault();
+      menu.slideToggle();
+    });
+    $(window).resize(function () {
+      var w = $(window).width();
+      if (w > 320 && menu.is(':hidden')) {
+        menu.removeAttr('style');
+      }
+    });
+  });*/
+</script>
+
+<script>//로그인
+  $('#first').click(function(){
+    var username = $('#username').val();
+    var password = $('#password').val();
+    //var nickname = $('#nickname').val();
+    var params0 = {username:username, password:password};
+    
+    $.ajax({
+      type: 'POST',
+      data: params0,
+      url: '/sgUp/',
+      dataType: 'html',
+      success: function(){              
+      }
+    })
+  })
+</script>
+
+
+
+
+<script>//개인 아이디번호 가져오기
+  function goPersonalPage(personalId){
+    window.location.href = "/personal/personalPage/?personalId="+personalId;
+  }
+</script>
+
+
+  /*nav *{border: 1px dotted red;}*/
+  nav.navbar{     
+    background-color: #585858;    
+  }
+  div.nav_wrappper{
+    height: 60px;
+    
+  }
+  div.navbar_img{
+    display: inline-block;  
+    float: left;
+    margin-left: 20px;
+    margin-top: 7px;
+  }
+
+  div.navbar_menu{
+    display: inline-block;
+    margin-left: 30px;
+    margin-top: 5px;
+    width: 580px;   
+    float: left;    
+    }
+    .navbar_menu a{
+      color: #fff;
+    }
+    .navbar_menu ul li{
+      list-style: none;
+      padding-right: 10px; 
+    }
+    .navbar-nav a{
+      font-size: 16px;      
+    }   
+    
+    .navbar-nav a:hover{
+      background-color: #585858 !important;
+      border-bottom: 1.5px solid #fff;
+      font-weight: bold;
+    } 
+  
+  div.navbar_right{
+    float:right;    
+  }
+
+  div.navbar_search{
+    display: inline-block;    
+    width: 280px;
+    margin-top: 5px;
+    }
+    #search{
+      color: white;
+      vertical-align: middle;
+      margin-left: 10px;        
+      font-size: 20px;
+    } 
+  
+  div.navbar_login{
+    display: inline-block;    
+    vertical-align: middle;
+    margin-left: 20px;
+    margin-top: 3px;
+    }
+    .navbar_login button{
+      margin: 0px 10px 0px 0px;
+    }
+  
+  span.infoUser{
+    color: #ecf0f1;
+    font-size: 15px;
+    margin-right: 10px;
+  }
+  .glyphicon-comment, .glyphicon-bell{color: white; font-size: 30px; padding-right: 25px; padding-top: 15px}
+  .lg-btn, .su-btn{margin-bottom: 20px; margin-left: 10px}
+    
+
+  .navbar_menu a#trigger{
+    display: none;
+
+  }
+
+
+
+  @media screen and (max-width: 1200px){
+    
+  }
+
+  @media screen and (max-width: 320px){
+    nav{
+      border-bottom: 0;
+    }
+    nav ul{
+      display: none;
+      height: auto;
+    }
+    nav li{
+      display: block;
+      float: none;
+      width: 100%;
+    }
+    nav a#trigger{
+      display: block;
+      background-color: #283744;
+      width:100%;
+      position:relative;
+    }
+    nav a#trigger:after{
+      content: "";
+      background: url("{{ STATIC_URL }}img/menu.png")no-repeat;
+      width:30px;
+      height:30px;
+      display: inline-block;
+      position: absolute;
+    }
+  }
+}
+
+
+
+
+
+--------------------------------------------------------------
+<script>/*// 경기 점수 정수로 파싱
+  $(function(){
+    var homescore = "{{game.homescore}}"
+    homescore = Math.round(homescore);  
+    var awayscore = "{{game.awayscore}}"
+    awayscore = Math.round(awayscore);  
+  });*/
+</script>
+
+<script>/* //날짜 파싱
+  var newDate = new Date(date);//UTC를 GMT 변환  
+  var hour = newDate.getHours();
+  var minute = newDate.getMinutes();
+  
+  if(minute == 0){
+    minute = "00";
+  }
+  var gameDate = hour+":"+minute;
+  
+  //var t = $(gameDate).html()
+  $(".gameDate").html('<span>'+gameDate+'</span>'); */
+</script>
+-----------------------------------
+<script>/*//스크롤시 마지막 아이디값 던져서 다음 페이지 가져옴
+  $(document).scroll(function() {
+    maxHeight = $(document).height();
+    currentScroll = $(window).scrollTop() + $(window).height();
+    var currentPage = 1;
+    
+    if(maxHeight <= currentScroll) {
+      //{docId : $(".scroll:last").attr("value")}div의 마지막 id를 가져와 서버로 보냄
+      currentPage++;//페이지 증가
+      $.post('/freeboardCell/',{page: currentPage},
+        function(data){
+          $('#all').after(data);  
+      });
+    }
+  });*/
+</script>
+---------------------------------------------------
+
+---------------------------------------------------------------
+  <div class="tab-pane" id="news">
+
+    <div class="panel panel-default">              
+      <div class="panel-body">
+        <img src="http://imgnews.naver.net/image//512/2016/04/07/sptPostArticleImage-83378.jpg?type=w540" alt="articleImg" width="100%" height="400px">
+      </div>
+      <div class="panel-footer">
+        <a href="http://sports.news.naver.com/wbaseball/news/read.nhn?oid=512&aid=0000000004">추신수 MLB일기 이대호와 한국에서 온 반가운 ‘손님’들</a>
+      </div>
+    </div>
+    <div class="panel panel-default">
+      <div class="panel-body">
+        <img src="http://imgnews.naver.net/image/117/2016/04/06/201604060927692211_1_99_20160406092804.jpg" alt="articleImg" width="100%" height="400px">
+      </div>
+      <div class="panel-footer">
+        <a href="http://sports.news.naver.com/photocenter/photo.nhn?albumId=48473&photoId=1032711&category=mlb">추신수-이대호 "반갑다 친구야"</a>
+      </div>
+    </div>
+  </div>-->
+==================================================================
+상세리스트 추천유저/뉴스
+div.articel{margin: 10px 0px 10px 0px;}
+    div.latestReco{
+      background-color: #e6db74;
+      padding: 10px 0px 10px 10px;
+    }
+    div.recoUser{
+      margin: 10px 0px 10px 0px;
+    }
+    div.recoHead{
+      color: #a0a0a0;
+    }
+
+
+
+<div class="tab-pane" id="recoPick">
+            <div class="latestReco"><b>최근 픽스타 KBO 추천 유저</b></div>
+            
+            <div class="panel panel-default recoUser">
+              <div class="panel-heading recoHead">
+                {% if writing.user.picKey == '0' %}
+                <img src="{{ STATIC_URL }}img/ic_user.png" class="img-circle" 
+                      onError="this.src='{{ STATIC_URL }}img/ic_user.png' " width="25px" height="25px"/>          
+                {% else %}                
+                <img src="{{writing.user.picKey}}" class="img-circle" 
+                      onError="this.src='{{ STATIC_URL }}img/ic_user.png' " width="25px" height="25px"/>          
+                {% endif %}
+                <span class="nnn">배현민 적중률: 75.0%(15/20)</span>
+              </div>
+              <div class="panel-footer">
+                <div style="float:left">일반</div> <div style="float:left">승1.75</div> <div style="float:right">패1.69</div>
+              </div>
+            </div>
+            <div class="panel panel-default recoUser">
+              <div class="panel-heading recoHead">
+                {% if writing.user.picKey == '0' %}
+                <img src="{{ STATIC_URL }}img/ic_user.png" class="img-circle" 
+                      onError="this.src='{{ STATIC_URL }}img/ic_user.png' " width="25px" height="25px"/>          
+                {% else %}                
+                <img src="{{writing.user.picKey}}" class="img-circle" 
+                      onError="this.src='{{ STATIC_URL }}img/ic_user.png' " width="25px" height="25px"/>          
+                {% endif %}
+                <span class="nnn">배현민 적중률: 75.0%(15/20)</span>
+              </div>
+              <div class="panel-footer">
+                <span>일반 승1.75 패1.69</span>
+              </div>
+            </div>
+            <div class="latestReco"><b>최근 픽스타 KBO 추천 유저</b></div>
+            
+            <div class="panel panel-default recoUser">
+              <div class="panel-heading recoHead">
+                {% if writing.user.picKey == '0' %}
+                <img src="{{ STATIC_URL }}img/ic_user.png" class="img-circle" 
+                      onError="this.src='{{ STATIC_URL }}img/ic_user.png' " width="25px" height="25px"/>          
+                {% else %}                
+                <img src="{{writing.user.picKey}}" class="img-circle" 
+                      onError="this.src='{{ STATIC_URL }}img/ic_user.png' " width="25px" height="25px"/>          
+                {% endif %}
+                <span class="nnn">배현민 적중률: 75.0%(15/20)</span>
+              </div>
+              <div class="panel-footer">
+                <span>일반 승1.75 패1.69</span>
+              </div>
+            </div>
+            <div class="panel panel-default recoUser">
+              <div class="panel-heading recoHead">
+                {% if writing.user.picKey == '0' %}
+                <img src="{{ STATIC_URL }}img/ic_user.png" class="img-circle" 
+                      onError="this.src='{{ STATIC_URL }}img/ic_user.png' " width="25px" height="25px"/>          
+                {% else %}                
+                <img src="{{writing.user.picKey}}" class="img-circle" 
+                      onError="this.src='{{ STATIC_URL }}img/ic_user.png' " width="25px" height="25px"/>          
+                {% endif %}
+                <span class="nnn">배현민 적중률: 75.0%(15/20)</span>
+              </div>
+              <div class="panel-footer">
+                <span>일반 승1.75 패1.69</span>
+              </div>
+            </div>         
+          </div>
+
+---------------------------------------------------------------------------
+/'gameDetail'/
+{% extends 'homepage/base.html' %}
+    
+{% block content %}
+
+{% block load_css %}
+  <style>   
+    table.detail{
+      margin-top: 50px;
+      width: 100%
+      }
+      .detail tr td{
+        border: 1px solid; 
+        background-color: #504027;
+        color: white;
+        border:2px solid #aaa;       
+        text-align: center;
+        vertical-align: middle!important;
+        font-size:1.0em; 
+        padding:10px;
+      }    
+      .detail img{width: 30%;}    
+      .detail p.result {color: #26ffff;}
+    
+    div.articel{margin: 10px 0px 10px 0px;}
+    div.latestReco{
+      background-color: #e6db74;
+      padding: 10px 0px 10px 10px;
+    }
+    div.recoUser{
+      margin: 10px 0px 10px 0px;
+    }
+    div.recoHead{
+      color: #a0a0a0;
+    }
+  </style>
+{% endblock %}
+
+{% block main %}
+
+<div class="container">
+  <div class="row">
+    <div class="col-md-7">
+      <div id="detailGame">
+
+        <table class="table table-bordered detail">
+          <tr>
+            <!--<td>{{realGame.gameId}}</td>
+            <td>{{realGame.sport}}</td>
+            <td>{{realGame.round}}</td>-->
+            <td colspan="4">{{realGame.league}}</td>
+            <!--<td>{{realGame.stadium}}</td>
+            <t  d>{{realGame.result}}</td>
+            <td>{{realGame.liveLink}}</td>-->
+          </tr>
+          <tr class="infor">            
+            <td>
+              <img src="{{realGame.homePic}}" alt="homeTeam">
+              <p>{{realGame.home}}</p>
+            </td>
+            <td colspan="2">
+              <p>{{realGame.homescore}} vs {{realGame.awayscore}}</p>
+              <p>{{realGame.date}}</p>
+              <p class="result">{{realGame.progress}}</p>
+            </td>    
+            <td>
+              <img src="{{realGame.awayPic}}"alt="awayTeam"><p>{{realGame.away}}</p>
+            </td>
+            <!--<td>{{realGame.drawscore}}</td>-->
+          </tr>
+          <!--<tr>
+            <td>{{realGame.totalCount}}</td>
+            <td>{{realGame.homeCount}}</td>
+            <td>{{realGame.drawCount}}</td>
+            <td>{{realGame.awayCount}}</td>
+          </tr>-->
+          <tr>
+            <td>유형</td>
+            <td>승(언더)</td>
+            <td>무</td>
+            <td>패(오버)</td>
+          </tr>
+          <tr>
+          {% for onlyGame in realGame.protogames %}
+            <!--<td>{{onlyGame.gameId}}</td>-->
+            <!--<td>{{onlyGame.round}}</td>-->
+            <!--<td>{{onlyGame.num}}</td>-->            
+            <!--<td>{{onlyGame.sport}}</td>-->
+            <!--<td>{{onlyGame.league}}</td>-->
+            <!--<td>{{onlyGame.stadium}}</td>-->
+            <!--<td>{{onlyGame.result}}</td>-->
+            <!--<td>{{onlyGame.date}}</td>-->
+            <!--<td>{{onlyGame.home}}</td> 팀명-->
+            <!--<td>{{onlyGame.away}}</td> 팀명-->
+          <tr>            
+            <td>            
+              {% if onlyGame.gameType == 0%}<span class="blue">일반</span>{% endif %}
+              {% if onlyGame.gameType == 1%}<span class="blue">홈 핸디{{onlyGame.handiNum}}</span>{% endif %}
+              {% if onlyGame.gameType == 2%}<span class="blue">언더/오버 {{onlyGame.handiNum}}</span>{%endif%}
+            </td>
+            <td>
+              <!--<input type="radio" name="bet" value="win">--> {{onlyGame.win}}
+            </td>
+            <td>
+              {% if onlyGame.draw %}
+              <!--<input type="radio" name="bet" value="draw">-->{{onlyGame.draw}}
+              {% endif %}
+            </td>
+            <td>
+              <!--<input type="radio" name="bet" value="lose">-->{{onlyGame.lose}}
+            </td>
+          </tr>
+          <tr>
+            <!--<td>{{onlyGame.score}}</td>
+            <td>{{onlyGame.totalCount}}</td>
+            <td>{{onlyGame.homeCount}}</td>
+            <td>{{onlyGame.drawCount}}</td>
+            <td>{{onlyGame.awayCount}}</td>            
+            <td><img src="{{onlyGame.homePic}}" width="50px" height="50px" alt=""></td>
+            <td><img src="{{onlyGame.awayPic}}" width="50px" height="50px" alt=""></td>-->
+          </tr>
+          {% endfor %}                        
+        </table>      
+
+        <ul class="nav nav-tabs nav-justified navDetail">
+          <li class="active" role="presentation" id="foreign_tab">
+            <a href="#foreignPick" data-toggle="tab"><b>해외픽</b></a>
+          </li>
+          <li role="presentation" class="dropdown" id="match_tab">
+            <a href="#matchInfo" data-toggle="tab"><b>팀정보</b></a>
+          </li>
+          <li role="presentation" class="dropdown" id="league_tab">
+            <a href="#leagueInfo" data-toggle="tab"><b>리그정보</b></a>
+          </li>
+          <li class="presentation" role="presentation" id="opinion_tab">
+            <a href="#opinion" data-toggle="tab"><b>의견</b></a>
+          </li>         
+        </ul>
+
+        <div class="tab-content" ><!--ajax로 불러오는곳-->
+          <div class="tab-pane active" id="foreignPick"></div>
+          <div class="tab-pane" id="matchInfo"></div>
+          <div class="tab-pane" id="leagueInfo"></div>
+          <div class="tab-pane" id="opinion"></div>         
+        </div><!--end tab-content-->
+        
+    </div><!--end detailGame-->
+  </div><!--end col-md-9-->
+  {% block right %}
+    {% include 'homepage/rightbar.html' %}
+  {% endblock%}
+
+
+  </div><!--end row-->
+</div><!--end container-->
+
+
+
+<script>//url에서 게임id 가져옴.
+  getParameter = function(name){
+      search=location.search;
+      if(!search){
+          //파라미터가 하나도 없을때
+          document.write("에러 출력 텍스트");
+          return false;
+      }
+   
+      search=search.split("?");
+      data=search[1].split("=");
+      if(search[1].indexOf(name)==(-1) || data[0]!=name){
+          //해당하는 파라미터가 없을때.
+          return "";
+          return;
+      }
+      if(search[1].indexOf("&")==(-1)){
+          //한개의 파라미터일때.
+          data=search[1].split("=");
+          return data[1];
+      }else{
+      //여러개의 파라미터 일때.
+      data=search[1].split("&"); //엠퍼센트로 자름.
+      for(i=0;i<=data.length-1;i++){
+          l_data=data[i].split("=");
+          if(l_data[0]==name){
+              return l_data[1];
+              break;
+          }else continue;
+          }
+      }
+  }
+
+var gameId = getParameter("gameId");
+
+  $.ajax({//해외픽 불러오기
+    type: 'get',
+    data: {gameId: gameId},
+    url: '/web/predictInfo/',
+    dataType: 'html',
+    success:function(data){
+      $('#foreignPick').html(data);
+    }   
+  });
+  $.ajax({//리그정보 불러오기
+    type: 'get',
+    data: {gameId: gameId},
+    url: '/web/leagueInfo/',
+    dataType: 'html',
+    success:function(data){
+      $('#leagueInfo').html(data);
+    }   
+  });
+  $.ajax({//팀정보 불러오기
+    type: 'get',
+    data: {gameId: gameId},
+    url: '/web/matchInfo/',
+    dataType: 'html',
+    success:function(data){
+      $('#matchInfo').html(data);
+    }   
+  });
+  $.ajax({//의견 불러오기
+    type: 'get',
+    data: {gameId: gameId},
+    url: '/gameCommentList/',
+    dataType: 'html',
+    success:function(data){
+      $('#opinion').html(data);
+    }   
+  });    
+</script>   
+
+{% endblock%}
+{% endblock%}
+
+-------------------------------------------------
+<!--
+  <ul class="nav nav-tabs nav-justified">               
+    <li role="presentation" >
+      <a href="#new-predict" data-toggle="tab" aria-haspopup="true" aria-expanded="false">새로 예측하기</a>
+    </li>
+    <li role="presentation" class="active">
+      <a href="#open-myPredict" data-toggle="tab" aria-haspopup="true" aria-expanded="false">내 예측목록에서 불러오기</a>  
+    </li>   
+  </ul>-->      
+
+<!--
+<div class="tab-pane active" id="new-predict">
+  <form action="/addFolder/">
+    <div class="accountInfo">
+      <p><b>베팅금액은 최소 100원 이상 최대 100,000원까지 가능합니다</b></p>
+      <div>
+        <label for="betValue">배당</label>
+        <input type="text" id="betValue" value="1.0" />
+      </div>                        
+      <div>
+        <label for="money">가상머니(가계부)</label>
+        <input type="text" id="money" min="100" max="100000" value="5000" contenteditable="true" />
+      </div>
+      <div>
+        <label for="totalMoney">예상적중금액</label>
+        <input type="text" id="totalMoney" value="0">     
+      </div>
+    </div>
+    <div id="newGame">새로 예측할 경기불러오는곳
+    </div>
+  </form>                  
+</div>-->
+--------------------------------------------------------
+<table class="table onPopulartable">
+<tbody>
+  <tr>
+    <td>축구</td>
+    <td>첼시 <img src="{{STATIC_URL}}img\chicago.png" alt="thumbnsil" width="22px" height="22px"></td>
+    <td>1:2</td>
+    <td><img src="{{STATIC_URL}}img\toronto.png" alt="thumbnsil" width="22px" height="22px">왓포드</td>
+    <td>분데스리</td>
+    <td>총329건</td>
+  </tr>
+  <tr>
+    <td><img src="{{STATIC_URL}}img\ic_user.png" width="26px" height="25px" /></td>
+    <td>닉네임</td>
+    <td>최근 픽스타 축구 추천유저</td>
+    <td>적중률 73.7%</td>
+    <td>(14/19)</td>
+  </tr>
+  </tbody>
+</table>
+<table class="table onPopulartable">
+<tbody>
+  <tr>
+    <td>축구</td>
+    <td>첼시 <img src="{{STATIC_URL}}img\chicago.png" alt="thumbnsil" width="22px" height="22px"></td>
+    <td>1:2</td>
+    <td><img src="{{STATIC_URL}}img\toronto.png" alt="thumbnsil" width="22px" height="22px">왓포드</td>
+    <td>분데스리</td>
+    <td>총329건</td>
+  </tr>
+  <tr>
+    <td><img src="{{STATIC_URL}}img\ic_user.png" width="26px" height="25px" /></td>
+    <td>닉네임</td>
+    <td>최근 픽스타 축구 추천유저</td>
+    <td>적중률 73.7%</td>
+    <td>(14/19)</td>
+  </tr>
+  </tbody>
+</table>
+
+
+
+
+  $('.homePic').on("click", function(event){
+    $(event.target).toggleClass("highlight"); //색깔 토글     
+    
+    var gameId = event.target.id;   
+    console.log(gameId);
+    var betNum = $(this).attr("ratio");       
+      
+    if( $(event.target).hasClass("highlight") == true ){      
+
+        betTotal = betNum * betTotal; // 진짜 총 배당
+        betTotal1 = (Math.ceil(betTotal*10))/10; // 보여주는 총 배당
+        
+        $("#betValue").attr("value", betTotal1);
+        //$("#betValue").text(betTotal1);
+
+        var totalMoney = $("#money").attr("value") * betTotal1;
+        $("#totalMoney").attr("value", totalMoney);
+        
+        betList.push({gameId:gameId, choice:home})        
+      }
+      else{       
+        betTotal = betTotal / betNum;
+        betTotal1 = (Math.ceil(betTotal*10))/10; // 보여주는 총 배당
+
+        $("#betValue").attr("value", betTotal1);
+        var totalMoney = $("#money").attr("value") * betTotal1;
+        $("#totalMoney").attr("value", totalMoney);
+
+        betList.pop({gameId:gameId, choice:home});        
+      }
+      for(i=0; i<betList.length; i++){
+          console.log(betList[i]);
+      } 
+    });
+  
+
+//동점 픽 골랐을때
+  $('.drawPic').on("click", function(event){
+    
+    $(event.target).toggleClass("highlight"); //색깔 토글 
+    $(event.target).attr("disabled", false);
+
+    var gameId = event.target.id;
+    console.log(gameId);
+
+    var betNum = $(this).attr("ratio");   
+
+    if( $(event.target).hasClass("highlight") == true ){  
+      
+      betTotal = betNum * betTotal; // 진짜 총 배당
+      betTotal1 = (Math.ceil(betTotal*10))/10; // 보여주는 총 배당
+      
+      $("#betValue").attr("value", betTotal1);
+      var totalMoney = $("#money").attr("value") * betTotal1;
+      $("#totalMoney").attr("value", totalMoney);
+      
+      betList.push({gameId:gameId, choice:draw})      
+    }
+    else{
+      betTotal = betTotal / betNum;
+      betTotal1 = (Math.ceil(betTotal*10))/10; // 보여주는 총 배당
+
+      $("#betValue").attr("value", betTotal1);
+      var totalMoney = $("#money").attr("value") * betTotal1;
+      $("#totalMoney").attr("value", totalMoney);     
+      
+      betList.pop({gameId:gameId, choice:draw});      
+    }
+    for(i=0; i<betList.length; i++){
+        console.log(betList[i]);      
+    } 
+  });
+
+//어웨이 픽 골랐을때
+  $('.awayPic').on("click", function(event){
+
+    $(event.target).toggleClass("highlight"); //색깔 토글 
+    $(event.target).attr("disabled", false);
+
+    var gameId = event.target.id;
+    console.log(gameId);
+
+    var betNum = $(this).attr("ratio");   
+
+    if( $(event.target).hasClass("highlight") == true ){      
+
+      betTotal = betNum * betTotal; // 진짜 총 배당
+      betTotal1 = (Math.ceil(betTotal*10))/10; // 보여주는 총 배당
+      
+      $("#betValue").attr("value", betTotal1);
+      var totalMoney = $("#money").attr("value") * betTotal1;
+      $("#totalMoney").attr("value", totalMoney);
+      
+      betList.push({gameId:gameId, choice:away})      
+    }
+    else{     
+      betTotal = betTotal / betNum;
+      betTotal1 = (Math.ceil(betTotal*10))/10; // 보여주는 총 배당
+
+      $("#betValue").attr("value", betTotal1);
+      var totalMoney = $("#money").attr("value") * betTotal1;
+      $("#totalMoney").attr("value", totalMoney);     
+      
+      betList.pop({gameId:gameId, choice:away});  
+    }
+    for(i=0; i<betList.length; i++){
+        console.log(betList[i]);      
+    } 
+  });
+  ===============================
+  /* 스크롤 페이징
+  $(document).scroll(function() {
+    maxHeight = $(document).height();
+    currentScroll = $(window).scrollTop() + $(window).height();
+    //var currentPage = 1;    
+    
+    if (maxHeight <= currentScroll) {     
+      //currentPage++;파라미터에 포함???
+
+      $.ajax({// 전체 내용 불러오기
+        type:"POST",
+        url:'/freeboardCell/',
+        data:params,
+        success:function(data){
+          $('#all').after(data);  
+        }
+      });
+    }
+  });*/
+
+
+    <!--
+      <div class="row" id="search">//search 메뉴
+        <div class="col-md-1">
+          <div class="dropdown">
+            <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">전체
+              <span class="caret"></span> 
+            </a>
+            <ul class="dropdown-menu">
+              <li><a href="#">제목</a></li>
+              <li class="divider"></li>
+              <li><a href="#">글쓴이</a></li>
+            </ul>
+          </div>
+        </div>
+        
+        <div class="col-md-4">
+          <div class="search">
+            <form class="form-search">
+              <input type="text" class="input-medium search-query">
+              <button class="btn" type="submit" >Search</button>
+            </form>
+          </div>
+        </div>        
+    -->
+
+픽스타 리그
+        <div class="tab-pane active" id="picstarLeague">
+          <div class="picTable">
+
+            <table class="table table-bordered picUserTable">
+              <tbody>
+                <tr>
+                  <td>28회차 108</td>
+                  <td><b>ACL</b></td>
+                  <td class="picDate">2016-04-06 19:00</td>
+                  <td rowspan="3">적중 +53</td>
+                </tr>
+                <tr>
+                  <td>
+                    <span class="homeTeam">빈즈엉</span>
+                    <span class="homeBet">2.16</span>
+                  </td>
+                  <td class="compare">U 2.5</td>
+                  <td>
+                    <span>1.43</span> 
+                    <span class="awayTeam">전북현대</span>
+                  </td>
+                </tr>
+                <tr>
+                  <td></td>
+                  <td class="compare">1 VS 2</td>
+                  <td class="result">오버</td>
+                </tr>
+              </tbody>                        
+            </table>
+          
+          </div>end picTable
+        </div>picstarLeague
+      
+
+/*픽스타리그 탭
+  table.picTable{   
+    margin: 10px 0px 10px 0px;
+    background-color: #ffffff;
+  }
+  .picTable tr:first-child td:last-child{
+    width: 25%;
+    color: blue;
+    font-size: 25px;
+    text-align: center;
+    vertical-align: middle;
+  }
+  
+  .picTable td{
+    vertical-align: middle;
+    font-size: 15px;
+  }
+  .picTable td:first-child{   
+    width: 30%
+  }
+  .picTable td:nth-child(2){
+    width: 15%    
+  }
+  .picTable td:nth-child(3){
+    width: 30%
+  } 
+  .compare{text-align: center}
+  
+  span.homeBet{float: right}
+  span.awayTeam{float: right;}
+  .result{text-align: right}
+  .picDate{text-align: right}
+*/
+
+라이브게임 셀 json 파싱시 쓰면됨
+
+<script>
+/*var detailArea = '<table class="table table-bordered detail">';
+        detailArea = '<tr><td colspan="4">'+realGame.league+'</td></tr>';
+        detailArea = '<tr class="infor">';
+        detailArea = '<td><img src="'+realGame.homePic+'" alt="homeTeam"><p>'+realGame.home+'</p></td>';
+        detailArea = '<td colspan="2">';
+        detailArea = '<p>'+realGame.homescore+ 'vs' +realGame.awayscore+'</p>';
+        detailArea = '<p>'+realGame.date+'</p>';
+        detailArea = '<p class="result">'+realGame.progress+'</p>';
+        detailArea = '</td>';
+        detailArea = '<td><img src="'+realGame.awayPic+'"alt="awayTeam"><p>'+realGame.away+'</p></td>';
+        detailArea = '</tr>';
+        detailArea = '<tr><td>유형</td><td>승(언더)</td><td>무</td><td>패(오버)</td></tr>';
+      $.each(data.realGame.protogames, function(onlyGame, realGame.protogames){     
+        detailArea = '<tr>' json파싱*/
+
+
+        //$(param).after(data);
+        //$('.gam').html(data);
+</script> 
+
+
+/* 댓글삭제기능
+      if($(this).attr("name") == "del"){  //부모 댓글 삭제        
+        if(confirm("답글을 삭제하시면 밑에 답글도 모두 삭제 됩니다. 삭제하시겠습니까?")==true){ //확인
+
+          var delCommen = $(this).parent().parent();
+          var nextTr = delCommen.next();
+          var delTr;
+
+          while(nextTr.attr("name") == "commentCode"){
+            nextTr = nextTr.next();
+            delTr = nextTr.prev();
+            delTr.remove();
+          }
+          delCommen.remove();
+        }else{  //취소
+          return;
+        }
+
+      }else if($(this).attr("name") == "cDel"){ //자식 댓글 삭제
+        if(confirm("정말 삭제하시겠습니까?") == true){
+          $(this).parent().parent().remove();
+        }else{
+          return;
+        }
+      
+      }else{
+    */
+
+/////////////////////////////스포츠 경기분류   <!-- 경기종목-->
+  <div class="col-md-2">
+    <div id="menu">
+
+      <div class="panel list-group gameMenu">
+
+        <a href="#" id="allGame" class="list-group-item">전체 경기
+          <span class="glyphicon glyphicon-stats pull-right"></span>
+        </a>
+
+        <a href="#" class="list-group-item" data-toggle="collapse" data-target="#sm" data-parent="#menu">축구             
+          <span class="pull-right"><img src="{{ STATIC_URL }}img\soccerball.png" /></span>          
+        </a>
+          <div id="sm" class="sublinks collapse">
+            <a href="#" class="list-group-item small" leagueName="프리메라">
+              <span class="glyphicon glyphicon-chevron-right"></span> 프리메라
+            </a>
+            <a href="#" class="list-group-item small" leagueName="EPL">
+              <span class="glyphicon glyphicon-chevron-right"></span> EPL
+            </a>
+            <a href="#" class="list-group-item small" leagueName="SPL">
+              <span class="glyphicon glyphicon-chevron-right"></span> SPL
+            </a>
+            <a href="#" class="list-group-item small" leagueName="세리에A">
+              <span class="glyphicon glyphicon-chevron-right"></span> 세리에A
+            </a>
+            <a href="#" class="list-group-item small" leagueName="프리그1">
+              <span class="glyphicon glyphicon-chevron-right"></span> 프리그1
+            </a>
+            <a href="#" class="list-group-item small" leagueName="K클래식">
+              <span class="glyphicon glyphicon-chevron-right"></span> K클래식
+            </a>
+            <a href="#" class="list-group-item small" leagueName="J리그">
+              <span class="glyphicon glyphicon-chevron-right"></span> J리그
+            </a>
+            <a href="#" class="list-group-item small" leagueName="ACL">
+              <span class="glyphicon glyphicon-chevron-right"></span> ACL
+            </a>
+          </div>
+
+        <a href="#" class="list-group-item" data-toggle="collapse" data-target="#sl" data-parent="#menu">야구 
+          <span class="pull-right"><img src="{{ STATIC_URL }}img\baseball.png" /></span>
+        </a>
+          <div id="sl" class="sublinks collapse">
+            <a href="#" class="list-group-item small" leagueName="KBO">
+              <span class="glyphicon glyphicon-chevron-right"></span> KBO</a>
+            <a href="#" class="list-group-item small" leagueName="MLB"><span class="glyphicon glyphicon-chevron-right"></span> MLB</a>
+            <a href="#" class="list-group-item small" leagueName="NPB"><span class="glyphicon glyphicon-chevron-right"></span> NPB</a>
+          </div>
+
+        <a href="#" class="list-group-item" data-toggle="collapse" data-target="#s2" data-parent="#menu">농구
+          <span class="pull-right"><img src="{{ STATIC_URL }}img\basketball.png" /></span>
+        </a>
+          <div id="s2" class="sublinks collapse">           
+            <a href="#" class="list-group-item small" leagueName="KBL">
+              <span class="glyphicon glyphicon-chevron-right"></span> KBL
+            </a>            
+            <a href="#" class="list-group-item small" leagueName="WKBL"><span class="glyphicon glyphicon-chevron-right"></span> WKBL</a>
+            <a href="#" class="list-group-item small" leagueName="NBA"><span class="glyphicon glyphicon-chevron-right"></span>NBA</a>
+          </div>
+
+      </div><!--end gameMenu-->
+    </div><!--end menu-->
+  </div><!--end col-md-2-->
+
+
+
+
+  function loadPicLeague(){
+    
+    $('#picstarLeague').empty();
+    while(picBetList.length){
+        picBetList.pop();
+    }
+
+
+    $.getJSON('/gameList/', function(data){//픽스타리그 클릭시 경기리스트 가져오기
+    
+      var strData = JSON.stringify(data);//json 데이터를 스트링으로
+      var objList = JSON.parse(strData); //스트링 데이터를 json으로 다시파싱   
+      var simpleGame = objList.data; //게임 객체 1개
+      console.log(simpleGame) 
+      var dataList='';    
+        dataList += '<table class="table table-bordered table-hover betTable">';                  
+      
+      for(var i=0; i < simpleGame.length; i++){
+        dataList += '<tr class="betInfo">'+
+                    '<td colspan="2"><span class="lea"><b>'+simpleGame[i].league+'</b></span></td>'+
+                    '<td colspan="3"><span class="dat"><b>'+parseDate(simpleGame[i].date)+
+                    '</b></span></td></tr>';
+        
+        dataList += '<tr class="betRow">';
+        dataList += '<td class="game_num"><b>'+simpleGame[i].num+'</b></td>';
+        //home
+        dataList += '<td gameId="'+simpleGame[i].gameId+'" class="betd homePic" onclick="picLeagueBet(this);"'+ 
+                        'ratio="'+simpleGame[i].win+'"  choice="1" realGameId="'+simpleGame[i].realGameId+'" gameNum="'+simpleGame[i].num+'" homeName="'+simpleGame[i].home+'" awayName="'+simpleGame[i].away+'" homeBet="'+simpleGame[i].win+'" awayBet="'+simpleGame[i].lose+'" drawBet="'+simpleGame[i].draw+'">'+
+                    '<span class="homeTeam">'+
+                    '<img src="'+simpleGame[i].homePic+'" width="30px" height="30px" />'+
+                    '<span>'+simpleGame[i].home+'</span>'+
+                    '</span>'
+        dataList += (simpleGame[i].gameType == 1) ? 'H '+simpleGame[i].handiNum : '';
+        dataList += '<span class="homeWin">'+simpleGame[i].win;
+        dataList += (simpleGame[i].gameType == 2) ? '<span class="under">↓</span>' : ''+    
+                    '</span>'+
+                    '</td>';
+        //draw            
+        dataList += '<td gameId="'+simpleGame[i].gameId+'" class="betd drawPic" onclick="picLeagueBet(this);"'+
+                        'ratio="'+simpleGame[i].draw+'" choice="4" realGameId="'+simpleGame[i].realGameId+'" gameNum="'+simpleGame[i].num+'" homeName="'+simpleGame[i].home+'" awayName="'+simpleGame[i].away+'" homeBet="'+simpleGame[i].win+'" awayBet="'+simpleGame[i].lose+'" drawBet="'+simpleGame[i].draw+'">'
+        dataList +=   (simpleGame[i].draw) ? simpleGame[i].draw : '';
+        dataList +=   (simpleGame[i].gameType == 2) ? 'U '+simpleGame[i].handiNum : '';
+                    '</td>';      
+        //away            
+        dataList += '<td gameId="'+simpleGame[i].gameId+'" class="betd awayPic" onclick="picLeagueBet(this);"'+
+                        'ratio="'+simpleGame[i].lose+'" choice="2" realGameId="'+simpleGame[i].realGameId+'" gameNum="'+simpleGame[i].num+'" homeName="'+simpleGame[i].home+'" awayName="'+simpleGame[i].away+'" homeBet="'+simpleGame[i].win+'" awayBet="'+simpleGame[i].lose+'" drawBet="'+simpleGame[i].draw+'">';
+        dataList += '<span class="awayLose">'+simpleGame[i].lose;
+        dataList += (simpleGame[i].gameType == 2) ? '<span class="over">↑</span>' : ''; '</span>';                    
+        dataList += '<span class="awayTeam">'+simpleGame[i].away+
+                      '<img src="'+simpleGame[i].awayPic+'" width="30px" height="30px"/>'+
+                    '</span>';
+        dataList += '</td>';
+        dataList += '</tr>';
+      }     
+        dataList += '</table>';
+      
+      $('#picstarLeague').append(dataList);
+
+      $(".betInfo").each(function(i){//날짜로 분류
+        if($(".dat").eq(i).text() == $(".dat").eq(i+1).text()){
+          $(".betInfo").eq(i+1).hide();     
+        }
+      }); 
+
+      //대기중 픽스타리그 리스트     
+      $.getJSON('/singleChoice/', function(data){
+        var single = data.singleChoiceList;     
+        var betd = $('.betd');
+        for(var i=0; i < betd.length; i++){
+          for(var j=0; j < single.length; j++){
+            if(($(betd[i]).attr("choice") == single[j].choice) && ($(betd[i]).attr("gameId") == single[j].gameId)){
+              $(betd[i]).addClass('picHighlight');            
+              picBetList.push({choice: $(betd[i]).attr('choice'), gameId: $(betd[i]).attr('gameId')});
+              console.log($(betd[i]).attr('choice'), $(betd[i]).attr('gameId'))         
+            }
+          }
+        }
+      });//end singleChoice
+    });// end getJSON gameList
+  }// end function loadPicLeague
+
+------------------------------------------------------
+
+function loadAccount(){
+  $.getJSON('/gameList/', function(data){
+    
+    //var strData = JSON.stringify(data);//json 데이터를 스트링으로
+    //var objList = JSON.parse(strData); //스트링 데이터를 json으로 다시파싱   
+    var simpleGame = data.data; //게임 객체 1개
+      
+    var dataList='';    
+      dataList += '<table class="table table-bordered table-hover betTable">';                  
+    
+    for(var i=0; i < simpleGame.length; i++){
+      dataList += '<tr class="betInfo">'+
+                  '<td colspan="2"><span class="lea"><b>'+simpleGame[i].league+'</b></span></td>'+
+                  '<td colspan="3"><span class="dat"><b>'+parseDate(simpleGame[i].date)+
+                  '</b></span></td></tr>';
+      
+      dataList += '<tr class="betRow">';
+      dataList += '<td class="game_num"><b>'+simpleGame[i].num+'</b></td>';
+
+      dataList += '<td gameId="'+simpleGame[i].gameId+'" class="betd homePic" onclick="getBet(this);"'+ 
+                      'ratio="'+simpleGame[i].win+'"  choice="1" realGameId="'+simpleGame[i].realGameId+'" gameNum="'+simpleGame[i].num+'" homeName="'+simpleGame[i].home+'" awayName="'+simpleGame[i].away+'" homeBet="'+simpleGame[i].win+'" awayBet="'+simpleGame[i].lose+'" drawBet="'+simpleGame[i].draw+'">'+
+                  '<span class="homeTeam">'+
+                  '<img src="'+simpleGame[i].homePic+'" width="30px" height="30px" />'+
+                  '<span>'+simpleGame[i].home+'</span>'+
+                  '</span>'
+      dataList += (simpleGame[i].gameType == 1) ? 'H '+simpleGame[i].handiNum : '';
+      dataList += '<span class="homeWin">'+simpleGame[i].win;
+      dataList += (simpleGame[i].gameType == 2) ? '<span class="under">↓</span>' : ''+    
+                  '</span>'+
+                  '</td>';
+
+      dataList += '<td gameId="'+simpleGame[i].gameId+'" class="betd drawPic" onclick="getBet(this);"'+
+                      'ratio="'+simpleGame[i].draw+'" choice="4" realGameId="'+simpleGame[i].realGameId+'" gameNum="'+simpleGame[i].num+'" homeName="'+simpleGame[i].home+'" awayName="'+simpleGame[i].away+'" homeBet="'+simpleGame[i].win+'" awayBet="'+simpleGame[i].lose+'" drawBet="'+simpleGame[i].draw+'">'
+      dataList +=   (simpleGame[i].draw) ? simpleGame[i].draw : '';
+      dataList +=   (simpleGame[i].gameType == 2) ? 'U '+simpleGame[i].handiNum : '';
+                  '</td>';      
+
+      dataList += '<td gameId="'+simpleGame[i].gameId+'" class="betd awayPic" onclick="getBet(this);"'+
+                      'ratio="'+simpleGame[i].lose+'" choice="2" realGameId="'+simpleGame[i].realGameId+'" gameNum="'+simpleGame[i].num+'" homeName="'+simpleGame[i].home+'" awayName="'+simpleGame[i].away+'" homeBet="'+simpleGame[i].win+'" awayBet="'+simpleGame[i].lose+'" drawBet="'+simpleGame[i].draw+'">';
+      dataList += '<span class="awayLose">'+simpleGame[i].lose;
+      dataList += (simpleGame[i].gameType == 2) ? '<span class="over">↑</span>' : ''; '</span>';                    
+      dataList += '<span class="awayTeam">'+simpleGame[i].away+
+                    '<img src="'+simpleGame[i].awayPic+'" width="30px" height="30px"/>'+
+                  '</span>';
+      dataList += '</td>';
+      dataList += '</tr>';
+    }           
+      dataList += '</table>';   
+    
+    $('#newGame').append(dataList);
+
+    $(".betInfo").each(function(i){
+      if($(".dat").eq(i).text() == $(".dat").eq(i+1).text()){
+        $(".betInfo").eq(i+1).hide();     
+      }
+    });
+
+    if($(dataList).contents().size() == 0){
+      $('#newGame').html('<div style="text-align:center; margin-top:70px;" "class="noData"><h3>배당이 곧 업데이트될 예정입니다.</h3></div>');
+    }
+  });//end getJSON
+}// end function loadAccount

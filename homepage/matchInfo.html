@@ -1,0 +1,299 @@
+
+{% block load_css %}	
+<link rel="stylesheet" href="{{ STATIC_URL }}h_css/info_cell.css">
+{% endblock %}
+
+<h3><b>{{ home }}</b> 최근 10경기</h3>
+
+<div class="tabbale">
+   <ul class="nav nav-tabs">
+      <li class="active"><a href="#home_all" data-toggle="tab">전체</a></li>
+      <li><a href="#home_home" data-toggle="tab">홈</a></li>
+      <li><a href="#home_away" data-toggle="tab">원정</a></li>
+   </ul>
+<div class="tab-content">
+
+<div id="home_all" class="tab-pane active fade in">
+<table border=0px style="width:100%;border-collapse:collapse; text-align:center;">
+	<thead style="background-color:orange;">
+		<tr style="">
+		<th style="">날짜</th>
+		<th style="">리그</th>
+		<th style="">경기</th>
+		<th style="">점수</th>
+		<th>결과</th>
+		</tr>
+	</thead>
+	<tbody>
+	{% for game in recentGame.homeall %}
+{% if t.teamName == home or t.teamName == away %}
+		<tr style='background-color:yellow;'>
+{% else %}
+		<tr style='{% if forloop.counter0|divisibleby:2 %}background-color:#eeeeee;{%else%}background-color:#dddddd;{%endif%}'>
+{% endif %}
+		<td>{{ game.date }}</td>
+		<td>{{ game.league }}</td>
+		<td><span {% if game.home == home %}style="color:blue"{% endif %}>{{ game.home }}</span> vs <span {% if game.away == home %}style="color:blue"{% endif %}>{{ game.away }}</span></td>
+		<td>{{ game.homescore }} : {{ game.awayscore }}</td>
+		<td>{{game.home}}</td>
+		</tr>
+	{% endfor %}
+	</tbody>
+</table>
+</div>
+
+<div id="home_home" class="tab-pane fade">
+<table border=0px style="width:100%;border-collapse:collapse; text-align:center;">
+	<thead style="background-color:orange;">
+		<tr style="">
+		<th style="">날짜</th>
+		<th style="">리그</th>
+		<th style="">경기</th>
+		<th style="">점수</th>
+		<th>결과</th>
+		</tr>
+	</thead>
+	<tbody>
+	{% for game in recentGame.homehome %}
+{% if t.teamName == home or t.teamName == away %}
+		<tr style='background-color:yellow;'>
+{% else %}
+		<tr style='{% if forloop.counter0|divisibleby:2 %}background-color:#eeeeee;{%else%}background-color:#dddddd;{%endif%}'>
+{% endif %}
+		<td>{{ game.date }}</td>
+		<td>{{ game.league }}</td>
+		<td><span {% if game.home == home %}style="color:blue"{% endif %}>{{ game.home }}</span> vs <span {% if game.away == home %}style="color:blue"{% endif %}>{{ game.away }}</span></td>
+		<td>{{ game.homescore }} : {{ game.awayscore }}</td>
+		<td>{{game.home}}</td>
+		</tr>
+	{% endfor %}
+	</tbody>
+</table>
+</div>
+
+<div id="home_away" class="tab-pane fade">
+<table border=0px style="width:100%;border-collapse:collapse; text-align:center;">
+	<thead style="background-color:orange;">
+		<tr style="">
+		<th style="">날짜</th>
+		<th style="">리그</th>
+		<th style="">경기</th>
+		<th style="">점수</th>
+		<th>결과</th>
+		</tr>
+	</thead>
+	<tbody>
+	{% for game in recentGame.homeaway %}
+{% if t.teamName == home or t.teamName == away %}
+		<tr style='background-color:yellow;'>
+{% else %}
+		<tr style='{% if forloop.counter0|divisibleby:2 %}background-color:#eeeeee;{%else%}background-color:#dddddd;{%endif%}'>
+{% endif %}
+		<td>{{ game.date }}</td>
+		<td>{{ game.league }}</td>
+		<td><span {% if game.home == home %}style="color:blue"{% endif %}>{{ game.home }}</span> vs <span {% if game.away == home %}style="color:blue"{% endif %}>{{ game.away }}</span></td>
+		<td>{{ game.homescore }} : {{ game.awayscore }}</td>
+		<td>{{game.home}}</td>
+		</tr>
+	{% endfor %}
+	</tbody>
+</table>
+</div>
+</div>
+
+
+<h3><b>{{ away }}</b> 최근 10경기</h3>
+
+<div class="tabbale">
+   <ul class="nav nav-tabs">
+      <li class="active"><a href="#away_all" data-toggle="tab">전체</a></li>
+      <li><a href="#away_home" data-toggle="tab">홈</a></li>
+      <li><a href="#away_away" data-toggle="tab">원정</a></li>
+   </ul>
+<div class="tab-content">
+
+<div id="away_all" class="tab-pane active fade in">
+<table border=0px style="width:100%;border-collapse:collapse; text-align:center;">
+	<thead style="background-color:orange;">
+		<tr style="">
+		<th style="">날짜</th>
+		<th style="">리그</th>
+		<th style="">경기</th>
+		<th style="">점수</th>
+		<th>결과</th>
+		</tr>
+	</thead>
+	<tbody>
+	{% for game in recentGame.awayall %}
+{% if t.teamName == home or t.teamName == away %}
+		<tr style='background-color:yellow;'>
+{% else %}
+		<tr style='{% if forloop.counter0|divisibleby:2 %}background-color:#eeeeee;{%else%}background-color:#dddddd;{%endif%}'>
+{% endif %}
+		<td>{{ game.date }}</td>
+		<td>{{ game.league }}</td>
+		<td><span {% if game.home == away %}style="color:blue"{% endif %}>{{ game.home }}</span> vs <span {% if game.away == away %}style="color:blue"{% endif %}>{{ game.away }}</span></td>
+		<td>{{ game.homescore }} : {{ game.awayscore }}</td>
+		<td>{{game.away}}</td>
+		</tr>
+	{% endfor %}
+	</tbody>
+</table>
+</div>
+
+<div id="away_home" class="tab-pane fade">
+<table border=0px style="width:100%;border-collapse:collapse; text-align:center;">
+	<thead style="background-color:orange;">
+		<tr style="">
+		<th style="">날짜</th>
+		<th style="">리그</th>
+		<th style="">경기</th>
+		<th style="">점수</th>
+		<th>결과</th>
+		</tr>
+	</thead>
+	<tbody>
+	{% for game in recentGame.awayhome %}
+{% if t.teamName == home or t.teamName == away %}
+		<tr style='background-color:yellow;'>
+{% else %}
+		<tr style='{% if forloop.counter0|divisibleby:2 %}background-color:#eeeeee;{%else%}background-color:#dddddd;{%endif%}'>
+{% endif %}
+		<td>{{ game.date }}</td>
+		<td>{{ game.league }}</td>
+		<td><span {% if game.home == away %}style="color:blue"{% endif %}>{{ game.home }}</span> vs <span {% if game.away == away %}style="color:blue"{% endif %}>{{ game.away }}</span></td>
+		<td>{{ game.homescore }} : {{ game.awayscore }}</td>
+		<td>{{game.away}}</td>
+		</tr>
+	{% endfor %}
+	</tbody>
+</table>
+</div>
+
+<div id="away_away" class="tab-pane fade">
+<table border=0px style="width:100%;border-collapse:collapse; text-align:center;">
+	<thead style="background-color:orange;">
+		<tr style="">
+		<th style="">날짜</th>
+		<th style="">리그</th>
+		<th style="">경기</th>
+		<th style="">점수</th>
+		<th>결과</th>
+		</tr>
+	</thead>
+	<tbody>
+	{% for game in recentGame.awayaway %}
+{% if t.teamName == home or t.teamName == away %}
+		<tr style='background-color:yellow;'>
+{% else %}
+		<tr style='{% if forloop.counter0|divisibleby:2 %}background-color:#eeeeee;{%else%}background-color:#dddddd;{%endif%}'>
+{% endif %}
+		<td>{{ game.date }}</td>
+		<td>{{ game.league }}</td>
+		<td><span {% if game.home == away %}style="color:blue"{% endif %}>{{ game.home }}</span> vs <span {% if game.away == away %}style="color:blue"{% endif %}>{{ game.away }}</span></td>
+		<td>{{ game.homescore }} : {{ game.awayscore }}</td>
+		<td>{{game.away}}</td>
+		</tr>
+	{% endfor %}
+	</tbody>
+</table>
+</div>
+</div>
+
+<h3>상대 전적</h3>
+<div class="tab-pane active fade in">
+<table border=0px style="width:100%;border-collapse:collapse; text-align:center;">
+	<thead style="background-color:orange;">
+		<tr style="">
+		<th style="">날짜</th>
+		<th style="">리그</th>
+		<th style="">경기</th>
+		<th>결과</th>
+		</tr>
+	</thead>
+	<tbody>
+	{% for game in recentGame.allhomeaway %}
+{% if t.teamName == home or t.teamName == away %}
+		<tr style='background-color:yellow;'>
+{% else %}
+		<tr style='{% if forloop.counter0|divisibleby:2 %}background-color:#eeeeee;{%else%}background-color:#dddddd;{%endif%}'>
+{% endif %}
+		<td>{{ game.date }}</td>
+		<td>{{ game.league }}</td>
+		<td><span {% if game.homescore > game.awayscore %}style="color:blue;"{% endif %} >{{ game.home }}</span> vs <span {% if game.awayscore > game.homescore %}style="color:blue;"{% endif %}>{{ game.away }}</span></td>
+		<td>{{ game.homescore }} : {{ game.awayscore }}</td>
+		</tr>
+	{% endfor %}
+	</tbody>
+</table>
+</div>
+
+
+{% if players %}
+<h3><b>{{home}}</b> 라인업({{ players.homeFormation }})</h3>
+<div style="position:relative; width:100%; height:200px;">
+<img src="{{ STATIC_URL }}img/soccer_ground.jpg" style="width:calc(100% + 20px); height:200px; margin-left:-10px; position:absolute;"/>
+{% for player in players.homePlayers %}
+<div style="position:absolute; top:calc({{player.top}}% - 15px); left:{{player.left}}%; background-color:rgba(0, 0, 0, 0.5); color:white; padding:0px 5px 0px 5px;">
+{% if player.position %}
+<span style="color:orange;">GK</span></br>
+{% endif %}
+{{player.name}}</br>
+<span style="color:#B3E5FC;">{{player.rating}}</span></div>
+{% endfor %}
+</div>
+<h3><b>{{away}}</b> 라인업({{ players.awayFormation }})</h3>
+<div style="position:relative; width:100%; height:200px;">
+<img src="{{ STATIC_URL }}img/soccer_ground.jpg" style="width:calc(100% + 20px); height:200px; margin-left:-10px; position:absolute;"/>
+{% for player in players.awayPlayers %}
+<div style="position:absolute; top:calc({{player.top}}% - 15px); left:{{player.left}}%; background-color:rgba(0, 0, 0, 0.5); color:white; padding:0px 5px 0px 5px;">
+{% if player.position %}
+<span style="color:orange;">GK</span></br>
+{% endif %}
+{{player.name}}</br>
+<span style="color:#B3E5FC;">{{player.rating}}</span></div>
+{% endfor %}
+</div>
+
+
+<h3><b>{{ home }}</b> 결장선수</h3>
+<table class='topBorder' style="width:100%;border-collapse:collapse; text-align:center;" border=1px>
+	<thead style="background-color:orange;">
+		<tr>
+		<th style="width:40%">선수명</th>
+		<th style="width:20%">평점</th>
+		<th style="width:20%">사유</th>
+		<th style="width:20%">상태</th>
+		</tr>
+	</thead>
+	{% for p in missingPlayers.homeMissingPlayers %}
+		<tr>
+		<td>{{ p.name }}</td>
+		<td>{{ p.rating }}</td>
+		<td>{{ p.reason }}</td>
+		<td>{{ p.sataus }}</td>
+		</tr>
+	{% endfor %}
+</table>
+<h3><b>{{ away }}</b> 결장선수</h3>
+<table class='topBorder' style="width:100%;border-collapse:collapse; text-align:center;" border=1px>
+	<thead style="background-color:orange;">
+		<tr>
+		<th style="width:40%">선수명</th>
+		<th style="width:20%">평점</th>
+		<th style="width:20%">사유</th>
+		<th style="width:20%">상태</th>
+		</tr>
+	</thead>
+	{% for p in missingPlayers.awayMissingPlayers %}
+		<tr>
+		<td>{{ p.name }}</td>
+		<td>{{ p.rating }}</td>
+		<td>{{ p.reason }}</td>
+		<td>{{ p.sataus }}</td>
+		</tr>
+	{% endfor %}
+</table>
+{% endif %}
+<div style="height:100px;">
+</div>

@@ -1,0 +1,176 @@
+{% extends 'homepage/base.html' %}
+
+{% block content %}
+
+
+{% block load_css %}
+<link rel="stylesheet" href="{{ STATIC_URL }}h_css/ranking_user.css">
+<style>   
+  ul.ranking-nav{
+    margin-top: 30px;
+    margin-bottom: 20px;
+    background-color: #DFE3EA;
+  }    
+  
+</style>
+{% endblock %}
+
+{% block load_js %}{% endblock %}
+
+{% block main %}
+<div class="container">
+  <div class="row">
+    <div class="col-md-9">
+      <ul class="nav nav-tabs nav-justified ranking-nav">
+        <li role="presentation" id="leagueRanking" class="active">
+          <a href="#pickLeague" data-toggle="tab"><b>픽스타리그</b></a>
+        </li>
+        <li role="presentation" id="leagueRanking">
+          <a href="#monthAccount" data-toggle="tab"><b>월간가계부</b></a>
+        </li>
+        <li role="presentation" id="leagueRanking">
+          <a href="#weekAccount" data-toggle="tab"><b>주간가계부</b></a>
+        </li>
+      </ul>
+
+      <div class="tab-content rankingTab" >
+        <div class="tab-pane active" id="pickLeague"></div>
+        <div class="tab-pane" id="monthAccount"></div>
+        <div class="tab-pane" id="weekAccount"></div>
+      </div>
+    </div><!--end col-md-9-->  
+  </div>
+</div>
+{% block right %}
+  {% include 'homepage/rightbar.html' %}
+{% endblock%}
+
+
+<script>
+  /*$.ajax({
+      url: '/ranking/',
+      dataType: 'jsonp',
+      jsonp: false,
+      jsonpCallback: 'content'
+    }).done(function (data) { */
+
+
+  $.getJSON('/ranking/', function(data){
+    console.log(data);
+    var strData = JSON.stringify(data);//json 데이터를 스트링으로    
+    var objList = JSON.parse(strData); //스트링 데이터를 json으로 다시파싱    
+    var leagueUserList = data.leagueUserList;    
+  /*픽스타 리그*/
+    var leagueUser ="";
+    for(var i=0 in leagueUserList){
+      leagueUser += '<div class="user_cell" onclick="goPersonalPage('+leagueUserList[i].userId+')">';    
+
+      leagueUser += '<div class="info_container">';
+      leagueUser += '<div class="rank">'+leagueUserList[i].leagueRank+'</div>';
+      /*
+        //leagueUser += '<div class="user_image_60">';
+        //leagueUser += (leagueUserList[i].picKey==0) ? '<img src="'+img/ic_user.png+'" width="60px" height="60px"/>' : '<img src="'+leagueUserList[i].picKey+'" class="img-circle" width="60px" height="60px"/>';
+        //leagueUser += '</div>';      
+       
+        leagueUser += '<div class="user_image_60">';
+        leagueUser += (leagueUserList[i].picKey==0) ? '<img src="{{STATIC_URL}}img/ic_user.png" width="60px" height="60px"/>' : '<img src="'+leagueUserList[i].picKey+'" class="img-circle" width="60px" height="60px"/>';
+        leagueUser += '</div>';
+      */
+      leagueUser += '<span class="nickname">'+leagueUserList[i].nickname+'</span>';
+      leagueUser += '</div>';//info_container
+
+      leagueUser += '<div class="info_bottom">';
+      leagueUser += '<div class="correctRate info">';
+      leagueUser += '<span class="desc"><b>적중률</b></span><br>';
+      leagueUser += '<span class="data">'+leagueUserList[i].leagueCorrectRatio+'%('+leagueUserList[i].leagueCorrectNum+'/'+leagueUserList[i].leagueTotalNum+')</span>';
+      leagueUser += '</div>'
+      leagueUser += '<div class="profit info">'
+      leagueUser += '<span class="desc"><b>리그포인트</b></span><br>'
+      leagueUser += '<span class="data">'+leagueUserList[i].leaguePoint+'</span>'
+      leagueUser += '</div>'
+      leagueUser += '<div class="waiting info">'
+      leagueUser += '<span class="desc"><b>대기중</b></span><br>'
+      leagueUser += '<span class="data">'+leagueUserList[i].waitingNum+'개</span>'
+      leagueUser += '</div>'
+      leagueUser += '</div>'//info_bottom
+      leagueUser += '</div>'// end user_cell
+    }    
+    $('#pickLeague').html(leagueUser);
+        
+    if($(leagueUser).contents().size() == 0){
+      $('#pickLeague').html('<div style="text-align:center; color:white; margin-top:200px;"><h2>다음 회차 픽스타리그 랭킹을 준비중입니다.</h2></div>');
+    }
+  /*월간 리그*/
+    var monthUserList = data.monthUserList;    
+    var monthUser =""
+    for(var i=0 in monthUserList){
+      monthUser += '<div class="user_cell" onclick="goPersonalPage('+monthUserList[i].userId+')">';
+      monthUser += '<div class="info_container">';
+      monthUser += '<div class="rank">'+monthUserList[i].monthRank+'</div>';
+
+      /*      monthUser += '<img src="'+monthUserList[i].picKey+'" class="img-circle"       onError="this.src=""{{ STATIC_URL }}img/ic_user.png""; width="60px" height="60px"/>'
+
+            monthUser += '<div class="user_image_60">'+
+            monthUser += (monthUserList[i].picKey == 0 ) ? '<img src="{{ STATIC_URL }}img/ic_user.png" onError="this.src="{{ STATIC_URL }}img/ic_user.png"" width="60px" height="60px"/>' : '<img src="'+monthUserList[i].picKey+'" class="img-circle" onError="this.src=""{{ STATIC_URL }}img/ic_user.png""; width="60px" height="60px"/>'+
+            monthUser +=  '</div>';
+      */        
+      monthUser += '<span class="nickname">'+monthUserList[i].nickname+'</span>';
+      monthUser += '</div>';//info_container
+
+      monthUser += '<div class="info_bottom">';
+      monthUser += '<div class="correctRate info">';
+      monthUser += '<span class="desc"><b>적중률</b></span><br>';
+      monthUser += '<span class="data">'+monthUserList[i].monthCorrectRatio+'%('+monthUserList[i].monthCorrectFolder+'/'+monthUserList[i].monthTotalFolder+')</span>';
+      monthUser += '</div>'
+      monthUser += '<div class="profit info">'
+      monthUser += '<span class="desc"><b>수익률</b></span><br>'
+      monthUser += '<span class="data">'+monthUserList[i].monthInterestRatio+'%</span>'
+      monthUser += '</div>'
+      monthUser += '<div class="waiting info">'
+      monthUser += '<span class="desc"><b>대기중</b></span><br>'
+      monthUser += '<span class="data">'+monthUserList[i].waitingNum+'개</span>'
+      monthUser += '</div>'
+      monthUser += '</div>'//info_bottom
+      monthUser += '</div>'// end user_cell
+    }
+    $('#monthAccount').html(monthUser);
+  /*주간 리그*/
+    var weekUserList = data.weekUserList;
+    var weekUser =""
+    for(var i=0 in weekUserList){
+      weekUser += '<div class="user_cell" onclick="goPersonalPage('+weekUserList[i].userId+')">';      
+
+      weekUser += '<div class="info_container">';
+      weekUser += '<div class="rank">'+weekUserList[i].weekRank+'</div>';
+      //weekUser += (weekUserList[i].picKey==0) ? 
+      //weekUser += '<div class="user_image_60">'+
+        //            '<img src="'+{{ STATIC_URL }}img/ic_user.png+'" onError="this.onerror=null; this.src="'+{{ STATIC_URL }}img/ic_user.png+'"; width="60px" height="60px"/>'+
+          //          '</div>' :
+      //weekUser += '<div class="user_image_60">'+
+                    //'<img src="'+weekUserList[i].picKey+'" class="img-circle" onError="this.onerror=null; this.src="'+{{ STATIC_URL }}img/ic_user.png+'"; width="60px" height="60px"/>'+
+        //            '</div>';
+      weekUser += '<span class="nickname">'+weekUserList[i].nickname+'</span>';
+      weekUser += '</div>';//info_container
+
+      weekUser += '<div class="info_bottom">';
+      weekUser += '<div class="correctRate info">';
+      weekUser += '<span class="desc"><b>적중률</b></span><br>';
+      weekUser += '<span class="data">'+weekUserList[i].weekCorrectRatio+'%('+weekUserList[i].weekCorrectFolder+'/'+weekUserList[i].weekTotalFolder+')</span>';
+      weekUser += '</div>'
+      weekUser += '<div class="profit info">'
+      weekUser += '<span class="desc"><b>수익률</b></span><br>'
+      weekUser += '<span class="data">'+weekUserList[i].weekInterestRatio+'%</span>'
+      weekUser += '</div>'
+      weekUser += '<div class="waiting info">'
+      weekUser += '<span class="desc"><b>대기중</b></span><br>'
+      weekUser += '<span class="data">'+weekUserList[i].waitingNum+'개</span>'
+      weekUser += '</div>'
+      weekUser += '</div>'//info_bottom
+      weekUser += '</div>'// end user_cell
+    }
+    $('#weekAccount').html(weekUser);
+  });// end getJSON 
+</script>
+
+{% endblock %}
+{% endblock %}

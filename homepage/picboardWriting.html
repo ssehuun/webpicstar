@@ -1,0 +1,215 @@
+{% extends 'homepage/base.html' %}
+		
+{% block content %}
+
+{% block load_css %}
+<link rel="stylesheet" href="{{ STATIC_URL }}h_css/folder.css">
+<!--common.css 삭제-->
+<style>
+/*picboardWriting*/
+	div.picboard-theme{		
+		margin: 30px 0px 30px 0px;		
+		border-bottom: solid 1px #fff}
+		.main-picboard,.g,.sub-picboard,.note{
+		display: inline-block;
+		color: white;
+		clear: both;
+		}
+		span.glyphicon-chevron-right{
+			margin-bottom: 10px;
+		}
+		.note{
+			float: right;
+			margin-top: 30px;
+		}
+/*body*/
+	div.picboard-writing{background-color: #ffffff; margin-bottom: 300px;}
+	
+	div.pic-header{display: inline-block;}
+	div.theme-area{padding-top: 20px; margin-left: 20px}
+	div#input-theme{margin-left: 20px; width: 600px}
+	div.pic-area{padding-top: 10px; margin-left: 20px}
+	div#input-pic{margin-left: 32px}
+	textarea#pic_upload{width: 95%; margin-top: 50px; margin-left: 20px} 
+	div.btn-area{text-align: center; margin: 30px; padding-bottom: 30px;}
+
+	div#boardwriting{margin-left: auto; margin-right: auto;}
+	
+	#open-myPredict{margin-top: 10px}
+
+	.picFolder{
+		height: 700px; overflow: auto;
+		}
+	div#open{margin-top: 15px; margin-bottom: 15px; text-align: center}
+	#open a{text-decoration: none}
+	#cloneArea{
+		margin-top: 20px;
+	}
+	.picModal{
+		width: 750px;
+	}
+	.selected{		
+		background-color: #e0e0e0;
+		opacity: 0.5;
+	}
+</style>
+{% endblock %}
+
+{% block main %}
+<div class="container">
+	<div class="row">
+		<div class="col-md-9">
+
+			<div class="picboard-theme">
+				<div class="main-picboard"><h1><b>픽게시판</b></h1></div>
+				<div class="g"><span class="glyphicon glyphicon-chevron-right"></span></div>
+				<div class="sub-picboard"><h4 >전체 게시판</h4></div>
+				<div class="note"><h6>적중된 픽을 자랑하거나, 예정된 게임을 분석글과 함께 올릴 수 있는 공간입니다.</h6></div>
+			</div>
+
+			<div class="picboard-writing">				
+				<form action="/addWriting/" id="fm-writing" name="fm-writing" accept-charset="utf-8" method="post">
+
+					<div class="theme-area">				
+						<label class="pic-header" for="theme">제목</label>
+						<div class="pic-header" id="input-theme">
+							<input type="text" id="theme" class="form-control" placeholder="제목을 입력해주세요" autofocus />
+						</div>
+					</div>
+
+					<div class="pic-area">
+						<label class="pic-header" id="pic" for="btn_writing">픽</label>
+						<div class="pic-header" id="input-pic">
+							<button type="button" id="btn-writing" class="btn btn-primary" data-toggle="modal" 
+											data-target="#boardwriting">선택하기
+							</button>
+							<span>&nbsp;&nbsp;여기를 눌러 선택해주세요</span>
+						</div>						
+					</div>
+
+					<div id="cloneArea"></div>					
+					<textarea class="form-control" contenteditable="true" name="pic_upload" id="pic_upload" cols="10" rows="14" placeholder="내용을 입력해주세요"></textarea>
+				</form>
+
+				<div class="btn-area">
+				{% if user.is_anonymous  %}
+					<button type="button" class="btn btn-warning" onclick="alert('로그인이 필요한 서비스입니다.');">글작성</button>
+				{% else %}
+ 					<button type="submit" id="upload_btn" class="btn btn-warning">글작성</button>
+				{% endif %}	
+					<a href="/picboardWritingPage/" class="btn btn-default">취소</a>
+				</div>
+			</div><!--picboard-writing-->
+				
+
+			<!-- 픽선택하기 Modal -->
+			<div class="modal fade" id="boardwriting" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+				<div class="modal-dialog picModal" role="document">
+					<div class="modal-content">						   
+						
+						<div class="modal-header">
+							<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+								<span aria-hidden="true">&times;</span>
+							</button>
+							<h4 class="modal-title" id="myModalLabel">내 예측목록 불러오기</h4>						
+						</div>
+
+						<div class="modal-body picFolder">													
+							<div class="tab-content">
+								<div class="tab-pane active" id="open-myPredict">
+									<div id="open">
+										<a href="#" class="mytab" id="all-mytab" value=0>전체&nbsp;</a>|
+										<a href="#" class="mytab" id="right-mytab" value=1>적중&nbsp;</a>|
+										<a href="#" class="mytab" id="wait-mytab" value=2>대기중</a>
+									</div>
+									<div id="myFolder"></div>
+								</div>
+							</div><!--end tab-content-->
+						</div><!--end modal-body-->
+
+						<div class="modal-footer">							
+							<button type="submit" id="register" class="btn btn-primary" data-dismiss="modal">게시</button>							
+						</div>			    
+
+					</div><!--end modal-content-->
+				</div>
+			</div><!--end modal-->
+		
+		</div><!--col-md-9-->
+	</div><!--row-->
+</div><!--end container-->
+
+{% block right %}
+	{% include 'homepage/rightbar.html' %}
+{% endblock %}
+
+<script>//내 예측목록 가져오기	
+	$('#btn-writing').on('click', function(){
+		$.post('/bettingList/', {personalId: "{{user.id}}", state: 0},			
+			function(data){						
+				$('#myFolder').html(data);
+		});
+	})		
+	$('#all-mytab').click(function(){
+		$.post('/bettingList/', {personalId: "{{user.id}}", state: 0},		
+			function(data){			
+				$('#myFolder').html(data);
+		});
+	})
+	
+	$('#right-mytab').click(function(){		
+		$.post('/bettingList/', {personalId: "{{user.id}}", state: 1},			
+			function(data){
+				$('#myFolder').html(data);
+		});	
+	})
+	
+	$('#wait-mytab').click(function(){		
+		$.post('/bettingList/', {personalId: "{{user.id}}", state: 2},
+			function(data){				
+				$('#myFolder').html(data);			
+		});
+	})
+</script>
+
+
+
+<script>
+	var folderId;
+
+	function selectPic(event){			
+		folderId = event.id			
+		
+		if($(event).hasClass('selected') == false){//선택되어있지않으면 선택후 달기
+			$(event).nextAll().removeClass("selected");
+			$(event).addClass("selected");
+			$('#cloneArea').html($(event).clone());			
+		}
+		else{//선택된거 다시 선택취소, 없애기
+			$(event).removeClass("selected");
+			$('#cloneArea').empty();
+		}
+		console.log(folderId);
+		return(folderId);
+	}
+	
+	
+	
+
+	$("#upload_btn").on("click", function(){//픽게시글 등록
+		var title = $('#theme').val();
+		var text = $('#pic_upload').val();				
+		console.log(title, text, folderId)
+		$.post('/addWriting/', {title:title, text:text, folderId:folderId},	
+			function(data){
+				alert("픽게시글이 등록되었습니다.");
+				window.location.href='/picboard/';
+		});
+	});
+</script>
+
+
+
+
+{% endblock %}
+{% endblock%}

@@ -1,0 +1,73 @@
+
+
+
+{% block load_css %}
+<style>  
+  footer {
+    position: relative;
+    margin-top: 50px;
+    bottom: 0;
+    max-width: 100%;
+    background-color: #e2e2e2; 
+    height: 141px;
+  }
+  div.footWrap{
+    width: 960px;
+    height: 140px;
+    margin: 0 auto;
+  }
+  .foot_img{
+    display: inline-block;    
+    margin: 15px;
+  }
+  .foot_info{    
+    margin-top: 15px;
+    display: inline-block;    
+    white-space:nowrap;
+  }
+  .foot_info2{
+    display: inline-block;
+    margin: 20px 0px 0px 15px;    
+  }
+  .foot_info2 ul li{
+    list-style: none;
+    display: block;}
+  .foot_info2 ul li a{
+    text-decoration: none;
+  }
+  @media screen and (max-width: 991px){
+  
+    .foot_img, .foot_info2{
+      display: none;
+    }
+  }
+</style>
+{% endblock %}
+
+	
+<footer>  
+  <div class="footWrap">
+    <div class="foot_img" >
+      <img src="{{STATIC_URL}}img\pic_logo.png" alt="" />
+    </div>
+
+    <div class="foot_info">
+      상호명: (주)LIK CORPORATION / 소재지: 서울특별시 관악구 행운동 35 / 대표자: 최진한 <br>
+      사업자등록번호 : 196-07-00218 <br>
+      LIK의 모든 컨텐츠 저작권은 (주)LIK CORPORATION에 있으며, 무단도용시 법적 불이익을 받습니다.<br>
+      문의: picstar.ask@gmail.com / 02-3285-2226 (13시 ~ 19시)<br>
+      © 2016 Picstar All right reserved.  
+    </div>
+
+    <div class="foot_info2">
+      <ul>
+        <li><a href="/web/individual/">개인정보취급방침</a></li>
+        <li><a href="http://www.picstar.co.kr">서비스소개</a></li>
+        <li><a href="/web/terms/">이용약관</a></li>
+        <li><a href="https://play.google.com/store/apps/details?id=me.picstar.picstar">앱 다운로드</a></li>
+      </ul>     
+    </div>
+  </div>  
+</footer>
+
+

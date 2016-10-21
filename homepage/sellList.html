@@ -1,0 +1,220 @@
+{% extends 'homepage/base.html' %}
+
+{% block content %}
+
+
+{% block load_css %}
+  <link rel="stylesheet" href="{{ STATIC_URL }}h_css/ranking_user.css">
+  <style>
+    .sellDetailArea{
+      margin-top: 30px;
+      padding-bottom: 30px;
+      background-color: white;
+    }
+
+    /*픽스타리그 폴더*/  
+    div.leagueDiv{
+      margin: 0 auto;
+      margin-top: 20px;
+      width: 80%    
+    }
+    table.leagueTable{    
+      table-layout: fixed;
+      font-size: 15px;  
+    }
+    
+    span.date{float: right;}
+    span.homeWin,.awayTeam{float: right;}
+
+    .drawTd{
+      text-align: center;
+    }
+    td.leaguePoint{   
+      text-align: center;   
+      font-size:25px;
+    }
+    span.buyNum{
+      text-align: center;
+      font-size: 15px;
+    }
+    span.leagueScore{margin-left: 44%;}
+    .leagueProgress{float: right;}
+
+    
+    span.under{color: blue;}
+    span.over{color: red;}
+    .yellow{background-color: #ffff80;}
+    .blue{color:blue;}
+    .orange{color:orange;}
+
+
+
+  </style>
+{% endblock %}
+
+{% block main %}
+
+<div class="container sellArea">
+  <div class="row">
+    <div class="col-md-9">
+      <div id="Area">
+
+        <ul class="nav nav-tabs nav-justified user_nav">
+          <li>
+            <a class="" href="#sellList" data-toggle="tab"><b>판매목록</b></a>
+          </li>
+          <li>
+            <a class="" href="#followerArea" data-toggle="tab"><b>관심유저</b></a>
+          </li>
+          <li>
+            <a class="" href="#management" data-toggle="tab"><b>관리</b></a>
+          </li> 
+        </ul>
+
+        <div class="tab-content sellDetailArea">
+          <div class="tab-pane active" id="sellList">
+            <ul class="nav nav-tabs nav-justified">
+              <li class="active" role="presentation">
+                <a href="#leaguePic" id="" class="" value=0 data-toggle="tab">리그픽</a>
+              </li>
+              <li role="presentation">
+                <a href="#folderPic" id="" class="" value=0 data-toggle="tab">가계부픽</a>
+              </li>
+            </ul>
+            <div class="tab-content">
+              <div class="tab-pane active" id="leaguePic"></div>
+              <div class="tab-pane" id="folderPic"></div>     
+            </div>  
+          </div>
+
+          <div class="tab-pane" id="followerArea"></div>     
+          <div class="tab-pane" id="management"></div>     
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+<script>
+// 내가 판 픽스타리그 픽
+  $.getJSON('/sellingList/', {state:1, page:0}, function(data){     
+    var leaguePicList = data.folderList;       
+    var leaguePic ="";
+    for(var i=0 in leaguePicList){
+      leaguePic += '<div class="leagueDiv">'
+      leaguePic += '<table class="table table-bordered leagueTable">';
+      leaguePic += '<tr>';
+      leaguePic += '<td colspan="3">'+leaguePicList[i].round+'회차&nbsp;'+leaguePicList[i].num+'&nbsp;'+
+                  leaguePicList[i].league+'&nbsp;<span class="date">'+parseDate(leaguePicList[i].date)+'</span></td>'+
+                  '<td class="leaguePoint" rowspan="3" point="'+leaguePicList[i].point+'">';
+      leaguePic += '<span class="buyNum">'+leaguePicList[i].buyNum+'개 판매됨</span><br>';
+      leaguePic += (leaguePicList[i].point > 0) ? '<span class="blue">적중<br>+'+leaguePicList[i].point : '';
+      leaguePic += (leaguePicList[i].point < 0) ? '<span class="orange">미적중<br>'+leaguePicList[i].point : '';
+      leaguePic += (leaguePicList[i].point == 0) ? '<span>대기중' : '';
+      leaguePic += '</span></td></tr>';
+      leaguePic += '<tr>';
+
+      leaguePic += (leaguePicList[i].singleChoice == 1) ? '<td class="homeTd yellow">' : '<td class="homeTd">';           
+      leaguePic += leaguePicList[i].home+'<span class="homeWin">'+leaguePicList[i].win;
+      leaguePic += (leaguePicList[i].gameType == 2) ? '<span class="under">↓</span>' : ''+'</span></td>';
+      
+      leaguePic += (leaguePicList[i].singleChoice == 4) ? '<td class="drawTd yellow">' : '<td class="drawTd">';     
+      leaguePic += (leaguePicList[i].draw) ? leaguePicList[i].draw : '';      
+      leaguePic += (leaguePicList[i].gameType == 2) ? '<span class="blue">U '+leaguePicList[i].handiNum : ''+'</span></td>';
+
+      leaguePic += (leaguePicList[i].singleChoice == 2) ? '<td class="awayTd yellow">' : '<td class="awayTd">';   
+      leaguePic += leaguePicList[i].lose;
+      leaguePic += (leaguePicList[i].gameType == 2) ? '<span class="over">↑</span>' : '';
+      leaguePic += '<span class="awayTeam">'+leaguePicList[i].away+'</span></td></tr>';
+
+      leaguePic += '<tr><td colspan="3">';
+      leaguePic += (leaguePicList[i].gameType == 0) ? '<span class="leagueScore">'+leaguePicList[i].homescore+'&nbsp;&nbsp;&nbsp;vs&nbsp;&nbsp;&nbsp;'+leaguePicList[i].awayscore+'</span>' : '';
+      leaguePic += (leaguePicList[i].gameType == 1) ? 'H '+leaguePicList[i].handiNum+'.0&nbsp;<span class="leagueScore">'+leaguePicList[i].homescore+'&nbsp;vs&nbsp;'+leaguePicList[i].awayscore+'</span>' : '';      
+      leaguePic += (leaguePicList[i].gameType == 2) ? '<span class="leagueScore">'+leaguePicList[i].drawscore+'</span>' : '';     
+      leaguePic += '<span class="leagueProgress blue"><b>'+leaguePicList[i].progress+'</b></span></td></tr>';
+      leaguePic += '</table>';
+      leaguePic += '</div>'
+    }  
+    $('#leaguePic').html(leaguePic);
+  });
+
+// 내가 판 가계부 픽
+  $.getJSON('/sellingList/', {state:0, page:0}, function(data){    
+    var folderPicList = data.folderList;
+    console.log(folderPicList);   
+
+    var folderPic ="";
+
+    for(var i=0; i < folderPicList.length; i++){    
+      folderPic += '<div class="boughtAccount">';
+      folderPic += '<table class="table table-bordered">';
+      folderPic += '<tbody>'
+      folderPic += '<tr><td colspan="6">프로토 '+folderPicList[i].round+'회차<span>'+folderPicList[i].date+'</span><td></tr>';
+
+
+      var bet = folderPicList[i].betList;
+      console.log(bet);
+      for(var j=0; j < bet.length; j++){
+        folderPic += '<tr><td>'+bet[j].num+'</td>';
+        folderPic += '<td>'+bet[j].date+'</td>';
+        folderPic += '<td>'+bet[j].league+'</td>';
+        folderPic += '<td>'+bet[j].home+bet[j].win+'</td>';
+        folderPic += '<td>'+bet[j].draw+'</td>';
+        folderPic += '<td>'+bet[j].lose+bet[j].away+'</td>';
+        folderPic += '<td>'+bet[j].homescore+':'+bet[j].awayscore+'</td></tr>';
+      }
+      folderPic += '</tbody></table>'
+      folderPic += '<div class="betInfo">';
+      folderPic += '배팅시간 : '+folderPicList[i].date+'<br>';
+      folderPic += '배팅금액 : '+folderPicList[i].money+'<br>';
+      folderPic += '배당 : '+folderPicList[i].ratio+'<br>';
+      folderPic += '적중예상금액 : '+folderPicList[i].expect;
+      //folderPic += '<span class="buyUser">picked by'+'<img src="folderPicList[i].user.picKey">'+folderPicList[i].user.nickname+'</span>';
+      folderPic += '</div>';      
+      folderPic += '</div>'
+    }     
+    $('#folderPic').html(folderPic);
+  });
+
+
+//나를 추가한 사람들
+  $.getJSON('/followerList/', function(data){         
+    var followerList = data.userList;
+    
+    var follower ="";
+    for(var i=0 in followerList){
+      follower += '<div class="user_cell" onclick="goPersonalPage('+followerList[i].userId+')">';    
+
+      follower += '<div class="info_container">';
+      follower += '<div class="rank">'+followerList[i].leagueRank+'</div>';
+    
+      follower += '<span class="nickname">'+followerList[i].nickname+'</span>';
+      follower += '</div>';//info_container
+
+      follower += '<div class="info_bottom">';
+      follower += '<div class="correctRate info">';
+      follower += '<span class="desc"><b>적중률</b></span><br>';
+      follower += '<span class="data">'+followerList[i].leagueCorrectRatio+'%('+followerList[i].leagueCorrectNum+'/'+followerList[i].leagueTotalNum+')</span>';
+      follower += '</div>'
+      follower += '<div class="profit info">'
+      follower += '<span class="desc"><b>리그포인트</b></span><br>'
+      follower += '<span class="data">'+followerList[i].leaguePoint+'</span>'
+      follower += '</div>'
+      follower += '<div class="waiting info">'
+      follower += '<span class="desc"><b>대기중</b></span><br>'
+      follower += '<span class="data">'+followerList[i].waitingNum+'개</span>'
+      follower += '</div>'
+      follower += '</div>'//info_bottom
+      follower += '</div>'// end user_cell
+    }    
+    $('#followerArea').html(follower);
+  });
+</script>
+
+
+
+{% endblock %}
+{% endblock %}

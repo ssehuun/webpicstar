@@ -1,0 +1,116 @@
+
+
+
+<script>
+	$.getJSON('/followingList/', function(data){//랭킹 json파싱
+    console.log(data);
+    var strData = JSON.stringify(data);//json 데이터를 스트링으로    
+    var objList = JSON.parse(strData); //스트링 데이터를 json으로 다시파싱
+        
+    var followingList = objList.userList; //내가 따르는 사람    
+    
+    var followingUser ="";
+    for(var i=0 in followingList){
+      followingUser += '<div class="user_cell" onclick="goPersonalPage('+followingList[i].userId+')">';    
+
+      followingUser += '<div class="info_container">';
+      followingUser += '<div class="rank">'+followingList[i].leagueRank+'</div>';
+   
+      followingUser += '<span class="nickname">'+followingList[i].nickname+'</span>';
+      followingUser += '</div>';//info_container
+
+      followingUser += '<div class="info_bottom">';
+      followingUser += '<div class="correctRate info">';
+      followingUser += '<span class="desc"><b>적중률</b></span><br>';
+      followingUser += '<span class="data">'+followingList[i].leagueCorrectRatio+'%('+followingList[i].leagueCorrectNum+'/'+followingList[i].leagueTotalNum+')</span>';
+      followingUser += '</div>'
+      followingUser += '<div class="profit info">'
+      followingUser += '<span class="desc"><b>리그포인트</b></span><br>'
+      followingUser += '<span class="data">'+followingList[i].leaguePoint+'</span>'
+      followingUser += '</div>'
+      followingUser += '<div class="waiting info">'
+      followingUser += '<span class="desc"><b>대기중</b></span><br>'
+      followingUser += '<span class="data">'+followingList[i].waitingNum+'개</span>'
+      followingUser += '</div>'
+      followingUser += '</div>'//info_bottom
+      followingUser += '</div>'// end user_cell
+    }    
+    $('#pickLeague').html(followingUser);
+
+  $.getJSON('/followerList/', function(data){//랭킹 json파싱
+    console.log(data);
+    var strData = JSON.stringify(data);//json 데이터를 스트링으로    
+    var objList = JSON.parse(strData); //스트링 데이터를 json으로 다시파싱
+    
+    var followerList = objList.userList;// 나를 따르는 사람    
+    
+    var followerUser ="";
+    for(var i=0 in followerList){
+      followerUser += '<div class="user_cell" onclick="goPersonalPage('+followerList[i].userId+')">';    
+
+      followerUser += '<div class="info_container">';
+      followerUser += '<div class="rank">'+followerList[i].leagueRank+'</div>';
+    
+      followerUser += '<span class="nickname">'+followerList[i].nickname+'</span>';
+      followerUser += '</div>';//info_container
+
+      followerUser += '<div class="info_bottom">';
+      followerUser += '<div class="correctRate info">';
+      followerUser += '<span class="desc"><b>적중률</b></span><br>';
+      followerUser += '<span class="data">'+followerList[i].leagueCorrectRatio+'%('+followerList[i].leagueCorrectNum+'/'+followerList[i].leagueTotalNum+')</span>';
+      followerUser += '</div>'
+      followerUser += '<div class="profit info">'
+      followerUser += '<span class="desc"><b>리그포인트</b></span><br>'
+      followerUser += '<span class="data">'+followerList[i].leaguePoint+'</span>'
+      followerUser += '</div>'
+      followerUser += '<div class="waiting info">'
+      followerUser += '<span class="desc"><b>대기중</b></span><br>'
+      followerUser += '<span class="data">'+followerList[i].waitingNum+'개</span>'
+      followerUser += '</div>'
+      followerUser += '</div>'//info_bottom
+      followerUser += '</div>'// end user_cell
+    }    
+    $('#pickLeague').html(followerUser);
+</script>
+
+</script>
+
+
+
+
+<h3>관심 픽스타</h3>
+<ul class="nav nav-tabs nav-justified user_nav">
+	<li>
+		<a class="user_feded" href="#addPicstar" data-toggle="tab"><b>내가 추가한 픽스타</b></a>
+	</li>
+	<li>
+		<a class="user_feded" href="#addedPicstar" data-toggle="tab"><b>나를 추가한 픽스타</b></a>
+	</li>	
+</ul><!--user_nav-->
+
+<div class="tab-content">
+	<div class="tab-pane active" id="addPicstar">
+	  <div class="user_cell" onclick="goPersonalPage(followerList[i].userId)">;
+      <div class="info_container">
+      	<div class="rank">followerList[i].leagueRank</div>       
+       	<span class="nickname">followerList[i].nickname</span>
+      </div>
+			<div class="info_bottom">;
+				<div class="correctRate info">;
+					<span class="desc"><b>적중률</b></span><br>;
+					<span class="data">followerList[i].leagueCorrectRatio%(followerList[i].leagueCorrectNum/followerList[i].leagueTotalNum)</span>;
+				</div>
+				<div class="profit info">
+					<span class="desc"><b>리그포인트</b></span><br>
+					<span class="data">followerList[i].leaguePoint</span>
+				</div>
+				<div class="waiting info">
+					<span class="desc"><b>대기중</b></span><br>
+					<span class="data">followerList[i].waitingNum개</span>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="tab-pane" id="addedPicstar"></div>
+</div>	

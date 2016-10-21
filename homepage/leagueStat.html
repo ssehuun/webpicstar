@@ -1,0 +1,74 @@
+
+
+		<div class="feedTheme"><b>최근 리그 성적</b></div>
+		<table class="table table-bordered feedTable">
+			<thead>
+				<th>회차</th>
+				<th>순위</th>
+				<th>적중률</th>
+				<th>게임수</th>
+				<th>리그포인트</th>
+			</thead>
+			<tbody>
+				{% for i in leagueInfo %}
+				<tr>
+					<td>{{i.0}}</td>					
+					<td>{{i.1}}</td>					
+					<td>{{i.3}}%</td>
+					<td>{{i.4}}개</td>
+					<td>{{i.2}}</td>
+				</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+
+		<div class="feedTheme"><b>최근 2달간 포인트 변화</b></div>
+		<div id="graph"></div>
+		
+			
+
+
+		<div class="feedTheme"><b>리그별 통계</b></div>
+		<table class="table table-bordered feedTable">
+			<thead>
+				<th>리그명</th>
+				<th>예측횟수</th>
+				<th>적중률</th>
+				<th>획득포인트</th>
+			</thead>
+			<tbody>
+				{% for j in statLeague %}
+				<tr>
+					<td>{{j.0}}</td>
+					<td>{{j.2}}</td>	
+					<td>{{j.1}}%</td>
+					<td>{{j.4}}</td>				
+				</tr>
+				{% endfor %}		
+			</tbody>
+		</table>
+
+		<div class="feedTheme"><b>게임유형별 통계</b></div>
+		<table class="table table-bordered feedTable">
+			<thead>
+				<th>게임유형</th>
+				<th>배팅횟수</th>
+				<th>적중률</th>
+				<th>획득포인트</th>
+			</thead>
+			<tbody>
+				{% for i in statType %}									
+				<tr>
+					{% if i.0 == 0 %}<td>일반</td>{% endif %}
+					{% if i.0 == 2 %}<td>언오버</td>{% endif %}
+					{% if i.0 == 1 %}<td>핸디</td>{% endif %}
+					<td>{{i.2}}</td>
+					<td>{{i.1}}%</td>
+					<td>{{i.4}}</td>					
+				</tr>
+				{% endfor %}				
+			</tbody>
+		</table>
+
+
+

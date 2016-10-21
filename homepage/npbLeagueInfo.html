@@ -1,0 +1,74 @@
+
+<link rel="stylesheet" href="{{ STATIC_URL }}h_css/info_cell.css">
+
+
+<body style="padding:10px;">
+<h3><b>퍼시픽리그</b> 경기기록</h3>
+
+<div id="league_all" class="tab-pane active fade in">
+<table border=0px style="width:100%;border-collapse:collapse; text-align:center;">
+	<thead style="background-color:orange;">
+		<tr style="">
+		<th style="text-align:center;">순위</th>
+		<th style="text-align:center;">팀명</th>
+		<th style="text-align:center;">경기수</th>
+		<th style="text-align:center;">승</th>
+		<th style="text-align:center;">무</th>
+		<th style="text-align:center;">패</th>
+		<th style="text-align:center;">게임차</th>
+		</tr>
+	</thead>
+<tbody>
+{% for t in pacific %}
+{% if t.teamName == home or t.teamName == away %}
+<tr style='background-color:yellow;'>
+{% else %}
+<tr style='{% if forloop.counter0|divisibleby:2 %}background-color:#eeeeee;{%else%}background-color:#dddddd;{%endif%}'>
+{% endif %}
+<td>{{t.rank}}</td>
+<td>{{t.teamName}}</td>
+<td>{{t.played}}</td>
+<td>{{t.win}}</td>
+<td>{{t.draw}}</td>
+<td>{{t.lose}}</td>
+<td>{{t.behind}}</td>
+</tr>
+{% endfor %}
+</tbody>
+</table>
+</div>
+
+<h3><b>센트럴리그</b> 경기기록</h3>
+
+<div id="league_all" class="tab-pane active fade in">
+<table border=0px style="width:100%;border-collapse:collapse; text-align:center;">
+	<thead style="background-color:orange;">
+		<tr style="">
+		<th style="text-align:center;">순위</th>
+		<th style="text-align:center;">팀명</th>
+		<th style="text-align:center;">경기수</th>
+		<th style="text-align:center;">승</th>
+		<th style="text-align:center;">무</th>
+		<th style="text-align:center;">패</th>
+		<th style="text-align:center;">게임차</th>
+		</tr>
+	</thead>
+<tbody>
+{% for t in central %}
+{% if t.teamName == home or t.teamName == away %}
+<tr style='background-color:yellow;'>
+{% else %}
+<tr style='{% if forloop.counter0|divisibleby:2 %}background-color:#eeeeee;{%else%}background-color:#dddddd;{%endif%}'>
+{% endif %}
+<td>{{t.rank}}</td>
+<td>{{t.teamName}}</td>
+<td>{{t.played}}</td>
+<td>{{t.win}}</td>
+<td>{{t.draw}}</td>
+<td>{{t.lose}}</td>
+<td>{{t.behind}}</td>
+</tr>
+{% endfor %}
+</tbody>
+</table>
+</div>

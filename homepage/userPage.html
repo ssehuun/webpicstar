@@ -1,0 +1,452 @@
+{% extends 'homepage/base.html' %}
+		
+{% block content %}
+
+{% block load_css %}
+<style>
+	
+
+/*개인정보*/
+	.addInterestBtn, .rmvInterestBtn{
+		float: right;
+		margin: 5px;
+	}
+	div.userInfo{		
+		height: 100px; 
+		width: 100%; 		
+		margin: 30px 0px 30px 0px;			
+		}
+		.userImg {
+			display: inline-block;
+		}
+		.userNick{
+			display: inline-block;
+			color: white;
+		}
+		.userFollow{
+			float: right;
+			color: white;
+			margin-top: 42px;
+			font-size: 16px;
+		}
+	div.tab-content{
+		background-color: #ffffff;
+	}
+	
+	ul.user_nav{
+		margin-bottom: 30px;
+	}
+	table.picUserTable{
+		margin: 0 auto;
+		margin-top: 20px;
+		margin-bottom: 20px;
+		width: 600px;
+	}
+	div#open2{margin-top: 15px; margin-bottom: 15px; text-align: center}
+	#open2 a{text-decoration: none}
+	
+
+	.userDetail{
+		padding-bottom: 30px;
+	}
+/*픽스타리그 폴더*/	
+	div.leagueDiv{
+		margin: 0 auto;
+		margin-top: 20px;
+		width: 80%		
+	}
+	table.leagueTable{		
+		table-layout: fixed;
+		font-size: 15px;	
+	}
+	.leagueTable tr td{
+		
+	}
+	span.date{float: right;}
+	span.homeWin,.awayTeam{float: right;}
+
+	.drawTd{
+		text-align: center;
+	}
+	td.leaguePoint{		
+		text-align: center;		
+		font-size:25px;
+	}
+	span.leagueScore{margin-left: 44%;}
+	.leagueProgress{float: right;}
+
+	
+	span.under{color: blue;}
+	span.over{color: red;}
+	.yellow{background-color: #ffff80;}
+	.blue{color:blue;}
+	.orange{color:orange;}
+
+
+/*가계부 탭*/
+	.accountTab, .feedTab{
+		font-size: 17px;
+	}
+	.feedFolder{
+		width: 720px;
+		margin: 0 auto;
+		padding-top: 10px;
+		padding-bottom: 10px;
+	}
+
+/*기록요약 탭*/
+	table.feedTable{		
+		font-size: 15px;
+		width: 90%;
+		margin: 0 auto;		
+		background-color: #fff;
+		table-layout: fixed;
+	}	
+	.feedTheme{
+			margin: 20px 0px 10px 20px;
+			font-size: 15px;
+		}
+	.feedTable th{		
+		text-align: center;
+		background-color: #dfe3ea;
+		border: 1px solid black !important;
+		}
+	.feedTable td{		
+		text-align: center;
+		border: 1px solid black !important;
+		}
+		.feedTable td:nth-child(1){
+			background-color: #dfe3ea;
+			font-weight: bold;	
+		}
+		.feedTable td:not(:nth-child(1)){
+			color: blue;
+		}
+		.feedTable td:last-child{
+			color: #ff9900 !important;
+		}
+	#protoStat{
+		min-height: 750px;
+		overflow:hidden;
+		height:auto;
+	}
+	
+/*기록요약 그래프*/
+
+			
+<style>
+	.bar--positive {
+  	fill: steelblue;
+	}
+	.bar--negative {
+	  fill: darkorange;
+	}
+	.axis text {
+	  font: 10px sans-serif;
+	}
+	.axis path,
+	.axis line {
+	  fill: none;
+	  stroke: #000;
+	  shape-rendering: crispEdges;
+	}
+</style>
+
+
+</style>
+{% endblock %}
+
+
+{% block main %}
+
+<div class="container">
+	<div class="row">
+		<div class="col-md-9">			
+			<div class="userInfo">				
+				<div class="userImg">
+					{% if picKey == 0 %}
+					<img src="{{ STATIC_URL }}img/ic_user.png" class="img-circle" 
+							onError="this.src='{{ STATIC_URL }}img/ic_user.png' " width="80px" height="80px"/>          
+					{% else %}                
+					<img src="{{picKey}}" class="img-circle" 
+							onError="this.src='{{ STATIC_URL }}img/ic_user.png' " width="80px" height="80px"/>          
+					{% endif %}
+				</div>
+				<div class="userNick"><h2><b>{{nickname}}</b></h2></div>
+				<div class="userFollow">				
+					<span>팔로잉: {{followingState}}명 |</span>
+					<span>{{socialDesc}}</span>
+					<div>{{bettingDesc}}</div>
+					<div class="addInterestBtn"><button type="button" class="btn btn-primary " onclick="alert('관심 픽스타로 등록 하였습니다');">관심등록</button></div>
+					<div class="rmvInterestBtn" style="display:none;"><button type="button" class="btn btn-primary " onclick="alert('관심 픽스타에서 해제하였습니다');">관심해제</button></div>
+				</div>
+			</div><!--end userInfo-->
+
+
+
+			<ul class="nav nav-tabs nav-justified user_nav">
+				<li id="picLeague_tab" class="active" role="presentation">
+					<a class="user_feded" href="#picLeague" data-toggle="tab"><b>픽스타리그</b></a>
+				</li>
+				<li id="acccount_tab"  role="presentation">
+					<a class="user_feded" href="#account" data-toggle="tab"><b>가계부</b></a>
+				</li>
+				<li id="feedback_tab" role="presentation">
+					<a class="user_feed" href="#feedback" data-toggle="tab"><b>기록요약</b></a>
+				</li>    
+			</ul><!--user_nav-->
+
+			<div class="tab-content userDetail">
+
+			<!--픽스타리그 폴더 -->
+				<div class="tab-pane active" id="picLeague">
+					<ul class="nav nav-tabs nav-justified">
+						<li class="active" role="presentation">
+							<a href="#picLeagueAllArea" id="" class="picTab" value=0 data-toggle="tab">
+								전체
+							</a>
+						</li>
+						<li role="presentation">
+							<a href="#picLeagueRightArea" id="" class="picTab" value=1 data-toggle="tab">
+								적중
+							</a>
+						</li>                       
+						<li role="presentation">
+							<a href="#picLeagueWaitArea" id="" class="picTab" value=2 data-toggle="tab">
+								대기중
+							</a>
+						</li>                       
+					</ul>
+					<div class="tab-content">
+						<div class="tab-pane active" id="picLeagueAllArea"></div>
+						<div class="tab-pane" id="picLeagueRightArea"></div>
+						<div class="tab-pane" id="picLeagueWaitArea"></div>					
+					</div>	
+				</div>
+
+			<!--가계부 폴더-->
+				<div class="tab-pane" id="account">
+					<ul class="nav nav-tabs nav-justified">
+						<li class="active" role="presentation">
+							<a href="#allArea" id="allTab" class="accountTab" value=0 data-toggle="tab">
+								전체
+							</a>
+						</li>
+						<li role="presentation" class="dropdown">
+							<a href="#rightArea" id="rightTab" class="accountTab" value=1 data-toggle="tab">
+								적중
+							</a>
+						</li>                       
+						<li role="presentation" class="dropdown">
+							<a href="#waitArea" id="waitTab" class="accountTab" value=2 data-toggle="tab">
+								대기중
+							</a>
+						</li>                       
+					</ul>
+					<div class="tab-content">
+						<div class="tab-pane active" id="allArea"></div>
+						<div class="tab-pane" id="rightArea"></div>
+						<div class="tab-pane" id="waitArea"></div>					
+					</div>	
+				</div>				
+
+				<!--기록요약 수치-->
+				<div class="tab-pane" id="feedback">
+					<ul class="nav nav-tabs nav-justified">						
+						<li class="active" role="presentation">
+							<a href="#leagueStat" class="feedTab" value=0 data-toggle="tab">
+								<b>픽스타리그</b>
+							</a>
+						</li>                       
+						<li role="presentation">
+							<a href="#protoStat" class="feedTab" value=1 data-toggle="tab">
+								<b>가계부</b>
+							</a>
+						</li>                       
+					</ul>				
+					<div class="tab-content">
+						<div class="tab-pane active" id="leagueStat"></div>
+						<div class="tab-pane" id="protoStat"></div>
+					</div>
+				</div><!--end feedback-->
+			
+			</div><!--end big tab-content-->
+		</div><!--end col-md-9-->
+	</div><!--end row-->
+</div><!--end container-->
+{% block right %}
+	{% include 'homepage/rightbar.html' %}
+{% endblock%}
+
+
+<script>
+	$("div.addInterestBtn").click(function() {
+  	$("div.rmvInterestBtn").show();
+  	$("div.addInterestBtn").hide();
+	});
+	$("div.rmvInterestBtn").click(function() {
+  	$("div.rmvInterestBtn").hide();
+  	$("div.addInterestBtn").show();
+	});
+</script>
+
+
+
+<script>
+//픽스타리그 가져오기
+
+	$.post('/singleBetList/', {personalId: "{{personalId}}", state:0, page:0},
+		function(data){			
+			var leaguePicList = data.betList;			
+			//console.log(leaguePicList);
+			var leaguePic ="";
+		for(var i=0 in leaguePicList){
+			leaguePic += '<div class="leagueDiv">'
+			leaguePic += '<table class="table table-bordered leagueTable">';
+			leaguePic += '<tr>';
+			leaguePic += '<td colspan="3">'+leaguePicList[i].round+'회차&nbsp;'+leaguePicList[i].num+'&nbsp;'+
+									leaguePicList[i].league+'&nbsp;<span class="date">'+parseDate(leaguePicList[i].date)+'</span></td>'+
+									'<td class="leaguePoint" rowspan="3" point="'+leaguePicList[i].point+'">';
+			leaguePic += (leaguePicList[i].point > 0) ? '<span class="blue">적중<br>+'+leaguePicList[i].point : '';
+			leaguePic += (leaguePicList[i].point < 0) ? '<span class="orange">미적중<br>'+leaguePicList[i].point : '';
+			leaguePic += (leaguePicList[i].point == 0) ? '<span>대기중' : '';
+			leaguePic += '</span></td></tr>';
+			leaguePic += '<tr>';
+
+			leaguePic += (leaguePicList[i].singleChoice == 1) ? '<td class="homeTd yellow">' : '<td class="homeTd">';						
+			leaguePic += leaguePicList[i].home+'<span class="homeWin">'+leaguePicList[i].win;
+			leaguePic += (leaguePicList[i].gameType == 2) ? '<span class="under">↓</span>' : ''+'</span></td>';
+			
+			leaguePic += (leaguePicList[i].singleChoice == 4) ? '<td class="drawTd yellow">' : '<td class="drawTd">';			
+			leaguePic += (leaguePicList[i].draw) ? leaguePicList[i].draw : '';			
+			leaguePic += (leaguePicList[i].gameType == 2) ? '<span class="blue">U '+leaguePicList[i].handiNum : ''+'</span></td>';
+
+			leaguePic += (leaguePicList[i].singleChoice == 2) ? '<td class="awayTd yellow">' : '<td class="awayTd">';		
+			leaguePic += leaguePicList[i].lose;
+			leaguePic += (leaguePicList[i].gameType == 2) ? '<span class="over">↑</span>' : '';
+			leaguePic += '<span class="awayTeam">'+leaguePicList[i].away+'</span></td></tr>';
+
+			leaguePic += '<tr><td colspan="3">';
+			leaguePic += (leaguePicList[i].gameType == 0) ? '<span class="leagueScore">'+leaguePicList[i].homescore+'&nbsp;&nbsp;&nbsp;vs&nbsp;&nbsp;&nbsp;'+leaguePicList[i].awayscore+'</span>' : '';
+			leaguePic += (leaguePicList[i].gameType == 1) ? 'H '+leaguePicList[i].handiNum+'.0&nbsp;<span class="leagueScore">'+leaguePicList[i].homescore+'&nbsp;vs&nbsp;'+leaguePicList[i].awayscore+'</span>' : '';			
+			leaguePic += (leaguePicList[i].gameType == 2) ? '<span class="leagueScore">'+leaguePicList[i].drawscore+'</span>' : '';			
+			leaguePic += '<span class="leagueProgress blue"><b>'+leaguePicList[i].progress+'</b></span></td></tr>';
+			leaguePic += '</table>';
+			leaguePic += '</div>'
+		}
+		$('#picLeagueAllArea').html(leaguePic);
+	});	
+</script>
+
+
+
+<script>
+//가계부 가져오기
+	$.post('/bettingList/', {personalId: "{{personalId}}", state: 0},
+		function(data){
+
+			$("#allArea").html(data);
+	});
+	$('#allTab').click(function(){
+		$.post('/bettingList/', {personalId: "{{personalId}}", state: 0},
+			function(data){
+				$("#allArea").html(data)			
+		});
+	});
+	$('#rightTab').click(function(){
+		$.post('/bettingList/', {personalId: "{{personalId}}", state: 1},
+			function(data){
+				$("#rightArea").html(data);
+		}); 
+	});
+	$('#waitTab').click(function(){
+		$.post('/bettingList/', {personalId: "{{personalId}}", state: 2},			
+			function(data){
+				$("#waitArea").html(data);
+		});
+	});	
+</script>
+
+
+<!--d3.js-->
+<script src="https://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+<script>
+	$(document).ready(function(){
+		var margin = {top: 20, right: 30, bottom: 40, left: 30},
+    width = 960 - margin.left - margin.right,
+    height = 500 - margin.top - margin.bottom;
+
+	var x = d3.scale.linear()
+	    .range([0, width]);
+
+	var y = d3.scale.ordinal()
+	    .rangeRoundBands([0, height], 0.1);
+
+	var xAxis = d3.svg.axis()
+	    .scale(x)
+	    .orient("bottom");
+
+	var yAxis = d3.svg.axis()
+	    .scale(y)
+	    .orient("left")
+	    .tickSize(0)
+	    .tickPadding(6);
+
+	var svg = d3.select("body").append("svg")
+	    .attr("width", width + margin.left + margin.right)
+	    .attr("height", height + margin.top + margin.bottom)
+	  .append("g")
+	    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+	d3.tsv("data.tsv", type, function(error, data) {
+	  x.domain(d3.extent(data, function(d) { return d.value; })).nice();
+	  y.domain(data.map(function(d) { return d.name; }));
+
+	  svg.selectAll(".bar")
+	      .data(data)
+	    .enter().append("rect")
+	      .attr("class", function(d) { return "bar bar--" + (d.value < 0 ? "negative" : "positive"); })
+	      .attr("x", function(d) { return x(Math.min(0, d.value)); })
+	      .attr("y", function(d) { return y(d.name); })
+	      .attr("width", function(d) { return Math.abs(x(d.value) - x(0)); })
+	      .attr("height", y.rangeBand());
+
+	  svg.append("g")
+	      .attr("class", "x axis")
+	      .attr("transform", "translate(0," + height + ")")
+	      .call(xAxis);
+
+	  svg.append("g")
+	      .attr("class", "y axis")
+	      .attr("transform", "translate(" + x(0) + ",0)")
+	      .call(yAxis);
+	});
+
+	function type(d) {
+	  d.value = +d.value;
+	  return d;
+	}
+	})
+	
+</script>
+
+<script>
+//픽스타리그 기록요약
+	$.post('/personal/leagueStat/', {personalId: "{{personalId}}"},
+		function(data){
+			
+			$('#leagueStat').html(data);
+	});
+
+//가계부 기록요약
+	$.post('/personal/protoStat/', {personalId: "{{personalId}}"},
+		function(data){			
+			$('#protoStat').html(data);			
+	});
+
+
+</script>
+
+
+{% endblock %}
+{% endblock %}

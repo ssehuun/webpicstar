@@ -1,0 +1,87 @@
+
+
+<link rel="stylesheet" href="{{ STATIC_URL }}h_css/info_cell.css">
+
+
+
+
+{% for nl in national %}
+<h3><b>내셔널 리그 {{nl.regionName}}</b> 경기기록</h3>
+
+<div id="league_all" class="tab-pane active fade in">
+<table border=0px style="width:100%;border-collapse:collapse; text-align:center;">
+	<thead style="background-color:orange;">
+		<tr style="">
+		<th style="text-align:center;">순위</th>
+		<th style="text-align:center;">팀명</th>
+		<th style="text-align:center;">경기수</th>
+		<th style="text-align:center;">승</th>
+		<th style="text-align:center;">패</th>
+		<th style="text-align:center;">게임차</th>
+		<th style="text_align:center;">연속</th>
+		<th style="text_align:center;">10경기</th>
+		</tr>
+	</thead>
+<tbody>
+{% for t in nl.regionTeamList %}
+{% if t.teamName == home or t.teamName == away %}
+<tr style='background-color:yellow;'>
+{% else %}
+<tr style='{% if forloop.counter0|divisibleby:2 %}background-color:#eeeeee;{%else%}background-color:#dddddd;{%endif%}'>
+{% endif %}
+<td>{{t.rank}}</td>
+<td>{{t.teamName}}</td>
+<td>{{t.played}}</td>
+<td>{{t.win}}</td>
+<td>{{t.lose}}</td>
+<td>{{t.behind}}</td>
+<td>{{t.succ}}</td>
+<td>{{t.recent10}}</td>
+</tr>
+{% endfor %}
+</tbody>
+</table>
+</div>
+
+{% endfor %}
+
+
+{% for nl in american %}
+<h3><b>아메리칸 리그 {{nl.regionName}}</b> 경기기록</h3>
+
+<div id="league_all" class="tab-pane active fade in">
+<table border=0px style="width:100%;border-collapse:collapse; text-align:center;">
+	<thead style="background-color:orange;">
+		<tr style="">
+		<th style="text-align:center;">순위</th>
+		<th style="text-align:center;">팀명</th>
+		<th style="text-align:center;">경기수</th>
+		<th style="text-align:center;">승</th>
+		<th style="text-align:center;">패</th>
+		<th style="text-align:center;">게임차</th>
+		<th style="text_align:center;">연속</th>
+		<th style="text_align:center;">10경기</th>
+		</tr>
+	</thead>
+<tbody>
+{% for t in nl.regionTeamList %}
+{% if t.teamName == home or t.teamName == away %}
+<tr style='background-color:yellow;'>
+{% else %}
+<tr style='{% if forloop.counter0|divisibleby:2 %}background-color:#eeeeee;{%else%}background-color:#dddddd;{%endif%}'>
+{% endif %}
+<td>{{t.rank}}</td>
+<td>{{t.teamName}}</td>
+<td>{{t.played}}</td>
+<td>{{t.win}}</td>
+<td>{{t.lose}}</td>
+<td>{{t.behind}}</td>
+<td>{{t.succ}}</td>
+<td>{{t.recent10}}</td>
+</tr>
+{% endfor %}
+</tbody>
+</table>
+</div>
+
+{% endfor %}

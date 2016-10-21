@@ -1,0 +1,72 @@
+{% extends 'homepage/base.html' %}
+
+{% block content %}
+
+
+{% block load_css %}
+  <style>
+    .user_cell{
+      color: white;
+    }
+  </style>
+{% endblock %}
+
+{% block main %}
+<div class="container">
+  <div class="row">
+    <div class="col-md-9">
+      <div id="followerArea"></div>
+    </div><!--end col-md-9--> 
+  </div>
+</div>
+
+
+
+
+<script>
+ $.getJSON('/followerList/', function(data){//랭킹 json파싱
+    console.log(data);
+    var strData = JSON.stringify(data);//json 데이터를 스트링으로    
+    var objList = JSON.parse(strData); //스트링 데이터를 json으로 다시파싱
+    
+    var followerList = objList.userList;// 나를 따르는 사람    
+    
+    var followerUser ="";
+    for(var i=0 in followerList){
+      followerUser += '<div class="user_cell" onclick="goPersonalPage('+followerList[i].userId+')">';    
+
+      followerUser += '<div class="info_container">';
+      followerUser += '<div class="rank">'+followerList[i].leagueRank+'</div>';
+    
+      followerUser += '<span class="nickname">'+followerList[i].nickname+'</span>';
+      followerUser += '</div>';//info_container
+
+      followerUser += '<div class="info_bottom">';
+      followerUser += '<div class="correctRate info">';
+      followerUser += '<span class="desc"><b>적중률</b></span><br>';
+      followerUser += '<span class="data">'+followerList[i].leagueCorrectRatio+'%('+followerList[i].leagueCorrectNum+'/'+followerList[i].leagueTotalNum+')</span>';
+      followerUser += '</div>'
+      followerUser += '<div class="profit info">'
+      followerUser += '<span class="desc"><b>리그포인트</b></span><br>'
+      followerUser += '<span class="data">'+followerList[i].leaguePoint+'</span>'
+      followerUser += '</div>'
+      followerUser += '<div class="waiting info">'
+      followerUser += '<span class="desc"><b>대기중</b></span><br>'
+      followerUser += '<span class="data">'+followerList[i].waitingNum+'개</span>'
+      followerUser += '</div>'
+      followerUser += '</div>'//info_bottom
+      followerUser += '</div>'// end user_cell
+    }    
+    $('#followerArea').html(followerUser);
+  });
+
+  
+
+
+</script>
+
+
+
+
+{% endblock %}
+{% endblock %}

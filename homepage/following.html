@@ -1,0 +1,66 @@
+{% extends 'homepage/base.html' %}
+
+{% block content %}
+
+
+{% block load_css %}
+  <link rel="stylesheet" href="{{ STATIC_URL }}h_css/ranking_user.css">
+	<style>
+		#follwingTheme{
+			font-size: 20px;
+			text-align: center;
+			margin: 24px;
+			color: white;	
+			font-weight: 600;
+		}
+	</style>
+{% endblock %}
+
+{% block main %}
+<div class="container">
+  <div class="row">
+    <div class="col-md-9">
+    	<div id="follwingTheme">관심 픽스타 목록</div>
+      	<div id="followingArea"></div>      
+    </div><!--end col-md-9--> 
+  </div>
+</div>
+
+<script>
+	$.getJSON('/followingList/', function(data){//랭킹 json파싱        
+    var followingList = data.userList; //내가 따르는 사람    
+    
+    var followingUser ="";
+    for(var i=0 in followingList){
+      followingUser += '<div class="user_cell" onclick="goPersonalPage('+followingList[i].userId+')">';    
+
+      followingUser += '<div class="info_container">';
+      followingUser += '<div class="rank">'+followingList[i].leagueRank+'</div>';
+   
+      followingUser += '<span class="nickname">'+followingList[i].nickname+'</span>';
+      followingUser += '</div>';//info_container
+
+      followingUser += '<div class="info_bottom">';
+      followingUser += '<div class="correctRate info">';
+      followingUser += '<span class="desc"><b>적중률</b></span><br>';
+      followingUser += '<span class="data">'+followingList[i].leagueCorrectRatio+'%('+followingList[i].leagueCorrectNum+'/'+followingList[i].leagueTotalNum+')</span>';
+      followingUser += '</div>'
+      followingUser += '<div class="profit info">'
+      followingUser += '<span class="desc"><b>리그포인트</b></span><br>'
+      followingUser += '<span class="data">'+followingList[i].leaguePoint+'</span>'
+      followingUser += '</div>'
+      followingUser += '<div class="waiting info">'
+      followingUser += '<span class="desc"><b>대기중</b></span><br>'
+      followingUser += '<span class="data">'+followingList[i].waitingNum+'개</span>'
+      followingUser += '</div>'
+      followingUser += '</div>'//info_bottom
+      followingUser += '</div>'// end user_cell
+    }    
+    $('#followingArea').html(followingUser);
+   });
+
+</script>
+
+{% endblock %}
+{% endblock %}
+
